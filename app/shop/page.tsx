@@ -6,30 +6,90 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Filter, Star, ShoppingCart, Heart } from "lucide-react"
+import { Star, ShoppingCart, Heart, Grid3X3, List, Search, SlidersHorizontal, X } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 
 type Product = {
-  id: string
-  exportProductId?: string
+  _id?: string
+  id?: string
   name: string
-  price: number | null
-  image: string
+  priceData?: {
+    price: number
+    currency: string
+    formatted: {
+      price: string
+    }
+  }
+  price?: {
+    price: number
+    currency: string
+    formatted: {
+      price: string
+    }
+  }
+  media?: {
+    mainMedia?: {
+      image?: {
+        url: string
+      }
+    }
+    items?: Array<{
+      image?: {
+        url: string
+      }
+    }>
+  }
   description?: string
   slug?: string
-  isInStock?: boolean
-  hasVariants?: boolean
-  originalPrice?: number | null
-  tagline?: string
+  stock?: {
+    inStock: boolean
+  }
+  variants?: Array<{
+    choices: {
+      weight: string
+    }
+    variant: {
+      priceData: {
+        price: number
+        formatted: {
+          price: string
+        }
+      }
+    }
+    stock: {
+      inStock: boolean
+    }
+    _id: string
+  }>
+  ribbons?: Array<{
+    text: string
+  }>
+  productType?: string
   region?: string
   category?: string
   rating?: number
   reviews?: number
   bestseller?: boolean
   limitedEdition?: boolean
+  ribbon?: string
+  additionalInfoSections?: any[]
+  productOptions?: any[]
 }
+
+type WeightOption = {
+  weight: string
+  price: number
+  originalPrice?: number
+}
+
+const getWeightOptions = (basePrice: number): WeightOption[] => [
+  { weight: "100g", price: Math.round(basePrice * 0.6) },
+  { weight: "250g", price: basePrice },
+  { weight: "500g", price: Math.round(basePrice * 1.8) },
+  { weight: "1kg", price: Math.round(basePrice * 3.4) },
+]
 
 export default function ShopPage() {
   const { add } = useCart()
@@ -41,6 +101,12 @@ export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [sortBy, setSortBy] = useState("featured")
+  // Renamed from selectedWeights to selectedVariants
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
+  const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
 
   useEffect(() => {
     const load = async () => {
@@ -49,7 +115,18 @@ export default function ShopPage() {
         const res = await fetch("/api/products", { cache: "no-store" })
         if (!res.ok) throw new Error("Failed to load products")
         const data = await res.json()
-        setProducts(data.products || [])
+        const productsData = data.products || []
+        console.log("Fetched products:", data)
+        setProducts(productsData)
+
+        const defaultVariants: Record<string, string> = {}
+        productsData.forEach((product: Product) => {
+          const productId = product._id || product.id || ""
+          if (product.variants && product.variants.length > 0) {
+            defaultVariants[productId] = product.variants[0]._id
+          }
+        })
+        setSelectedVariants(defaultVariants)
       } catch (e: any) {
         setError(e?.message || "Failed to load products")
       } finally {
@@ -58,6 +135,92 @@ export default function ShopPage() {
     }
     load()
   }, [])
+
+  const getCurrentPrice = (product: Product): number => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.priceData?.price ?? product.price?.price ?? 0
+    }
+
+    const selectedVariantId = selectedVariants[product._id || product.id || ""]
+    const selectedVariant = product.variants.find((v) => v._id === selectedVariantId) || product.variants[0]
+    return selectedVariant.variant.priceData.price
+  }
+
+  const getCurrentImage = (product: Product): string => {
+    const productId = product._id || product.id || ""
+    const hoverIndex = hoveredProducts[productId] || 0
+
+    if (product.media?.items && product.media.items.length > 1) {
+      const imageIndex = hoverIndex % product.media.items.length
+      return product.media.items[imageIndex]?.image?.url || "/placeholder.svg"
+    }
+
+    return getProductImage(product)
+  }
+
+  const getProductImage = (product: Product): string => {
+    return product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
+  }
+
+  const getProductPrice = (product: Product): number => {
+    return product.priceData?.price ?? product.price?.price ?? 0
+  }
+
+  const getFormattedPrice = (product: Product): string => {
+    return (
+      product.priceData?.formatted?.price ??
+      product.price?.formatted?.price ??
+      (product.priceData?.price ? `₹${product.priceData.price}` : "₹0")
+    )
+  }
+
+  const isInStock = (product: Product): boolean => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.stock?.inStock ?? true
+    }
+
+    const selectedVariantId = selectedVariants[product._id || product.id || ""]
+    const selectedVariant = product.variants.find((v) => v._id === selectedVariantId) || product.variants[0]
+    return selectedVariant.stock.inStock
+  }
+
+  const handleVariantChange = (productId: string, variantId: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [productId]: variantId,
+    }))
+  }
+
+  const isMadeToOrder = (product: Product): boolean => {
+    return product.ribbons?.some((ribbon) => ribbon.text === "Made to Order") || false
+  }
+
+  const handleMouseEnter = (productId: string) => {
+    const product = products.find((p) => (p._id || p.id) === productId)
+    if (product?.media?.items && product.media.items.length > 1) {
+      const interval = setInterval(() => {
+        setHoveredProducts((prev) => ({
+          ...prev,
+          [productId]: ((prev[productId] || 0) + 1) % product.media.items!.length,
+        }))
+      }, 800)
+
+      // Store interval ID for cleanup
+      ;(window as any)[`interval_${productId}`] = interval
+    }
+  }
+
+  const handleMouseLeave = (productId: string) => {
+    const interval = (window as any)[`interval_${productId}`]
+    if (interval) {
+      clearInterval(interval)
+      delete (window as any)[`interval_${productId}`]
+    }
+    setHoveredProducts((prev) => ({
+      ...prev,
+      [productId]: 0,
+    }))
+  }
 
   const regions = [
     "all",
@@ -72,57 +235,184 @@ export default function ShopPage() {
   ]
   const categories = ["all", "Masala", "Chutney", "Instant"]
 
-  const filteredProducts = products.filter((product) => {
-    if (selectedRegion !== "all" && product.region !== selectedRegion) return false
-    if (selectedCategory !== "all" && product.category !== selectedCategory) return false
-    if (showBestsellers && !product.bestseller) return false
-    if (showLimitedEdition && !product.limitedEdition) return false
-    return true
-  })
+  const filteredProducts = products
+    .filter((product) => {
+      if (selectedRegion !== "all" && product.region !== selectedRegion) return false
+      if (selectedCategory !== "all" && product.category !== selectedCategory) return false
+      if (showBestsellers && !product.bestseller) return false
+      if (showLimitedEdition && !product.limitedEdition) return false
+      if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
+      return true
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return getCurrentPrice(a) - getCurrentPrice(b)
+        case "price-high":
+          return getCurrentPrice(b) - getCurrentPrice(a)
+        case "rating":
+          return (b.rating || 0) - (a.rating || 0)
+        case "name":
+          return a.name.localeCompare(b.name)
+        default:
+          return 0
+      }
+    })
+
+  const clearAllFilters = () => {
+    setSelectedRegion("all")
+    setSelectedCategory("all")
+    setShowBestsellers(false)
+    setShowLimitedEdition(false)
+    setSearchQuery("")
+    setSortBy("featured")
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="bg-card py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-balance">Premium Spice Collection</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover authentic flavors from every corner of India, crafted for the modern kitchen
+      <section className="relative bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 lg:py-28">
+        <div className="absolute inset-0 bg-[url('/spices-pattern.jpg')] opacity-5"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-medium">
+              Premium Collection
+            </Badge>
+            <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-black mb-6 text-balance bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Authentic Indian Spices
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+              Discover handpicked spices from every corner of India, crafted with tradition and perfected for the modern
+              kitchen
             </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold"
+              >
+                Shop Collection
+              </Button>
+              <Button variant="outline" size="lg" className="border-2 px-8 py-3 text-lg font-semibold bg-transparent">
+                Learn More
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="sticky top-24">
-              {/* Mobile Filter Toggle */}
-              <Button
-                variant="outline"
-                className="lg:hidden w-full mb-4 bg-transparent"
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-6">
+            <div className="flex-1 max-w-md">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search spices..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <Filter className="h-4 w-4 mr-2" />
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+                <option value="name">Name A-Z</option>
+              </select>
+
+              <div className="flex border border-border rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 ${viewMode === "list" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}
+                >
+                  <List className="h-4 w-4" />
+                </button>
+              </div>
+
+              <Button variant="outline" onClick={() => setIsFilterOpen(!isFilterOpen)} className="lg:hidden">
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
                 Filters
               </Button>
+            </div>
+          </div>
 
+          {(selectedRegion !== "all" ||
+            selectedCategory !== "all" ||
+            showBestsellers ||
+            showLimitedEdition ||
+            searchQuery) && (
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {selectedRegion !== "all" && (
+                <Badge variant="secondary" className="gap-1">
+                  {selectedRegion}
+                  <button onClick={() => setSelectedRegion("all")}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              {selectedCategory !== "all" && (
+                <Badge variant="secondary" className="gap-1">
+                  {selectedCategory}
+                  <button onClick={() => setSelectedCategory("all")}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              {showBestsellers && (
+                <Badge variant="secondary" className="gap-1">
+                  Bestsellers
+                  <button onClick={() => setShowBestsellers(false)}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              {showLimitedEdition && (
+                <Badge variant="secondary" className="gap-1">
+                  Limited Edition
+                  <button onClick={() => setShowLimitedEdition(false)}>
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs">
+                Clear all
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:w-72 flex-shrink-0">
+            <div className="sticky top-24">
               {/* Filter Panel */}
               <div className={`space-y-6 ${isFilterOpen ? "block" : "hidden lg:block"}`}>
-                <Card className="p-6 shadow-sm">
-                  <h3 className="font-serif text-lg font-semibold mb-4">Shop by Region</h3>
+                <Card className="p-6 shadow-sm border-border/50">
+                  <h3 className="font-sans text-lg font-bold mb-4 text-card-foreground">Shop by Region</h3>
                   <div className="space-y-2">
                     {regions.map((region) => (
                       <button
                         key={region}
                         onClick={() => setSelectedRegion(region)}
-                        className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        className={`block w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
                           selectedRegion === region
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary text-primary-foreground shadow-sm"
                             : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -132,16 +422,16 @@ export default function ShopPage() {
                   </div>
                 </Card>
 
-                <Card className="p-6 shadow-sm">
-                  <h3 className="font-serif text-lg font-semibold mb-4">Category</h3>
+                <Card className="p-6 shadow-sm border-border/50">
+                  <h3 className="font-sans text-lg font-bold mb-4 text-card-foreground">Category</h3>
                   <div className="space-y-2">
                     {categories.map((category) => (
                       <button
                         key={category}
                         onClick={() => setSelectedCategory(category)}
-                        className={`block w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                        className={`block w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200 ${
                           selectedCategory === category
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary text-primary-foreground shadow-sm"
                             : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
                       >
@@ -151,26 +441,26 @@ export default function ShopPage() {
                   </div>
                 </Card>
 
-                <Card className="p-6 shadow-sm">
-                  <h3 className="font-serif text-lg font-semibold mb-4">Special Collections</h3>
-                  <div className="space-y-3">
-                    <label className="flex items-center space-x-3 cursor-pointer">
+                <Card className="p-6 shadow-sm border-border/50">
+                  <h3 className="font-sans text-lg font-bold mb-4 text-card-foreground">Special Collections</h3>
+                  <div className="space-y-4">
+                    <label className="flex items-center space-x-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={showBestsellers}
                         onChange={(e) => setShowBestsellers(e.target.checked)}
-                        className="rounded border-border text-primary focus:ring-primary"
+                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-2"
                       />
-                      <span className="text-sm">Bestsellers</span>
+                      <span className="text-sm group-hover:text-foreground transition-colors">Bestsellers</span>
                     </label>
-                    <label className="flex items-center space-x-3 cursor-pointer">
+                    <label className="flex items-center space-x-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={showLimitedEdition}
                         onChange={(e) => setShowLimitedEdition(e.target.checked)}
-                        className="rounded border-border text-primary focus:ring-primary"
+                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-2"
                       />
-                      <span className="text-sm">Limited Edition</span>
+                      <span className="text-sm group-hover:text-foreground transition-colors">Limited Edition</span>
                     </label>
                   </div>
                 </Card>
@@ -181,113 +471,338 @@ export default function ShopPage() {
           {/* Product Grid */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-8">
-              <p className="text-muted-foreground">
-                {isLoading ? "Loading products..." : `Showing ${filteredProducts.length} of ${products.length} products`}
+              <p className="text-muted-foreground font-medium">
+                {isLoading
+                  ? "Loading products..."
+                  : `Showing ${filteredProducts.length} of ${products.length} products`}
               </p>
             </div>
 
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredProducts.map((product) => (
-                <Link key={product.id || product.slug} href={`/product/${product.slug || product.id}`}>
-                  <Card className="group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-0">
-                      <div className="relative overflow-hidden">
-                        <img
-                          src={product.image || "/placeholder.svg"}
-                          alt={product.name}
-                          className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+            {error && (
+              <Card className="p-6 mb-6 border-destructive/20 bg-destructive/5">
+                <p className="text-destructive font-medium">{error}</p>
+              </Card>
+            )}
 
-                        <div className="absolute top-4 left-4 flex flex-col gap-2">
-                          {product.bestseller && (
-                            <Badge className="bg-primary text-primary-foreground">Bestseller</Badge>
-                          )}
-                          {product.limitedEdition && <Badge variant="secondary">Limited Edition</Badge>}
-                        </div>
+            <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 lg:grid-cols-2" : "grid-cols-1"}`}>
+              {filteredProducts.map((product) => {
+                const currentPrice = getCurrentPrice(product)
+                const productId = product._id || product.id || ""
+                const selectedVariantId = selectedVariants[productId]
+                const selectedVariant =
+                  product.variants?.find((v) => v._id === selectedVariantId) || product.variants?.[0]
 
-                        <button className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white">
-                          <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500" />
-                        </button>
+                return (
+                  <Link key={productId} href={`/product/${product.slug || productId}`}>
+                    <Card
+                      className={`group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1 ${
+                        viewMode === "list" ? "flex flex-row max-w-4xl mx-auto" : ""
+                      }`}
+                      onMouseEnter={() => handleMouseEnter(productId)}
+                      onMouseLeave={() => handleMouseLeave(productId)}
+                    >
+                      <CardContent className="p-0 flex-1">
+                        {viewMode === "list" ? (
+                          // Single column layout
+                          <div className="flex flex-row h-full">
+                            <div className="w-80 flex-shrink-0 relative overflow-hidden">
+                              <img
+                                src={getCurrentImage(product) || "/placeholder.svg"}
+                                alt={product.name}
+                                className="object-cover w-full h-full group-hover:scale-110 transition-all duration-700"
+                              />
 
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-end">
-                          <div className="p-6 w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Button
-                              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                              onClick={async (e) => {
-                                e.preventDefault()
-                                try {
-                                  if (product.isInStock === false) throw new Error("Out of stock")
-                                  add({ id: product.exportProductId || `product_${product.id}`, name: product.name, price: product.price ?? undefined, image: product.image }, 1)
-                                  toast.success("Added to cart", { description: product.name })
-                                } catch (err) {
-                                  const message = err instanceof Error ? err.message : "Add to cart failed"
-                                  toast.error(message)
-                                }
-                              }}
-                            >
-                              <ShoppingCart className="h-4 w-4 mr-2" />
-                              Add to Cart
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
+                              <div className="absolute top-3 left-3 flex flex-col gap-2">
+                                {product.bestseller && (
+                                  <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm px-3 py-1.5 rounded-full shadow-lg border-0 font-medium">
+                                    ✨ Bestseller
+                                  </Badge>
+                                )}
+                                {product.limitedEdition && (
+                                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm px-3 py-1.5 rounded-full shadow-lg border-0 font-medium">
+                                    🔥 Limited
+                                  </Badge>
+                                )}
+                                {isMadeToOrder(product) && (
+                                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm px-3 py-1.5 rounded-full shadow-lg border-0 font-medium">
+                                    👨‍🍳 Made to Order
+                                  </Badge>
+                                )}
+                                {!isInStock(product) && (
+                                  <Badge className="bg-gray-900/90 text-white text-sm px-3 py-1.5 rounded-full shadow-lg border-0 font-medium">
+                                    Out of Stock
+                                  </Badge>
+                                )}
+                              </div>
 
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          {typeof product.rating === "number" && (
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm text-muted-foreground ml-1">
-                                {product.rating}
-                                {typeof product.reviews === "number" ? ` (${product.reviews})` : ""}
-                              </span>
+                              <button className="absolute top-3 right-3 p-2.5 bg-white/95 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
+                                <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
+                              </button>
                             </div>
-                          )}
-                        </div>
 
-                        <h3 className="font-serif text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
+                            <div className="flex-1 p-8 flex flex-col justify-between">
+                              <div>
+                                <div className="flex items-start justify-between mb-4">
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-2xl text-gray-900 mb-3 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-200">
+                                      {product.name}
+                                    </h3>
+                                  </div>
+                                  {typeof product.rating === "number" && (
+                                    <div className="flex items-center gap-1 bg-yellow-50 px-4 py-2 rounded-full ml-4 flex-shrink-0">
+                                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                      <span className="text-base font-semibold text-yellow-700">{product.rating}</span>
+                                    </div>
+                                  )}
+                                </div>
 
-                        {product.tagline && (
-                          <p className="text-sm text-accent font-medium mb-3 italic">{product.tagline}</p>
-                        )}
+                                <div className="flex items-center gap-4 mb-6">
+                                  {product.region && (
+                                    <span className="text-base text-orange-700 font-semibold bg-orange-50 px-4 py-2 rounded-full border border-orange-100">
+                                      📍 {product.region}
+                                    </span>
+                                  )}
+                                  {product.category && (
+                                    <span className="text-base text-gray-600 font-medium bg-gray-50 px-4 py-2 rounded-full">
+                                      {product.category}
+                                    </span>
+                                  )}
+                                </div>
 
-                        {product.region && (
-                          <p className="text-sm text-muted-foreground mb-4">From {product.region}</p>
-                        )}
+                                {product.variants && product.variants.length > 0 && (
+                                  <div className="mb-6 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-base font-medium text-gray-700">Weight:</span>
+                                      <select
+                                        value={selectedVariantId || ""}
+                                        onChange={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          handleVariantChange(productId, e.target.value)
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                        }}
+                                        className="px-4 py-3 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white min-w-32"
+                                      >
+                                        {product.variants.map((variant) => (
+                                          <option key={variant._id} value={variant._id}>
+                                            {variant.choices.weight}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {product.price !== null && <span className="font-bold text-lg">${product.price}</span>}
-                            {product.originalPrice && (
-                              <span className="text-sm text-muted-foreground line-through">${product.originalPrice}</span>
-                            )}
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-3xl font-bold text-orange-600">
+                                        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                      </span>
+                                     
+                                    </div>
+                                  </div>
+                                )}
+
+                                {(!product.variants || product.variants.length === 0) && (
+                                  <div className="mb-6">
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-3xl font-bold text-orange-600">₹{currentPrice}</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              <Button
+                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-4 text-lg rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                onClick={async (e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  try {
+                                    if (!isInStock(product)) throw new Error("Out of stock")
+                                    const exportProductId = product._id || product.id || ""
+                                    const variantSuffix = selectedVariant ? `_${selectedVariant._id}` : ""
+                                    add(`${exportProductId}${variantSuffix}`, 1)
+                                    const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
+                                    toast.success("Added to cart", { description: `${product.name}${weightText}` })
+                                  } catch (err) {
+                                    const message = err instanceof Error ? err.message : "Add to cart failed"
+                                    toast.error(message)
+                                  }
+                                }}
+                              >
+                                <ShoppingCart className="h-5 w-5 mr-2" />
+                                Add to Cart
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                        ) : (
+                          // Grid layout (existing code)
+                          <>
+                            <div className="relative overflow-hidden">
+                              <img
+                                src={getCurrentImage(product) || "/placeholder.svg"}
+                                alt={product.name}
+                                className="object-cover w-full h-64 group-hover:scale-110 transition-all duration-700"
+                              />
+
+                              <div className="absolute top-2 left-2 flex flex-col gap-1">
+                                {product.bestseller && (
+                                  <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                    ✨ Bestseller
+                                  </Badge>
+                                )}
+                                {product.limitedEdition && (
+                                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                    🔥 Limited
+                                  </Badge>
+                                )}
+                                {isMadeToOrder(product) && (
+                                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                    👨‍🍳 Made to Order
+                                  </Badge>
+                                )}
+                                {!isInStock(product) && (
+                                  <Badge className="bg-gray-900/90 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                    Out of Stock
+                                  </Badge>
+                                )}
+                              </div>
+
+                              <button className="absolute top-2 right-2 p-2 bg-white/95 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
+                                <Heart className="h-3 w-3 text-gray-600 hover:text-red-500 transition-colors" />
+                              </button>
+                            </div>
+
+                            <div className="p-6">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-200">
+                                    {product.name}
+                                  </h3>
+                                </div>
+                                {typeof product.rating === "number" && (
+                                  <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1 rounded-full ml-3 flex-shrink-0">
+                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                    <span className="text-sm font-semibold text-yellow-700">{product.rating}</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-between mb-4">
+                                {product.region && (
+                                  <span className="text-sm text-orange-700 font-semibold bg-orange-50 px-3 py-1 rounded-full border border-orange-100">
+                                    📍 {product.region}
+                                  </span>
+                                )}
+                                {product.category && (
+                                  <span className="text-sm text-gray-600 font-medium bg-gray-50 px-3 py-1 rounded-full">
+                                    {product.category}
+                                  </span>
+                                )}
+                              </div>
+
+                              {product.variants && product.variants.length > 0 && (
+                                <div className="mb-4 space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium text-gray-700">Weight:</span>
+                                    <select
+                                      value={selectedVariantId || ""}
+                                      onChange={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        handleVariantChange(productId, e.target.value)
+                                      }}
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                      }}
+                                      className="px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+                                    >
+                                      {product.variants.map((variant) => (
+                                        <option key={variant._id} value={variant._id}>
+                                          {variant.choices.weight}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xl font-bold text-orange-600">
+                                      {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                    </span>
+                                    
+                                  </div>
+                                </div>
+                              )}
+
+                              {(!product.variants || product.variants.length === 0) && (
+                                <div className="mb-4">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xl font-bold text-orange-600">₹{currentPrice}</span>
+                                  </div>
+                                </div>
+                              )}
+
+                              <Button
+                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                onClick={async (e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  try {
+                                    if (!isInStock(product)) throw new Error("Out of stock")
+                                    const exportProductId = product._id || product.id || ""
+                                    const variantSuffix = selectedVariant ? `_${selectedVariant._id}` : ""
+                                    add(`${exportProductId}${variantSuffix}`, 1)
+                                    const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
+                                    toast.success("Added to cart", { description: `${product.name}${weightText}` })
+                                  } catch (err) {
+                                    const message = err instanceof Error ? err.message : "Add to cart failed"
+                                    toast.error(message)
+                                  }
+                                }}
+                              >
+                                <ShoppingCart className="h-4 w-4 mr-2" />
+                                Add to Cart
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                )
+              })}
             </div>
 
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">No products found matching your filters.</p>
-                <Button
-                  variant="outline"
-                  className="mt-4 bg-transparent"
-                  onClick={() => {
-                    setSelectedRegion("all")
-                    setSelectedCategory("all")
-                    setShowBestsellers(false)
-                    setShowLimitedEdition(false)
-                  }}
-                >
-                  Clear Filters
-                </Button>
+            {filteredProducts.length === 0 && !isLoading && (
+              <Card className="text-center py-16 border-dashed border-2 border-border">
+                <div className="max-w-md mx-auto">
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-sans text-xl font-bold mb-2">No products found</h3>
+                  <p className="text-muted-foreground mb-6">
+                    We couldn't find any products matching your current filters. Try adjusting your search criteria.
+                  </p>
+                  <Button onClick={clearAllFilters} className="bg-primary hover:bg-primary/90">
+                    Clear All Filters
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {isLoading && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <Card key={i} className="overflow-hidden">
+                    <div className="w-full h-64 bg-muted animate-pulse"></div>
+                    <div className="p-6 space-y-4">
+                      <div className="h-5 bg-muted rounded animate-pulse"></div>
+                      <div className="h-7 bg-muted rounded animate-pulse w-3/4"></div>
+                      <div className="h-5 bg-muted rounded animate-pulse w-1/2"></div>
+                    </div>
+                  </Card>
+                ))}
               </div>
             )}
           </div>

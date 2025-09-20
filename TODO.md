@@ -1,40 +1,22 @@
-# Cart Implementation Plan
+# Fix /api/products to return all fields
 
-## Current State Analysis
-- Cart API handles create, add, get operations with Wix Ecom
-- Cart page displays items but shows hardcoded 0 for all calculations
-- Quantity buttons and remove buttons have empty onClick handlers
-- Product prices available via /api/products endpoint
-- Cart lineItems have catalogItemId but no price data
+## Current Issue
+- `/api/products` endpoint only returns specific normalized fields
+- Missing important fields like region, category, rating, reviews, bestseller, limitedEdition
+- Individual product endpoint `/api/products/[id]` already returns all fields correctly
 
-## Implementation Steps
+## Plan Implementation
 
-### 1. Enhance Cart API to Include Product Prices
-- Modify cart API to fetch product details for each lineItem
-- Add price information to cart response
-- Ensure prices are included in create, add, and get operations
+### Step 1: Update API endpoint
+- [ ] Modify `app/api/products/route.ts` to return full product objects instead of normalized fields
+- [ ] Remove the field filtering/normalization mapping
+- [ ] Return complete Wix API response similar to individual product endpoint
 
-### 2. Implement Cart Calculations in Cart Page
-- Calculate subtotal: sum of (price * quantity) for all items
-- Calculate shipping: free if subtotal >= $50, else $9.99
-- Calculate tax: 8.25% of subtotal
-- Calculate total: subtotal + shipping + tax
+### Step 2: Update shop page (if needed)
+- [ ] Check if `app/shop/page.tsx` needs updates to handle new fields
+- [ ] Add support for additional fields like region, category, rating, reviews, bestseller, limitedEdition
 
-### 3. Add Quantity Update Functionality
-- Add "update" action to cart API route
-- Implement increase/decrease quantity buttons
-- Update cart state after quantity changes
-
-### 4. Add Remove Item Functionality
-- Add "remove" action to cart API route
-- Implement remove button functionality
-- Update cart state after item removal
-
-### 5. Update use-cart Hook
-- Add updateQuantity and removeItem functions
-- Ensure cart state updates properly after changes
-
-### 6. Testing and Validation
-- Test all cart operations
-- Verify calculations are correct
-- Ensure UI updates properly
+### Step 3: Testing
+- [ ] Test `/api/products` endpoint to verify all fields are returned
+- [ ] Test shop page functionality with additional data
+- [ ] Verify product filtering and display works correctly

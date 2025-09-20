@@ -19,27 +19,11 @@ export async function GET() {
     const result = await wixClient.products.queryProducts().limit(50).find()
 
     const items = result?.items || []
-    const normalized = items.map((p: any) => ({
-      id: p._id || p.id,
-      catalogItemId: String(p._id || p.id || "").replace(/^product_/, ""),
-      exportProductId: p.exportProductId || (p.id ? `product_${p.id}` : undefined),
-      name: p.name,
-      price: p.priceData?.price ?? p.price?.price ?? null,
-      description: p.description,
-      slug: p.slug,
-      isInStock: p.stock?.inStock ?? true,
-      hasVariants: (Array.isArray(p.variants) && p.variants.length > 0) || Boolean(p.manageVariants),
-      image:
-        p.media?.mainMedia?.image?.url ||
-        p.media?.items?.[0]?.image?.url ||
-        "/placeholder.svg",
-      productType: p.productType,
-    }))
+    console.log("Raw products from Wix:", items)
 
-    return NextResponse.json({ products: normalized })
+    // Return full product objects instead of normalized/filtered fields
+    return NextResponse.json({ products: items })
   } catch (error: any) {
     return NextResponse.json({ error: error?.message || "Unknown error" }, { status: 500 })
   }
 }
-
-

@@ -14,7 +14,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40" />
         <div className="absolute inset-0">
           <img
-            src="/indian-woman-pouring-spices-over-avocado-toast-in-.jpg"
+            src="https://static.wixstatic.com/media/e7c120_1ee1c0b437b94cf9a07e89f845073a2e~mv2.jpg"
             alt="Gen Z woman pouring spices over avocado toast"
             className="w-full h-full object-cover"
           />

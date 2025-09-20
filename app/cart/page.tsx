@@ -20,14 +20,13 @@ import { useCart } from "../../hooks/use-cart";
 export default function CartPage() {
   const { cart, updateQuantity, remove, checkout, loading } = useCart();
 
-  // ✅ Normalize items
-  const items =
-    cart?.lineItems || cart?.lineItemsV2?.items || [];
+  // ✅ Normalize items (lineItems from API)
+  const items = cart?.lineItems || [];
 
   // ✅ Calculate totals
   const subtotal = useMemo(() => {
     return items.reduce((sum: number, item: any) => {
-      const price = item.priceData?.price || item.price?.amount || 0;
+      const price = parseFloat(item.price?.amount || "0");
       const qty = item.quantity || 0;
       return sum + price * qty;
     }, 0);
@@ -66,20 +65,14 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
               {items.map((item: any) => (
-                <Card key={item._id || item.id} className="p-6">
+                <Card key={item.id} className="p-6">
                   <div className="flex items-center gap-6">
                     {/* Product Image */}
                     <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden">
-                      {item.media?.[0]?.url ||
-                      item.image ||
-                      item.thumbnailUrl ? (
+                      {item.image?.url ? (
                         <img
-                          src={
-                            item.media?.[0]?.url ||
-                            item.image ||
-                            item.thumbnailUrl
-                          }
-                          alt={item.productName || item.name || "Product"}
+                          src={item.image.url}
+                          alt={item.productName?.original || "Product"}
                           className="w-full h-full object-cover"
                         />
                       ) : null}
@@ -88,20 +81,26 @@ export default function CartPage() {
                     {/* Product Info */}
                     <div className="flex-1">
                       <h3 className="font-serif text-lg font-semibold mb-1">
-                        {item.productName || item.name || "Product"}
+                        {item.productName?.original || item.name || "Product"}
                       </h3>
+
+                      {/* Variant description line (e.g. weight) */}
+                      {item.descriptionLines?.length > 0 && (
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {item.descriptionLines
+                            .map((d: any) => d.plainText?.original)
+                            .join(", ")}
+                        </p>
+                      )}
+
                       <p className="text-sm text-muted-foreground mb-2">
                         Quantity: {item.quantity}
                       </p>
-                      {typeof item.priceData?.price === "number" ||
-                      item.price?.amount ? (
-                        <p className="text-sm font-medium">
-                          ₹
-                          {(
-                            item.priceData?.price || item.price?.amount || 0
-                          ).toFixed(2)}
-                        </p>
-                      ) : null}
+
+                      <p className="text-sm font-medium">
+                        {item.price?.formattedAmount ||
+                          `₹${parseFloat(item.price?.amount || "0").toFixed(2)}`}
+                      </p>
                     </div>
 
                     {/* Actions */}
@@ -110,7 +109,7 @@ export default function CartPage() {
                         <button
                           onClick={() =>
                             updateQuantity(
-                              item._id || item.id,
+                              item.id,
                               Math.max(1, (item.quantity || 1) - 1)
                             )
                           }
@@ -123,10 +122,7 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() =>
-                            updateQuantity(
-                              item._id || item.id,
-                              (item.quantity || 1) + 1
-                            )
+                            updateQuantity(item.id, (item.quantity || 1) + 1)
                           }
                           className="p-2 hover:bg-muted transition-colors"
                         >
@@ -134,7 +130,7 @@ export default function CartPage() {
                         </button>
                       </div>
                       <button
-                        onClick={() => remove(item._id || item.id)}
+                        onClick={() => remove(item.id)}
                         className="p-2 text-muted-foreground hover:text-destructive transition-colors"
                       >
                         <X className="h-4 w-4" />
