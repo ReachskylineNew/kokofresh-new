@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Plus, Minus, Trash2, Heart, Shield, Truck, ArrowLeft } from "lucide-react"
 import { useCart } from "../../hooks/use-cart"
+import { ShoppingCart } from "lucide-react"
+import Link from "next/link"
+
 
 export default function CartPage() {
   const { cart, updateQuantity, remove, checkout, loading } = useCart()
@@ -47,7 +50,10 @@ export default function CartPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <ArrowLeft className="h-4 w-4" />
-              <button className="hover:text-primary transition-colors">Continue shopping</button>
+              <Link href="/shop" className="hover:text-primary transition-colors">
+  Continue shopping
+</Link>
+
             </div>
             <div className="text-sm text-muted-foreground hidden md:block">
               {items.length} {items.length === 1 ? "item" : "items"} in cart
@@ -68,17 +74,20 @@ export default function CartPage() {
 
         {items.length === 0 ? (
           <div className="text-center py-8 md:py-20">
-            <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 bg-muted rounded-full flex items-center justify-center">
-                <div className="w-8 h-8 md:w-12 md:h-12 border-2 border-muted-foreground rounded opacity-50"></div>
-              </div>
-              <h2 className="text-lg md:text-xl font-medium mb-2">Your cart is empty</h2>
-              <p className="text-muted-foreground mb-4 md:mb-6">Add items to get started</p>
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                Continue Shopping
-              </Button>
-            </div>
-          </div>
+  <div className="max-w-md mx-auto">
+    <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 md:mb-6 bg-muted rounded-full flex items-center justify-center">
+      <ShoppingCart className="w-8 h-8 md:w-12 md:h-12 text-muted-foreground opacity-70" />
+    </div>
+    <h2 className="text-lg md:text-xl font-medium mb-2">Your cart is empty</h2>
+    <p className="text-muted-foreground mb-4 md:mb-6">Add items to get started</p>
+    <Link href="/shop">
+  <Button size="lg" className="bg-primary hover:bg-primary/90">
+    Continue Shopping
+  </Button>
+</Link>
+  </div>
+</div>
+
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
             <div className="lg:col-span-3">
