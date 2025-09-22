@@ -108,11 +108,12 @@ export default function CartPage() {
                                 {item.productName?.original || item.name || "Product"}
                               </h3>
 
-                              {item.descriptionLines?.length > 0 && (
-                                <p className="text-sm text-muted-foreground mb-2 line-clamp-1 hidden md:block">
-                                  {item.descriptionLines.map((d: any) => d.plainText?.original).join(", ")}
-                                </p>
-                              )}
+                           {item.descriptionLines?.length > 0 && (
+  <p className="text-xs md:text-sm text-muted-foreground mb-2 line-clamp-2">
+    {item.descriptionLines.map((d: any) => d.plainText?.original).join(", ")}
+  </p>
+)}
+
 
                               <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm mb-2 md:mb-0">
                                 <span className="text-green-600 font-medium">In Stock</span>
