@@ -5,9 +5,14 @@ import Link from "next/link"
 import { ShoppingCart, Menu, X, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useCart } from "@/hooks/use-cart"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { cart } = useCart()
+
+  // Calculate total quantity in cart
+  const totalQuantity = cart?.lineItems?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -33,6 +38,9 @@ export function Navigation() {
             <Link href="/about" className="text-foreground hover:text-primary transition-colors font-medium">
               About
             </Link>
+              <Link href="/contact" className="text-foreground hover:text-primary transition-colors font-medium">
+              Contact
+            </Link>
           </div>
 
           {/* Right Side Actions */}
@@ -57,9 +65,11 @@ export function Navigation() {
             <Link href="/cart">
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  0
-                </span>
+                {totalQuantity > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {totalQuantity}
+                  </span>
+                )}
               </Button>
             </Link>
 

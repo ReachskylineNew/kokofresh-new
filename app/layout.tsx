@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
+import { CartProvider } from "@/context/cart-context"
 import "./globals.css"
 
 
@@ -34,7 +35,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </Suspense>
         <Analytics />
         <SonnerToaster position="top-center" richColors />
       </body>

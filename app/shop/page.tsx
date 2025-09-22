@@ -272,34 +272,49 @@ export default function ShopPage() {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      <section className="relative bg-gradient-to-br from-primary/5 via-background to-accent/5 py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[url('/spices-pattern.jpg')] opacity-5"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-6 bg-primary/10 text-primary border-primary/20 px-4 py-2 text-sm font-medium">
-              Premium Collection
-            </Badge>
-            <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-black mb-6 text-balance bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Authentic Indian Spices
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
-              Discover handpicked spices from every corner of India, crafted with tradition and perfected for the modern
-              kitchen
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold"
-              >
-                Shop Collection
-              </Button>
-              <Button variant="outline" size="lg" className="border-2 px-8 py-3 text-lg font-semibold bg-transparent">
-                Learn More
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+     <section
+  className="relative bg-cover bg-center py-20 lg:py-28"
+  style={{
+    backgroundImage:
+      "linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('https://static.wixstatic.com/media/e7c120_1ee1c0b437b94cf9a07e89f845073a2e~mv2.jpg')",
+  }}
+>
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center max-w-4xl mx-auto">
+      <Badge className="mb-6 bg-white/10 text-yellow-400 border-yellow-500/30 px-4 py-2 text-sm font-medium">
+        Premium Collection
+      </Badge>
+
+      {/* Main SEO heading */}
+      <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-black mb-6 text-balance bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent leading-tight">
+        Authentic Indian Spices
+      </h1>
+
+      {/* Supporting SEO description */}
+      <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed mb-8">
+        Discover handpicked spices from every corner of India, crafted with tradition and perfected for the modern
+        kitchen.
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button
+          size="lg"
+          className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black px-8 py-3 text-lg font-semibold"
+        >
+          Shop Collection
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black px-8 py-3 text-lg font-semibold bg-transparent"
+        >
+          Learn More
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="mb-8">
@@ -493,7 +508,7 @@ export default function ShopPage() {
                   product.variants?.find((v) => v._id === selectedVariantId) || product.variants?.[0]
 
                 return (
-                  <Link key={productId} href={`/product/${product.slug || productId}`}>
+                  <Link key={productId} href={`/product?id=${product.slug || productId}`}>
                     <Card
                       className={`group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1 ${
                         viewMode === "list" ? "flex flex-row max-w-4xl mx-auto" : ""
@@ -612,27 +627,46 @@ export default function ShopPage() {
                                 )}
                               </div>
 
-                              <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-4 text-lg rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
-                                onClick={async (e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  try {
-                                    if (!isInStock(product)) throw new Error("Out of stock")
-                                    const exportProductId = product._id || product.id || ""
-                                    const variantSuffix = selectedVariant ? `_${selectedVariant._id}` : ""
-                                    add(`${exportProductId}${variantSuffix}`, 1)
-                                    const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
-                                    toast.success("Added to cart", { description: `${product.name}${weightText}` })
-                                  } catch (err) {
-                                    const message = err instanceof Error ? err.message : "Add to cart failed"
-                                    toast.error(message)
-                                  }
-                                }}
-                              >
-                                <ShoppingCart className="h-5 w-5 mr-2" />
-                                Add to Cart
-                              </Button>
+<Button
+  className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+  onClick={async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+       console.log("Adding to cart:", product)
+      if (!isInStock(product)) throw new Error("Out of stock")
+
+       
+      const exportProductId = product._id || product.id || ""
+      const selectedVariantId = selectedVariant?._id
+
+      // Build options array for hook
+      const optionsArray = selectedVariant
+        ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
+            name,
+            value,
+          }))
+        : []
+
+      // ✅ Pass productId, qty, optionsArray, and variantId separately
+      await add(exportProductId, 1, optionsArray, selectedVariantId)
+
+      const weightText = selectedVariant
+        ? ` (${Object.values(selectedVariant.choices).join(", ")})`
+        : ""
+      toast.success("Added to cart", {
+        description: `${product.name}${weightText}`,
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Add to cart failed"
+      toast.error(message)
+    }
+  }}
+>
+  <ShoppingCart className="h-4 w-4 mr-2" />
+  Add to Cart
+</Button>
+
                             </div>
                           </div>
                         ) : (
@@ -743,27 +777,37 @@ export default function ShopPage() {
                                 </div>
                               )}
 
-                              <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
-                                onClick={async (e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  try {
-                                    if (!isInStock(product)) throw new Error("Out of stock")
-                                    const exportProductId = product._id || product.id || ""
-                                    const variantSuffix = selectedVariant ? `_${selectedVariant._id}` : ""
-                                    add(`${exportProductId}${variantSuffix}`, 1)
-                                    const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
-                                    toast.success("Added to cart", { description: `${product.name}${weightText}` })
-                                  } catch (err) {
-                                    const message = err instanceof Error ? err.message : "Add to cart failed"
-                                    toast.error(message)
-                                  }
-                                }}
-                              >
-                                <ShoppingCart className="h-4 w-4 mr-2" />
-                                Add to Cart
-                              </Button>
+<Button
+  className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-3 text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+  onClick={async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      if (!isInStock(product)) throw new Error("Out of stock")
+      const exportProductId = product._id || product.id || ""
+      const selectedVariantId = selectedVariant?._id
+
+      // Build options array for hook
+      const optionsArray = selectedVariant
+        ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
+            name,
+            value,
+          }))
+        : []
+
+      await add(exportProductId, 1, optionsArray, selectedVariantId)
+
+      const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
+      toast.success("Added to cart", { description: `${product.name}${weightText}` })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Add to cart failed"
+      toast.error(message)
+    }
+  }}
+>
+  <ShoppingCart className="h-4 w-4 mr-2" />
+  Add to Cart
+</Button>
                             </div>
                           </>
                         )}
