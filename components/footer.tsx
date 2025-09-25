@@ -87,7 +87,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">© 2024 Flavourz of India. All rights reserved.</p>
+          <p className="text-muted-foreground text-sm">© 2024 Flavourz. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <span className="text-muted-foreground text-sm">English</span>
             <span className="text-muted-foreground text-sm">தமிழ்</span>

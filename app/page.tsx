@@ -1,4 +1,5 @@
-import { Navigation } from "@/components/navigation"
+"use client"
+import { Navigation }  from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -20,8 +21,105 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react"
+import { useEffect, useState } from "react"
+
+type Product = {
+  _id?: string
+  id?: string
+  name: string
+  priceData?: {
+    price: number
+    currency: string
+    formatted: {
+      price: string
+    }
+  }
+  price?: {
+    price: number
+    currency: string
+    formatted: {
+      price: string
+    }
+  }
+  media?: {
+    mainMedia?: {
+      image?: {
+        url: string
+      }
+    }
+    items?: Array<{
+      image?: {
+        url: string
+      }
+    }>
+  }
+  description?: string
+  slug?: string
+  stock?: {
+    inStock: boolean
+  }
+  variants?: Array<{
+    choices: {
+      weight: string
+    }
+    variant: {
+      priceData: {
+        price: number
+        formatted: {
+          price: string
+        }
+      }
+    }
+    stock: {
+      inStock: boolean
+    }
+    _id: string
+  }>
+  ribbons?: Array<{
+    text: string
+  }>
+  productType?: string
+  region?: string
+  category?: string
+  rating?: number
+  reviews?: number
+  bestseller?: boolean
+  limitedEdition?: boolean
+  ribbon?: string
+  additionalInfoSections?: any[]
+  productOptions?: any[]
+}
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch("/api/products", { cache: "no-store" })
+        if (!res.ok) throw new Error("Failed to load products")
+        const data = await res.json()
+        const productsData = data.products || []
+        console.log("Fetched products for homepage:", productsData)
+
+        // Show first 6 products or filter for featured/bestsellers
+        const featuredProducts = productsData.slice(0, 6)
+        setProducts(featuredProducts)
+      } catch (e: any) {
+        setError(e?.message || "Failed to load products")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadProducts()
+  }, [])
+
+  const getProductImage = (product: Product): string => {
+    return product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
+  }
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -56,7 +154,7 @@ export default function HomePage() {
     </div>
 
     <h1 className="font-black text-6xl md:text-8xl lg:text-9xl mb-6 text-balance bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent leading-tight">
-      Flavourz of India
+      Flavourz Of India
     </h1>
 
     <p className="text-2xl md:text-3xl mb-4 text-balance font-bold text-white">
@@ -168,7 +266,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Categories - Bento Grid Style */}
+      {/* Product Categories - Dynamic Data */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -178,87 +276,47 @@ export default function HomePage() {
             <p className="text-xl text-muted-foreground">Every spice tells a story. What's yours?</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Garam Masala",
-                subtitle: "The OG Blend",
-                description: "For when you want that authentic warmth that hits different",
-                image: "/garam-masala-spice-blend-in-wooden-bowl.jpg",
-                badge: "Bestseller",
-                color: "bg-gradient-to-br from-orange-500 to-red-500",
-              },
-              {
-                title: "Chai Masala",
-                subtitle: "Cozy Vibes Only",
-                description: "Turn your basic tea into a whole aesthetic",
-                image: "/chai-masala-spices-with-tea-cups.jpg",
-                badge: "Trending",
-                color: "bg-gradient-to-br from-amber-500 to-orange-500",
-              },
-              {
-                title: "Biryani Masala",
-                subtitle: "Flex Mode: ON",
-                description: "Because your biryani should be as extra as you are",
-                image: "/biryani-masala-with-rice-and-spices.jpg",
-                badge: "Chef's Pick",
-                color: "bg-gradient-to-br from-yellow-500 to-orange-500",
-              },
-              {
-                title: "Tandoori Masala",
-                subtitle: "Smoky & Bold",
-                description: "For those who like their food with attitude",
-                image: "/tandoori-masala-with-grilled-food.jpg",
-                badge: "Fire",
-                color: "bg-gradient-to-br from-red-500 to-pink-500",
-              },
-              {
-                title: "Curry Powder",
-                subtitle: "The Versatile Queen",
-                description: "One blend to rule them all - literally works with everything",
-                image: "/curry-powder-spice-blend-golden-color.jpg",
-                badge: "Versatile",
-                color: "bg-gradient-to-br from-yellow-400 to-orange-400",
-              },
-              {
-                title: "Chaat Masala",
-                subtitle: "Tangy Energy",
-                description: "Add some zing to your life (and your snacks)",
-                image: "/chaat-masala-with-street-food.jpg",
-                badge: "Zesty",
-                color: "bg-gradient-to-br from-lime-500 to-green-500",
-              },
-            ].map((product, index) => (
-              <Card
-                key={index}
-                className="group cursor-pointer hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 hover:border-primary/50"
-              >
-                <CardContent className="p-0 relative">
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div
-                      className={`absolute inset-0 ${product.color} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold">
-                        {product.badge}
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="font-bold text-xl mb-1">{product.title}</h3>
-                      <p className="text-sm opacity-90 mb-2">{product.subtitle}</p>
-                      <p className="text-xs opacity-80">{product.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-red-500 text-lg font-medium">{error}</p>
+            </div>
+          )}
+
+       {isLoading ? (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[...Array(6)].map((_, i) => (
+      <Card key={i} className="overflow-hidden">
+        <CardContent className="p-0">
+          <div className="h-64 bg-muted animate-pulse" />
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+) : (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {products.map((product, index) => (
+      <Card
+        key={product._id || product.id || index}
+        className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden border"
+      >
+        <CardContent className="p-0">
+          <div className="relative h-64 overflow-hidden">
+            <img
+              src={getProductImage(product)}
+              alt={product.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 text-white">
+              <h3 className="font-bold text-xl">{product.name}</h3>
+            </div>
           </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
+)}
+
 
           <div className="text-center mt-12">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4">
@@ -310,7 +368,7 @@ export default function HomePage() {
                 className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
               >
                 <Instagram className="mr-2 h-4 w-4" />
-                Follow @flavourzindia
+                Follow @kokofresh
               </Button>
               <Button
                 variant="outline"

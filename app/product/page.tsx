@@ -32,7 +32,7 @@ export default function ProductPage() {
   const { add } = useCart()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const productId = searchParams.get('id')
+  const productId = searchParams.get("id")
 
   const [product, setProduct] = useState<WixProduct | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
@@ -152,6 +152,7 @@ export default function ProductPage() {
                 src={
                   product.media?.items?.[selectedImage]?.image?.url ||
                   product.media?.mainMedia?.image?.url ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg"
@@ -406,19 +407,98 @@ export default function ProductPage() {
             )}
 
             {activeTab === "instructions" && (
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="mb-6 sm:mb-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-orange-100 rounded-lg">
+                      <Info className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+                        How to Use
+                      </h2>
+                      <p className="text-sm sm:text-base text-gray-600 mt-1">
+                        Follow these simple steps for the best experience
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {product.additionalInfoSections?.map((section: any, index: number) => (
-                  <div key={index}>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                      <Info className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-                      {section.title.replace(/\*/g, "")}
-                    </h3>
-                    <div
-                      className="prose prose-sm sm:prose-lg max-w-none text-gray-700 text-sm sm:text-base"
-                      dangerouslySetInnerHTML={{ __html: section.description }}
-                    />
+                  <div
+                    key={index}
+                    className="bg-gradient-to-r from-orange-50/50 to-amber-50/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-orange-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div className="flex items-start gap-4 mb-4 sm:mb-6">
+                      <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+                          {section.title.replace(/\*/g, "")}
+                        </h3>
+                        <div
+                          className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-700 leading-relaxed"
+                          style={{
+                            fontSize: "clamp(14px, 2.5vw, 16px)",
+                            lineHeight: "1.7",
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: section.description
+                              .replace(
+                                /<p>/g,
+                                '<p class="mb-4 text-gray-700" style="font-size: clamp(14px, 2.5vw, 16px); line-height: 1.7;">',
+                              )
+                              .replace(/<ul>/g, '<ul class="space-y-2 ml-4 list-disc list-inside">')
+                              .replace(/<ol>/g, '<ol class="space-y-2 ml-4 list-decimal list-inside">')
+                              .replace(
+                                /<li>/g,
+                                '<li class="text-gray-700 pl-2" style="font-size: clamp(14px, 2.5vw, 16px); line-height: 1.7;">',
+                              )
+                              .replace(/<strong>/g, '<strong class="font-semibold text-gray-900">')
+                              .replace(/<em>/g, '<em class="italic text-orange-700">'),
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {index < product.additionalInfoSections?.length - 1 && (
+                      <div className="flex justify-center mt-6 sm:mt-8">
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-orange-300 to-transparent"></div>
+                      </div>
+                    )}
                   </div>
                 ))}
+
+                {product.additionalInfoSections?.length > 0 && (
+                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        💡
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Pro Tip</h4>
+                        <p className="text-blue-800 text-sm sm:text-base leading-relaxed">
+                          For the best results, follow the instructions in order and take your time with each step. If
+                          you have any questions, feel free to contact our support team.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {(!product.additionalInfoSections || product.additionalInfoSections.length === 0) && (
+                  <div className="text-center py-12 sm:py-16">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Info className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Instructions Coming Soon</h3>
+                    <p className="text-gray-600 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+                      Detailed usage instructions for this product will be available shortly. Check back soon or contact
+                      us for immediate assistance.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 

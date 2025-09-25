@@ -1,10 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { getVisitorTokenFromBackend } from "../lib/getvisitortoken";
+import Cookies from "js-cookie";
 
 const BASE_URL = "https://www.wixapis.com/ecom/v1";
-const APP_ID = "1380b703-ce81-ff05-f115-39571d94dfcd";
+const APP_ID = "1380b703-ce81-ff05-f115-39571d94df35";
 
 type VisitorAuth = {
   access_token: string;
@@ -25,12 +25,7 @@ type Cart = {
 type CartContextType = {
   cart: Cart;
   loading: boolean;
-  add: (
-    productId: string,
-    qty: number,
-    options?: { name: string; value: string }[],
-    variantId?: string
-  ) => Promise<any>;
+  add: (productId: string, qty: number, options?: { name: string; value: string }[], variantId?: string) => Promise<any>;
   updateQuantity: (lineItemId: string, qty: number) => Promise<void>;
   remove: (lineItemId: string) => Promise<void>;
   checkout: () => Promise<void>;
@@ -43,30 +38,42 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<VisitorAuth | null>(null);
 
-  // Init visitor token
+const ensureAuth = async (): Promise<VisitorAuth> => {
+  if (auth && Date.now() < auth.expires_at) return auth;
+
+  const accessRaw = Cookies.get("accessToken");
+  const refreshRaw = Cookies.get("refreshToken");
+
+  let parsedAccess: any = null;
+  let parsedRefresh: any = null;
+
+  if (accessRaw) parsedAccess = JSON.parse(accessRaw);
+  if (refreshRaw) parsedRefresh = JSON.parse(refreshRaw);
+
+  if (parsedAccess?.value && parsedRefresh?.value) {
+    const newAuth: VisitorAuth = {
+      access_token: parsedAccess.value,
+      refresh_token: parsedRefresh.value,
+      expires_at: parsedAccess.expiresAt
+        ? parsedAccess.expiresAt * 1000
+        : Date.now() + 3600 * 1000,
+    };
+    setAuth(newAuth);
+    return newAuth;
+  }
+
+  throw new Error("No valid auth tokens in cookies");
+};
+
+
+  // Initial load
   useEffect(() => {
     (async () => {
       try {
-        let stored: VisitorAuth | null = null;
-        const raw = localStorage.getItem("visitorAuth");
-        if (raw) stored = JSON.parse(raw);
-
-        if (!stored || Date.now() > stored.expires_at) {
-          const tokenData = await getVisitorTokenFromBackend(stored?.refresh_token);
-          const newAuth: VisitorAuth = {
-            access_token: tokenData.access_token,
-            refresh_token: tokenData.refresh_token,
-            expires_at: Date.now() + tokenData.expires_in * 1000,
-          };
-          localStorage.setItem("visitorAuth", JSON.stringify(newAuth));
-          setAuth(newAuth);
-          await load(newAuth);
-        } else {
-          setAuth(stored);
-          await load(stored);
-        }
-      } catch (err) {
-        console.error("Failed to init visitor token", err);
+        const activeAuth = await ensureAuth();
+        await load(activeAuth);
+      } catch (e) {
+        console.error(e);
       }
     })();
   }, []);
@@ -95,188 +102,146 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Add to cart
-  const add = async (
-    productId: string,
-    qty: number,
-    options?: { name: string; value: string }[],
-    variantId?: string
-  ) => {
-    if (!auth) throw new Error("Visitor token not ready");
+const add = async (
+  productId: string,
+  qty: number,
+  options?: { name: string; value: string }[],
+  variantId?: string
+) => {
+  const activeAuth = await ensureAuth();
 
-    const optionsObj =
-      options?.reduce((acc, opt) => ({ ...acc, [opt.name]: opt.value }), {}) || {};
+  // Convert array of options into object { weight: "200gms", ... }
+  const optionsObj =
+    options?.reduce((acc, opt) => ({ ...acc, [opt.name]: opt.value }), {}) || {};
 
-    const existingItem = cart?.lineItems?.find((item) => {
-      const ref = item.catalogReference;
-      const refVariantId = ref?.options?.variantId;
-      const refOptions = ref?.options?.options || {};
-      return (
-        ref?.catalogItemId === productId &&
-        refVariantId === variantId &&
-        JSON.stringify(refOptions) === JSON.stringify(optionsObj)
-      );
-    });
-
-    if (existingItem) {
-      return await updateQuantity(existingItem.id, (existingItem.quantity || 0) + qty);
-    }
-
-    const payload = {
-      lineItems: [
-        {
-          catalogReference: {
-            appId: APP_ID,
-            catalogItemId: productId,
-            options: {
-              ...(variantId ? { variantId } : {}),
-              ...(Object.keys(optionsObj).length ? { options: optionsObj } : {}),
-            },
+  const payload = {
+    lineItems: [
+      {
+        catalogReference: {
+          appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e", // ✅ correct appId
+          catalogItemId: productId, // product ID passed from UI
+          options: {
+            ...(variantId ? { variantId } : {}),
+            ...(Object.keys(optionsObj).length ? { options: optionsObj } : {}),
           },
-          quantity: qty,
         },
-      ],
-    };
-
-    const doAdd = async (accessToken: string) => {
-      const res = await fetch(`${BASE_URL}/carts/current/add-to-cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      return res;
-    };
-
-    let res = await doAdd(auth.access_token);
-
-    if (res.status === 401) {
-      const tokenData = await getVisitorTokenFromBackend(auth.refresh_token);
-      const newAuth: VisitorAuth = {
-        access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token,
-        expires_at: Date.now() + tokenData.expires_in * 1000,
-      };
-      localStorage.setItem("visitorAuth", JSON.stringify(newAuth));
-      setAuth(newAuth);
-
-      res = await doAdd(newAuth.access_token);
-    }
-
-    const text = await res.text();
-    const data = JSON.parse(text || "{}");
-    setCart(data?.cart || { lineItems: [] });
-    return data?.cart;
+        quantity: qty,
+      },
+    ],
   };
+
+  const res = await fetch(`${BASE_URL}/carts/current/add-to-cart`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${activeAuth.access_token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (res.status === 401) {
+    const refreshed = await ensureAuth();
+    return add(productId, qty, options, variantId); // retry with fresh token
+  }
+
+  const data = await res.json();
+  setCart(data?.cart || { lineItems: [] });
+  return data?.cart;
+};
+
 
   // Update quantity
   const updateQuantity = async (lineItemId: string, qty: number) => {
-    if (!auth) return;
+    const activeAuth = await ensureAuth();
 
-    try {
-      const res = await fetch(`${BASE_URL}/carts/current/update-line-items-quantity`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.access_token}`,
-        },
-        body: JSON.stringify({
-          lineItems: [
-            {
-              id: lineItemId,
-              quantity: qty,
-            },
-          ],
-        }),
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Failed with ${res.status}: ${errorText}`);
-      }
-
-      const data = await res.json();
-      setCart(data?.cart || { lineItems: [] });
-    } catch (err) {
-      console.error("Update quantity error:", err);
-    }
-  };
-
-  // Remove item
-  const remove = async (lineItemId: string) => {
-    if (!auth) return;
-    const res = await fetch(`${BASE_URL}/carts/current/remove-line-items`, {
+    const res = await fetch(`${BASE_URL}/carts/current/update-line-items-quantity`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.access_token}`,
+        Authorization: `Bearer ${activeAuth.access_token}`,
       },
-      body: JSON.stringify({ lineItemIds: [lineItemId] }),
+      body: JSON.stringify({ lineItems: [{ id: lineItemId, quantity: qty }] }),
     });
+
     const data = await res.json();
     setCart(data?.cart || { lineItems: [] });
   };
 
-  // Checkout
-  const checkout = async () => {
-    if (!auth) return;
-    if (!cart?.lineItems?.length) {
-      console.error("Cannot checkout, cart is empty");
-      return;
-    }
+  // Remove item
+  const remove = async (lineItemId: string) => {
+    const activeAuth = await ensureAuth();
 
-    try {
-      const estimateRes = await fetch(`${BASE_URL}/carts/current/estimate-totals`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.access_token}`,
-        },
-        body: JSON.stringify({
-          calculateTax: false,
-          calculateShipping: true,
-        }),
-      });
+    const res = await fetch(`${BASE_URL}/carts/current/remove-line-items`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${activeAuth.access_token}`,
+      },
+      body: JSON.stringify({ lineItemIds: [lineItemId] }),
+    });
 
-      if (!estimateRes.ok) {
-        const errorText = await estimateRes.text();
-        throw new Error(`Estimate totals failed: ${errorText}`);
-      }
-
-      const estimateData = await estimateRes.json();
-
-      const checkoutRes = await fetch(`${BASE_URL}/carts/current/create-checkout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.access_token}`,
-        },
-        body: JSON.stringify({
-          channelType: "WEB",
-        }),
-      });
-
-      if (!checkoutRes.ok) {
-        const errorText = await checkoutRes.text();
-        throw new Error(`Create checkout failed: ${errorText}`);
-      }
-
-      const checkoutData = await checkoutRes.json();
-
-      if (checkoutData.checkoutUrl) {
-        window.location.href = checkoutData.checkoutUrl;
-      } else if (checkoutData.checkoutId) {
-        const fallbackUrl = `https://www.kokofresh.in/checkout?checkoutId=${checkoutData.checkoutId}`;
-        window.location.href = fallbackUrl;
-      } else {
-        throw new Error("No checkout URL returned");
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-    }
+    const data = await res.json();
+    setCart(data?.cart || { lineItems: [] });
   };
+
+const checkout = async () => {
+  const activeAuth = await ensureAuth();
+
+  if (!cart?.lineItems?.length) {
+    console.error("Cannot checkout, cart is empty");
+    return;
+  }
+
+  try {
+    // 1. Estimate totals (important for shipping/tax)
+    const estimateRes = await fetch(`${BASE_URL}/carts/current/estimate-totals`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${activeAuth.access_token}`,
+      },
+      body: JSON.stringify({
+        calculateTax: false,
+        calculateShipping: true,
+      }),
+    });
+
+    if (!estimateRes.ok) {
+      const errorText = await estimateRes.text();
+      throw new Error(`Estimate totals failed: ${errorText}`);
+    }
+
+    // 2. Create checkout session
+    const checkoutRes = await fetch(`${BASE_URL}/carts/current/create-checkout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${activeAuth.access_token}`,
+      },
+      body: JSON.stringify({ channelType: "WEB" }),
+    });
+
+    if (!checkoutRes.ok) {
+      const errorText = await checkoutRes.text();
+      throw new Error(`Create checkout failed: ${errorText}`);
+    }
+
+    const checkoutData = await checkoutRes.json();
+
+    // 3. Redirect
+    if (checkoutData.checkoutUrl) {
+      window.location.href = checkoutData.checkoutUrl;
+    } else if (checkoutData.checkoutId) {
+      // fallback: build URL manually
+      window.location.href = `https://www.kokofresh.in/checkout?checkoutId=${checkoutData.checkoutId}`;
+    } else {
+      throw new Error("No checkout URL returned");
+    }
+  } catch (err) {
+    console.error("Checkout error:", err);
+  }
+};
+
 
   return (
     <CartContext.Provider value={{ cart, loading, add, updateQuantity, remove, checkout }}>

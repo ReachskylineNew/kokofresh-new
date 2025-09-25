@@ -1,38 +1,37 @@
+"use client";
 
-// lib/wixClient.ts
 import { createClient, OAuthStrategy } from "@wix/sdk";
+import { members } from "@wix/members";
 import { currentCart } from "@wix/ecom";
-import { products } from "@wix/stores";
+import { collections, products } from "@wix/stores";
+import Cookies from "js-cookie";
 
-export const wixClient = createClient({
-  modules: { currentCart, products },
-  auth: OAuthStrategy({
-    clientId: "9d6c0efd-5a3a-46f5-b3de-4cde8ded7c57",
-  }),
-});
-
-let isVisitorInit = false;
-
-export async function initVisitorSession() {
-  if (typeof window === "undefined" || isVisitorInit) return;
-  isVisitorInit = true;
-
-  const stored = localStorage.getItem("wixVisitorTokens");
-
-  if (stored) {
-    try {
-      wixClient.auth.setTokens(JSON.parse(stored));
-      return;
-    } catch (err) {
-      console.error("Invalid stored visitor tokens", err);
-    }
-  }
-
+// helper to safely parse cookies
+function safeParseCookie(key: string) {
+  const value = Cookies.get(key);
+  if (!value) return null;
   try {
-    const tokens = await wixClient.auth.generateVisitorTokens();
-    wixClient.auth.setTokens(tokens);
-    localStorage.setItem("wixVisitorTokens", JSON.stringify(tokens));
-  } catch (err) {
-    console.error("Failed to generate visitor tokens", err);
+    return JSON.parse(value);
+  } catch {
+    return value; // fallback if it was stored as plain string
   }
 }
+
+const accessToken = safeParseCookie("accessToken");
+const refreshToken = safeParseCookie("refreshToken");
+
+export const wixClient = createClient({
+  modules: {
+    products,
+    collections,
+    currentCart,
+    members,
+  },
+  auth: OAuthStrategy({
+    clientId: "2656201f-a899-4ec4-8b24-d1132bcf5405",
+    tokens: {
+      accessToken: accessToken || undefined,
+      refreshToken: refreshToken || undefined,
+    },
+  }),
+});

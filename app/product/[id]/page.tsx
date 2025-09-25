@@ -377,7 +377,7 @@ export default function ProductPage() {
                   }`}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab === "instructions" ? "How to Use" : tab}
+                  {tab === "instructions" ? "How to Usejnjn" : tab}
                 </button>
               ))}
             </div>

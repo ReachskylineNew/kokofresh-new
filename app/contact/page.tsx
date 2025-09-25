@@ -1,3 +1,4 @@
+"use client"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -79,14 +80,14 @@ export default function ContactPage() {
                 icon: <Instagram className="h-12 w-12 text-primary" />,
                 title: "Social DMs",
                 description: "Slide into our DMs on Instagram or Twitter. We're pretty active.",
-                action: "@flavourzindia",
+                action: "@kokofresh",
                 highlight: "Most Fun",
               },
               {
                 icon: <Mail className="h-12 w-12 text-primary" />,
                 title: "Email Us",
                 description: "For detailed questions or business inquiries. We reply within 24 hours.",
-                action: "hello@flavourzindia.com",
+                action: "hello@kokofresh.com",
                 highlight: "Most Detailed",
               },
               {
@@ -305,11 +306,11 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-lg mb-1">Email Addresses</h3>
                     <p className="text-muted-foreground">
-                      General: hello@flavourzindia.com
+                      General: hello@kokofresh.com
                       <br />
-                      Business: business@flavourzindia.com
+                      Business: business@kokofresh.com
                       <br />
-                      Press: press@flavourzindia.com
+                      Press: press@kokofresh.com
                     </p>
                   </div>
                 </div>
@@ -322,7 +323,7 @@ export default function ContactPage() {
                   className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
                 >
                   <Instagram className="mr-2 h-4 w-4" />
-                  @flavourzindia
+                  @kokofresh
                 </Button>
                 <Button
                   variant="outline"
@@ -330,7 +331,7 @@ export default function ContactPage() {
                   className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
                 >
                   <Twitter className="mr-2 h-4 w-4" />
-                  @flavourzindia
+                  @kokofresh
                 </Button>
                 <Button
                   variant="outline"

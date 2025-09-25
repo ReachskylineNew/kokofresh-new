@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { Navigation } from "@/components/navigation"
+import {Navigation } from "../../components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"

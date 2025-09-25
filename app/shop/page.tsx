@@ -108,33 +108,43 @@ export default function ShopPage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setIsLoading(true)
-        const res = await fetch("/api/products", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to load products")
-        const data = await res.json()
-        const productsData = data.products || []
-        console.log("Fetched products:", data)
-        setProducts(productsData)
+useEffect(() => {
+  const load = async () => {
+    try {
+      setIsLoading(true)
+      const res = await fetch("/api/products", { cache: "no-store" })
+      if (!res.ok) throw new Error("Failed to load products")
+      const data = await res.json()
+      const productsData = (data.products || []).map((p: Product) => {
+        // ✅ derive category
+        let category = "Masala"
+        if (p.name?.toLowerCase().includes("chutney powder")) {
+          category = "Chutney"
+        }
+        return { ...p, category }
+      })
 
-        const defaultVariants: Record<string, string> = {}
-        productsData.forEach((product: Product) => {
-          const productId = product._id || product.id || ""
-          if (product.variants && product.variants.length > 0) {
-            defaultVariants[productId] = product.variants[0]._id
-          }
-        })
-        setSelectedVariants(defaultVariants)
-      } catch (e: any) {
-        setError(e?.message || "Failed to load products")
-      } finally {
-        setIsLoading(false)
-      }
+      console.log("Fetched products with category:", productsData)
+      setProducts(productsData)
+
+      // set default variants
+      const defaultVariants: Record<string, string> = {}
+      productsData.forEach((product: Product) => {
+        const productId = product._id || product.id || ""
+        if (product.variants && product.variants.length > 0) {
+          defaultVariants[productId] = product.variants[0]._id
+        }
+      })
+      setSelectedVariants(defaultVariants)
+    } catch (e: any) {
+      setError(e?.message || "Failed to load products")
+    } finally {
+      setIsLoading(false)
     }
-    load()
-  }, [])
+  }
+  load()
+}, [])
+
 
   const getCurrentPrice = (product: Product): number => {
     if (!product.variants || product.variants.length === 0) {
@@ -427,26 +437,7 @@ export default function ShopPage() {
             <div className="sticky top-24">
               {/* Filter Panel - Restored original desktop spacing */}
               <div className={`space-y-3 sm:space-y-4 lg:space-y-6 ${isFilterOpen ? "block" : "hidden lg:block"}`}>
-                <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
-                  <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
-                    Shop by Region
-                  </h3>
-                  <div className="space-y-1 sm:space-y-2">
-                    {regions.map((region) => (
-                      <button
-                        key={region}
-                        onClick={() => setSelectedRegion(region)}
-                        className={`block w-full text-left px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-lg text-sm transition-all duration-200 ${
-                          selectedRegion === region
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {region === "all" ? "All Regions" : region}
-                      </button>
-                    ))}
-                  </div>
-                </Card>
+              
 
                 <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
                   <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
@@ -880,3 +871,25 @@ export default function ShopPage() {
     </div>
   )
 }
+
+
+  {/* <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
+                  <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
+                    Shop by Region
+                  </h3>
+                  <div className="space-y-1 sm:space-y-2">
+                    {regions.map((region) => (
+                      <button
+                        key={region}
+                        onClick={() => setSelectedRegion(region)}
+                        className={`block w-full text-left px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-lg text-sm transition-all duration-200 ${
+                          selectedRegion === region
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {region === "all" ? "All Regions" : region}
+                      </button>
+                    ))}
+                  </div>
+                </Card> */}

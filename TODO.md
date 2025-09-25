@@ -1,22 +1,30 @@
-# Fix /api/products to return all fields
+# NavUser User Data Integration
 
-## Current Issue
-- `/api/products` endpoint only returns specific normalized fields
-- Missing important fields like region, category, rating, reviews, bestseller, limitedEdition
-- Individual product endpoint `/api/products/[id]` already returns all fields correctly
+## Plan Implementation Steps
 
-## Plan Implementation
+### 1. Modify navigation.tsx (Parent Component)
+- [ ] Add state management for user data
+- [ ] Fetch user data using the existing `/api/me` endpoint
+- [ ] Pass user data as props to NavUser component
+- [ ] Handle loading and error states
 
-### Step 1: Update API endpoint
-- [ ] Modify `app/api/products/route.ts` to return full product objects instead of normalized fields
-- [ ] Remove the field filtering/normalization mapping
-- [ ] Return complete Wix API response similar to individual product endpoint
+### 2. Update NavUser.tsx (Child Component)
+- [ ] Accept user data as props
+- [ ] Display actual user information (name, email, etc.) instead of generic "User"
+- [ ] Handle cases where user data is not available
+- [ ] Maintain existing authentication logic
 
-### Step 2: Update shop page (if needed)
-- [ ] Check if `app/shop/page.tsx` needs updates to handle new fields
-- [ ] Add support for additional fields like region, category, rating, reviews, bestseller, limitedEdition
+### 3. Create User Interface
+- [ ] Define proper TypeScript interface for user data
+- [ ] Ensure type safety between parent and child components
 
-### Step 3: Testing
-- [ ] Test `/api/products` endpoint to verify all fields are returned
-- [ ] Test shop page functionality with additional data
-- [ ] Verify product filtering and display works correctly
+### 4. Error Handling & Loading States
+- [ ] Add proper loading states while fetching user data
+- [ ] Handle API errors gracefully
+- [ ] Provide fallback UI when user data is unavailable
+
+## Testing Checklist
+- [ ] Test the authentication flow
+- [ ] Verify user data displays correctly
+- [ ] Ensure logout functionality still works
+- [ ] Check error handling scenarios

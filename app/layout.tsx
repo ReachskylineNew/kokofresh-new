@@ -11,8 +11,8 @@ import "./globals.css"
 
 
 export const metadata: Metadata = {
-  title: "Flavourz of India - Premium Indian Spices",
-  description: "Flavourz of India. Fresh, Fun, Yours. Premium Indian spices for the modern kitchen.",
+  title: "Flavourz - Premium Indian Spices",
+  description: "Flavourz. Fresh, Fun, Yours. Premium Indian spices for the modern kitchen.",
   generator: "v0.app",
 }
 
@@ -33,8 +33,16 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
+           {/* Google reCAPTCHA script */}
+        <script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          async
+          defer
+        ></script>
       </head>
+
       <body className="font-sans antialiased">
+      
         <Suspense fallback={<div>Loading...</div>}>
           <CartProvider>
             {children}
@@ -42,6 +50,7 @@ export default function RootLayout({
         </Suspense>
         <Analytics />
         <SonnerToaster position="top-center" richColors />
+
       </body>
     </html>
   )
