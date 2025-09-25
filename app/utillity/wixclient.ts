@@ -26,6 +26,7 @@ export const wixClient = createClient({
     collections,
     currentCart,
     members,
+
   },
   auth: OAuthStrategy({
     clientId: "2656201f-a899-4ec4-8b24-d1132bcf5405",

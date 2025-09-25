@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { wixClient } from "../app/utillity/wixclient";
 import { Button } from "../components/ui/button";
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 export default function NavUser() {
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ export default function NavUser() {
     }
   }
 
+ 
   async function verifyLogin() {
     const data = JSON.parse(localStorage.getItem("oAuthRedirectData") || "null");
     try {
@@ -72,7 +74,7 @@ const login = async () => {
 };
 
   const logout = async () => {
-    setLoading(true);
+    setLoading(true); 
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     const { logoutUrl } = await wixClient.auth.logout(window.location.href);
@@ -92,8 +94,9 @@ const login = async () => {
     return null;
   }
 
-  return wixClient.auth.loggedIn() ? (
-    <div className="flex items-center gap-3">
+ return wixClient.auth.loggedIn() ? (
+  <div className="flex items-center gap-3">
+    <Link href="/profile" className="flex items-center gap-3 hover:opacity-90 transition">
       {profile?.profile?.photo?.url ? (
         <img
           src={`/api/proxy-image?url=${encodeURIComponent(profile.profile.photo.url)}`}
@@ -114,12 +117,13 @@ const login = async () => {
           <span className="text-xs text-muted-foreground">{profile.loginEmail}</span>
         )}
       </div>
+    </Link>
 
-      <Button variant="outline" size="sm" onClick={logout} disabled={loading}>
-        Sign Out
-      </Button>
-    </div>
-  ) : (
+    <Button variant="outline" size="sm" onClick={logout} disabled={loading}>
+      Sign Out
+    </Button>
+  </div>
+) : (
     <Button size="sm" variant="default" onClick={login} disabled={loading}>
       {loading ? "Signing in..." : "Sign In"}
     </Button>

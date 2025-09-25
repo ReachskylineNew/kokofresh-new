@@ -239,27 +239,30 @@ export default function ProductPage() {
                   {opt.name}:
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {opt.choices.map((choice: any) => (
-                    <button
-                      key={choice.value}
-                      onClick={() =>
-                        setSelectedOptions((prev) => ({
-                          ...prev,
-                          [opt.name]: choice.value,
-                        }))
-                      }
-                      disabled={!choice.inStock}
-                      className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
-                        selectedOptions[opt.name] === choice.value
-                          ? "border-orange-500 bg-orange-500 text-white shadow-lg"
-                          : choice.inStock
-                            ? "border-gray-200 hover:border-orange-300 hover:bg-orange-50"
-                            : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      {choice.value}
-                    </button>
-                  ))}
+                 {opt.choices
+  .filter((choice: any) => choice.visible) // ✅ only visible choices
+  .map((choice: any) => (
+    <button
+      key={choice.value}
+      onClick={() =>
+        setSelectedOptions((prev) => ({
+          ...prev,
+          [opt.name]: choice.value,
+        }))
+      }
+      disabled={!choice.inStock}
+      className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
+        selectedOptions[opt.name] === choice.value
+          ? "border-orange-500 bg-orange-500 text-white shadow-lg"
+          : choice.inStock
+          ? "border-gray-200 hover:border-orange-300 hover:bg-orange-50"
+          : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+      }`}
+    >
+      {choice.value}
+    </button>
+  ))}
+
                 </div>
               </div>
             ))}
@@ -523,20 +526,23 @@ export default function ProductPage() {
                 <div className="space-y-4">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Variants</h3>
                   <div className="space-y-3">
-                    {product.variants?.map((variant: any, index: number) => (
-                      <div key={index} className="p-3 sm:p-4 border border-gray-200 rounded-lg">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                          <span className="font-medium text-sm sm:text-base">
-                            {Object.entries(variant.choices)
-                              .map(([key, value]) => `${value}`)
-                              .join(", ")}
-                          </span>
-                          <span className="text-orange-600 font-semibold text-sm sm:text-base">
-                            {variant.variant.priceData.formatted.price}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                   {product.variants
+  ?.filter((variant: any) => variant.variant.visible) // ✅ only visible variants
+  .map((variant: any, index: number) => (
+    <div key={index} className="p-3 sm:p-4 border border-gray-200 rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+        <span className="font-medium text-sm sm:text-base">
+          {Object.entries(variant.choices)
+            .map(([key, value]) => `${value}`)
+            .join(", ")}
+        </span>
+        <span className="text-orange-600 font-semibold text-sm sm:text-base">
+          {variant.variant.priceData.formatted.price}
+        </span>
+      </div>
+    </div>
+  ))}
+
                   </div>
                 </div>
               </div>

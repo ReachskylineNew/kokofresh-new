@@ -1,5 +1,6 @@
 "use client"
 
+
 import { useEffect, useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
@@ -594,40 +595,43 @@ useEffect(() => {
                                   )}
                                 </div>
 
-                                {product.variants && product.variants.length > 0 && (
-                                  <div className="mb-2 sm:mb-3 lg:mb-6 space-y-2 lg:space-y-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 lg:gap-4">
-                                      <span className="text-xs sm:text-sm lg:text-base font-medium text-gray-700">
-                                        Weight:
-                                      </span>
-                                      <select
-                                        value={selectedVariantId || ""}
-                                        onChange={(e) => {
-                                          e.preventDefault()
-                                          e.stopPropagation()
-                                          handleVariantChange(productId, e.target.value)
-                                        }}
-                                        onClick={(e) => {
-                                          e.preventDefault()
-                                          e.stopPropagation()
-                                        }}
-                                        className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 lg:py-3 text-xs sm:text-sm lg:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white min-w-24 lg:min-w-32"
-                                      >
-                                        {product.variants.map((variant) => (
-                                          <option key={variant._id} value={variant._id}>
-                                            {variant.choices.weight}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </div>
+                               {product.variants && product.variants.length > 0 && (
+  <div className="mb-2 sm:mb-3 lg:mb-6 space-y-2 lg:space-y-4">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 lg:gap-4">
+      <span className="text-xs sm:text-sm lg:text-base font-medium text-gray-700">
+        Weight:
+      </span>
+      <select
+        value={selectedVariantId || ""}
+        onChange={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          handleVariantChange(productId, e.target.value)
+        }}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+        }}
+        className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 lg:py-3 text-xs sm:text-sm lg:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white min-w-24 lg:min-w-32"
+      >
+        {product.variants
+          .filter((variant) => variant.variant.visible) // ✅ Only show visible ones
+          .map((variant) => (
+            <option key={variant._id} value={variant._id}>
+              {variant.choices.weight}
+            </option>
+          ))}
+      </select>
+    </div>
 
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-orange-600">
-                                        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
-                                      </span>
-                                    </div>
-                                  </div>
-                                )}
+    <div className="flex items-center justify-between">
+      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-orange-600">
+        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+      </span>
+    </div>
+  </div>
+)}
+
 
                                 {(!product.variants || product.variants.length === 0) && (
                                   <div className="mb-2 sm:mb-3 lg:mb-6">
@@ -748,38 +752,41 @@ useEffect(() => {
                                 )}
                               </div>
 
-                              {product.variants && product.variants.length > 0 && (
-                                <div className="mb-2 sm:mb-3 lg:mb-4 space-y-2 lg:space-y-3">
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-xs lg:text-sm font-medium text-gray-700">Weight:</span>
-                                    <select
-                                      value={selectedVariantId || ""}
-                                      onChange={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        handleVariantChange(productId, e.target.value)
-                                      }}
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                      }}
-                                      className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
-                                    >
-                                      {product.variants.map((variant) => (
-                                        <option key={variant._id} value={variant._id}>
-                                          {variant.choices.weight}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div>
+                          {product.variants && product.variants.length > 0 && (
+  <div className="mb-2 sm:mb-3 lg:mb-4 space-y-2 lg:space-y-3">
+    <div className="flex items-center justify-between">
+      <span className="text-xs lg:text-sm font-medium text-gray-700">Weight:</span>
+      <select
+        value={selectedVariantId || ""}
+        onChange={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          handleVariantChange(productId, e.target.value)
+        }}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+        }}
+        className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+      >
+        {product.variants
+          .filter((variant) => variant.variant.visible) // ✅ only visible variants
+          .map((variant) => (
+            <option key={variant._id} value={variant._id}>
+              {variant.choices.weight}
+            </option>
+          ))}
+      </select>
+    </div>
 
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
-                                      {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
-                                    </span>
-                                  </div>
-                                </div>
-                              )}
+    <div className="flex items-center justify-between">
+      <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
+        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+      </span>
+    </div>
+  </div>
+)}
+
 
                               {(!product.variants || product.variants.length === 0) && (
                                 <div className="mb-2 sm:mb-3 lg:mb-4">
