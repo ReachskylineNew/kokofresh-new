@@ -5,26 +5,38 @@ import { wixClient } from "../app/utillity/wixclient";
 import { Button } from "../components/ui/button";
 import Cookies from "js-cookie";
 
-async function getProfile() {
-  try {
-    const token = Cookies.get("accessToken");
-    if (!token) return null;
-
-    wixClient.auth.setTokens({
-      accessToken: JSON.parse(token),
-      refreshToken: JSON.parse(Cookies.get("refreshToken") || "null"),
-    });
-
-    const { member } = await wixClient.members.getCurrentMember();
-    return member || null;
-  } catch {
-    return null;
-  }
-}
-
 export default function NavUser() {
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // ✅ Ensure we only run Wix code in the browser
+  useEffect(() => {
+    setIsClient(true);
+    verifyLogin();
+    if (wixClient.auth.loggedIn()) {
+      getProfile().then(setProfile);
+    }
+  }, []);
+
+  // ---------- Auth helpers ----------
+  async function getProfile() {
+    try {
+      const token = Cookies.get("accessToken");
+      const refresh = Cookies.get("refreshToken");
+      if (!token || !refresh) return null;
+
+      wixClient.auth.setTokens({
+        accessToken: JSON.parse(token),
+        refreshToken: JSON.parse(refresh),
+      });
+
+      const result = await wixClient.members.getCurrentMember();
+      return result?.member || null;
+    } catch {
+      return null;
+    }
+  }
 
   async function verifyLogin() {
     const data = JSON.parse(localStorage.getItem("oAuthRedirectData") || "null");
@@ -41,33 +53,27 @@ export default function NavUser() {
 
       localStorage.removeItem("oAuthRedirectData");
       window.history.replaceState({}, document.title, window.location.pathname);
-    } catch {}
+    } catch (err) {
+      console.error("verifyLogin error:", err);
+    }
   }
 
   const login = async () => {
     setLoading(true);
     const loginRequest = wixClient.auth.generateOAuthData("http://localhost:3000");
     localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequest));
+
     const { authUrl } = await wixClient.auth.getAuthUrl(loginRequest);
     window.location.href = authUrl;
   };
 
   const logout = async () => {
+    setLoading(true);
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     const { logoutUrl } = await wixClient.auth.logout(window.location.href);
     window.location.href = logoutUrl;
   };
-
-  useEffect(() => {
-    (async () => {
-      await verifyLogin();
-      if (wixClient.auth.loggedIn()) {
-        const userProfile = await getProfile();
-        setProfile(userProfile);
-      }
-    })();
-  }, []);
 
   const getInitials = (name: string) =>
     name
@@ -76,38 +82,42 @@ export default function NavUser() {
       .join("")
       .toUpperCase();
 
-  return (
-    <div>
-      {wixClient.auth.loggedIn() ? (
-        <div className="flex items-center gap-3">
-          {profile?.profile?.photo?.url ? (
-            <img
-              src={`/api/proxy-image?url=${encodeURIComponent(profile.profile.photo.url)}`}
-              alt={profile.profile.nickname || "Profile"}
-              className="w-8 h-8 rounded-full border shadow"
-            />
-          ) : (
-            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold shadow">
-              {getInitials(profile?.profile?.nickname || "U")}
-            </div>
-          )}
-          <div className="hidden sm:flex flex-col">
-            <span className="text-sm font-medium text-foreground">
-              {profile?.profile?.nickname || "User"}
-            </span>
-            {profile?.loginEmail && (
-              <span className="text-xs text-muted-foreground">{profile.loginEmail}</span>
-            )}
-          </div>
-          <Button variant="outline" size="sm" onClick={logout}>
-            Sign Out
-          </Button>
-        </div>
+  // ---------- Render ----------
+  if (!isClient) {
+    // ⛔ Prevents `role` crash during build/SSR
+    return null;
+  }
+
+  return wixClient.auth.loggedIn() ? (
+    <div className="flex items-center gap-3">
+      {profile?.profile?.photo?.url ? (
+        <img
+          src={`/api/proxy-image?url=${encodeURIComponent(profile.profile.photo.url)}`}
+          alt={profile?.profile?.nickname || "Profile"}
+          className="w-8 h-8 rounded-full border shadow"
+        />
       ) : (
-        <Button size="sm" variant="default" onClick={login} disabled={loading}>
-          {loading ? "Signing in..." : "Sign In"}
-        </Button>
+        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold shadow">
+          {getInitials(profile?.profile?.nickname || "U")}
+        </div>
       )}
+
+      <div className="hidden sm:flex flex-col">
+        <span className="text-sm font-medium text-foreground">
+          {profile?.profile?.nickname || "User"}
+        </span>
+        {profile?.loginEmail && (
+          <span className="text-xs text-muted-foreground">{profile.loginEmail}</span>
+        )}
+      </div>
+
+      <Button variant="outline" size="sm" onClick={logout} disabled={loading}>
+        Sign Out
+      </Button>
     </div>
+  ) : (
+    <Button size="sm" variant="default" onClick={login} disabled={loading}>
+      {loading ? "Signing in..." : "Sign In"}
+    </Button>
   );
 }
