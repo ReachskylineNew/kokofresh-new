@@ -58,14 +58,18 @@ export default function NavUser() {
     }
   }
 
-  const login = async () => {
-    setLoading(true);
-    const loginRequest = wixClient.auth.generateOAuthData("http://localhost:3000");
-    localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequest));
+const login = async () => {
+  setLoading(true);
 
-    const { authUrl } = await wixClient.auth.getAuthUrl(loginRequest);
-    window.location.href = authUrl;
-  };
+  // 👇 Use current origin (localhost in dev, real domain in prod)
+  const redirectUri = `${window.location.origin}`;
+
+  const loginRequest = wixClient.auth.generateOAuthData(redirectUri);
+  localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequest));
+
+  const { authUrl } = await wixClient.auth.getAuthUrl(loginRequest);
+  window.location.href = authUrl;
+};
 
   const logout = async () => {
     setLoading(true);
