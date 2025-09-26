@@ -1,6 +1,6 @@
-import { NextResponse, NextRequest } from "next/server"
-import { createClient, ApiKeyStrategy } from "@wix/sdk"
-import { products as productsModule } from "@wix/stores"
+import { NextResponse, NextRequest } from "next/server";
+import { createClient, ApiKeyStrategy } from "@wix/sdk";
+import { products as productsModule } from "@wix/stores";
 
 // Mock data for development when Wix API is not configured
 const mockProducts = [
@@ -15,11 +15,6 @@ const mockProducts = [
     description: "Premium garam masala blend with authentic Indian spices",
     slug: "garam-masala",
     stock: { inStock: true },
-    region: "North India",
-    category: "Masala",
-    rating: 4.8,
-    reviews: 124,
-    bestseller: true,
     productType: "Spice Blend"
   },
   {
@@ -33,11 +28,6 @@ const mockProducts = [
     description: "Special biryani masala for authentic Hyderabadi taste",
     slug: "biryani-masala",
     stock: { inStock: true },
-    region: "Hyderabad",
-    category: "Masala",
-    rating: 4.9,
-    reviews: 89,
-    limitedEdition: true,
     productType: "Spice Blend"
   },
   {
@@ -51,90 +41,74 @@ const mockProducts = [
     description: "Fresh mint chutney made with traditional recipe",
     slug: "mint-chutney",
     stock: { inStock: true },
-    region: "Gujarat",
-    category: "Chutney",
-    rating: 4.7,
-    reviews: 156,
     productType: "Chutney"
   }
-]
+];
+
+// ✅ Revalidate every 60 seconds (adjust as needed)
+export const revalidate = 60;
+
+// ✅ Prevent build-time caching
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const apiKey = process.env.WIX_API_KEY
-    const siteId = process.env.WIX_SITE_ID
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
+    const apiKey = process.env.WIX_API_KEY;
+    const siteId = process.env.WIX_SITE_ID;
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
 
-    // If no API keys are configured, return mock data for development
+    // If no API keys configured → fallback to mock data
     if (!apiKey || !siteId) {
-      console.log("Using mock data - Wix API keys not configured")
+      console.log("⚠️ Using mock data - Wix API keys not configured");
 
       if (id) {
-        // Return single mock product
-        const product = mockProducts.find(p => p._id === id || p.slug === id)
+        const product = mockProducts.find(p => p._id === id || p.slug === id);
         if (!product) {
-          return NextResponse.json({ error: "Product not found" }, { status: 404 })
+          return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
-        return NextResponse.json({ product })
+        return NextResponse.json({ product });
       }
 
-      // Return all mock products
-      return NextResponse.json({ products: mockProducts })
+      return NextResponse.json({ products: mockProducts });
     }
 
     const wixClient = createClient({
       modules: { products: productsModule },
       auth: ApiKeyStrategy({ siteId, apiKey }),
-    })
+    });
 
-    // If id is provided, return single product
+    // ✅ If id → fetch single product
     if (id) {
-      let product: any
+      let product: any;
       try {
         // Try by ID
-        product = await wixClient.products.getProduct(id)
+        product = await wixClient.products.getProduct(id);
       } catch {
-        // Fallback to slug query
+        // Try by slug
         const q = await wixClient.products
           .queryProducts()
           .eq("slug", id)
           .limit(1)
-          .find()
+          .find();
 
         if (!q?.items?.length) {
-          return NextResponse.json({ error: "Product not found" }, { status: 404 })
+          return NextResponse.json({ error: "Product not found" }, { status: 404 });
         }
-        product = q.items[0]
+        product = q.items[0];
       }
 
-      // Return single product
-      return NextResponse.json({ product })
+      return NextResponse.json({ product });
     }
 
-    // If no id provided, return all products
-    try {
-      const query = await wixClient.products.queryProducts().find()
-
-      if (!query?.items) {
-        return NextResponse.json({ products: [] })
-      }
-
-      // Return all products
-      return NextResponse.json({ products: query.items })
-    } catch (error: any) {
-      return NextResponse.json(
-        { error: error?.message || "Failed to fetch products" },
-        { status: 500 }
-      )
-    }
+    // ✅ Otherwise → fetch all products
+    const query = await wixClient.products.queryProducts().find();
+    return NextResponse.json({ products: query.items ?? [] });
   } catch (error: any) {
+    console.error("❌ Product API error:", error);
     return NextResponse.json(
       { error: error?.message || "Unknown error" },
       { status: 500 }
-    )
+    );
   }
 }
-
-// Force this route to be dynamic to avoid prerendering issues
-export const dynamic = 'force-dynamic'
