@@ -27,22 +27,27 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<any[]>([])
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
 
-  // Fetch orders
 useEffect(() => {
   const fetchOrders = async () => {
     if (!contact?._id) return
     try {
-     const res = await fetch("/api/orders", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",   // 👈 added this
-  },
-  body: JSON.stringify({ contactId: contact._id }),
-})
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contactId: contact._id }),
+      })
 
       const data = await res.json()
-      setOrders(data.orders || [])
-      console.log("🛒 Ordersnew:", data.orders)
+
+      // ✅ Fallback safeguard filter on client side
+      const filteredOrders = (data.orders || []).filter(
+        (o: any) => o.buyerInfo?.contactId === contact._id
+      )
+
+      setOrders(filteredOrders)
+      console.log("🛒 Orders (after local filter):", filteredOrders)
     } catch (err) {
       console.error("Failed to fetch orders:", err)
     }
