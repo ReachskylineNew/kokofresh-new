@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { CartProvider } from "@/context/cart-context"
+import { UserProvider } from "@/context/user-context"
 import "./globals.css"
 
 
@@ -44,9 +45,13 @@ export default function RootLayout({
       <body className="font-sans antialiased">
       
         <Suspense fallback={<div>Loading...</div>}>
+        <UserProvider>
+
+    
           <CartProvider>
             {children}
           </CartProvider>
+              </UserProvider>
         </Suspense>
         <Analytics />
         <SonnerToaster position="top-center" richColors />

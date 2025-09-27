@@ -39,6 +39,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@types/js-cookie": "^3.0.6",
     "@vercel/analytics": "latest",
+    "@wix/crm": "^1.0.1045",
     "@wix/data": "^1.0.294",
     "@wix/ecom": "^1.0.827",
     "@wix/members": "^1.0.116",
