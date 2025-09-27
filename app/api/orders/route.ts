@@ -10,7 +10,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing contactId" }, { status: 400 });
     }
 
-    // ✅ Create Wix Admin client
     const wixAdminClient = createClient({
       modules: { orders },
       auth: ApiKeyStrategy({
@@ -20,21 +19,14 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    // ✅ Call the new search API
+    // ✅ Use correct filter syntax
     const response = await wixAdminClient.orders.searchOrders({
       search: {
         filter: {
-          "buyerInfo.contactId": contactId, // filter by logged-in user
+          "buyerInfo.contactId": { $eq: contactId }, // 👈 must use $eq
         },
-        sort: [
-          {
-            fieldName: "_createdDate",
-            order: "DESC",
-          },
-        ],
-        cursorPaging: {
-          limit: 10, // return last 10 orders
-        },
+        sort: [{ fieldName: "_createdDate", order: "DESC" }],
+        cursorPaging: { limit: 10 },
       },
     });
 

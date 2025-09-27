@@ -28,23 +28,27 @@ export default function ProfilePage() {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
 
   // Fetch orders
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (!contact?._id) return
-      try {
-        const res = await fetch("/api/orders", {
-          method: "POST",
-          body: JSON.stringify({ contactId: contact._id }),
-        })
-        const data = await res.json()
-        setOrders(data.orders || [])
-        console.log("🛒 Orders:", data.orders)
-      } catch (err) {
-        console.error("Failed to fetch orders:", err)
-      }
+useEffect(() => {
+  const fetchOrders = async () => {
+    if (!contact?._id) return
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // 👈 required
+        },
+        body: JSON.stringify({ contactId: contact._id }),
+      })
+      const data = await res.json()
+      setOrders(data.orders || [])
+      console.log("🛒 Orders:", data.orders)
+    } catch (err) {
+      console.error("Failed to fetch orders:", err)
     }
-    fetchOrders()
-  }, [contact])
+  }
+  fetchOrders()
+}, [contact])
+
 
   const toggleExpand = (id: string) => {
     setExpandedOrder(expandedOrder === id ? null : id)
