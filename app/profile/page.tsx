@@ -41,7 +41,7 @@ useEffect(() => {
       })
       const data = await res.json()
       setOrders(data.orders || [])
-      console.log("🛒 Orders:", data.orders)
+      console.log("🛒 Ordersnew:", data.orders)
     } catch (err) {
       console.error("Failed to fetch orders:", err)
     }
