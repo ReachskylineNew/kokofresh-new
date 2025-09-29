@@ -2,6 +2,7 @@
 import type React from "react"
 
 import type { Metadata } from "next"
+import Script from "next/script"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { Toaster } from "sonner"
@@ -55,7 +56,18 @@ export default function RootLayout({
         </Suspense>
         <Analytics />
          <Toaster richColors position="top-center" />
-
+ <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-EPBVY275H2"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-script" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-EPBVY275H2');
+          `}
+        </Script>
       </body>
     </html>
   )
