@@ -276,13 +276,13 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-lg mb-1">Our HQ</h3>
                     <p className="text-muted-foreground">
-                      Flavourz India Pvt Ltd
+                      CKGFlavorz FoodTech Pvt Ltd
                       <br />
-                      Block A, Spice Garden Complex
+                      112, 17th main road, MIG KHB Colony
                       <br />
-                      Sector 18, Gurgaon - 122015
+                      5th block, Koramangala
                       <br />
-                      Haryana, India
+                      Bangalore 560095
                     </p>
                   </div>
                 </div>
@@ -344,13 +344,28 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="relative">
-              <img src="/modern-office-space-with-spices-and-young-team-wor.jpg" alt="Flavourz India Office" className="rounded-2xl shadow-2xl" />
-              <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-xl">
-                <div className="text-2xl font-black mb-2">24/7</div>
-                <div className="text-sm">Flavor Support</div>
-              </div>
-            </div>
+<div className="relative">
+  <div className="rounded-2xl shadow-2xl overflow-hidden bg-card border-2 border-primary/20">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.243859362772!2d77.6278958153479!3d12.935432919215295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae15d1a6edc6db%3A0xb1d6f26a9a7b6ef4!2sCKGFlavorz%20FoodTech%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+      width="100%"
+      height="400"
+      style={{ border: 0 }}
+      allowFullScreen
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      className="w-full h-96"
+      title="CKGFlavorz FoodTech Office Location"
+    />
+  </div>
+  <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-xl">
+    <div className="text-2xl font-black mb-2">📍</div>
+    <div className="text-sm">Find Us Here</div>
+  </div>
+</div>
+
+
+
           </div>
         </div>
       </section>

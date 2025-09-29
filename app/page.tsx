@@ -90,10 +90,32 @@ type Product = {
   productOptions?: any[]
 }
 
+type Reel = {
+  _id: string
+  title: string
+  url: string
+  thumbnail?: string
+}
+
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+   const [reels, setReels] = useState<Reel[]>([])
+
+  useEffect(() => {
+    const loadReels = async () => {
+      try {
+        const res = await fetch("/api/reels", { cache: "no-store" })
+        const data = await res.json()
+        setReels(data.data || [])
+      } catch (err) {
+        console.error("Failed to load reels:", err)
+      }
+    }
+    loadReels()
+  }, [])
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -381,104 +403,28 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* UGC Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            {[
-              {
-                image: "/gen-z-person-cooking-with-spices-tiktok-style.jpg",
-                username: "@spice.queen.23",
-                caption: "POV: Your dal actually slaps now 💅",
-                likes: "47.2K",
-                isVideo: true,
-              },
-              {
-                image: "/aesthetic-spice-flatlay-instagram-style.jpg",
-                username: "@minimal.masala",
-                caption: "Spice cabinet organization that hits different ✨",
-                likes: "23.8K",
-                isVideo: false,
-              },
-              {
-                image: "/placeholder-zvxby.png",
-                username: "@biryani.bae",
-                caption: "Teaching my roommates how to adult with spices",
-                likes: "89.1K",
-                isVideo: true,
-              },
-              {
-                image: "/colorful-indian-food-photography-modern-style.jpg",
-                username: "@food.therapy",
-                caption: "Therapy but make it curry 🍛",
-                likes: "34.5K",
-                isVideo: false,
-              },
-              {
-                image: "/placeholder-uehz0.png",
-                username: "@hack.my.kitchen",
-                caption: "5-min dinner hack that actually works",
-                likes: "156K",
-                isVideo: true,
-              },
-              {
-                image: "/aesthetic-tea-preparation-with-chai-masala.jpg",
-                username: "@chai.and.chill",
-                caption: "Study break vibes with homemade chai ☕",
-                likes: "19.7K",
-                isVideo: false,
-              },
-              {
-                image: "/young-couple-cooking-together-with-indian-spices.jpg",
-                username: "@couple.cooks",
-                caption: "Date night = cooking together with real spices",
-                likes: "67.3K",
-                isVideo: true,
-              },
-              {
-                image: "/spice-art-arrangement-colorful-creative.jpg",
-                username: "@spice.artist",
-                caption: "When your spices are also your art supplies 🎨",
-                likes: "28.9K",
-                isVideo: false,
-              },
-            ].map((post, index) => (
-              <Card
-                key={index}
-                className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-2 hover:border-primary/50"
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {reels.map((reel) => (
+              <div
+                key={reel._id}
+                className="rounded-lg shadow-lg p-2 bg-white/10 backdrop-blur-sm border border-white/20"
               >
-                <CardContent className="p-0 relative">
-                  <div className="relative aspect-square overflow-hidden">
-                    <img
-                      src={post.image || "/placeholder.svg"}
-                      alt={`UGC post by ${post.username}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {post.isVideo && (
-                      <div className="absolute top-3 right-3">
-                        <div className="bg-black/50 backdrop-blur-sm rounded-full p-2">
-                          <Play className="h-4 w-4 text-white fill-white" />
-                        </div>
-                      </div>
-                    )}
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-end">
-                      <div className="p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-full">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-3">
-                            <Heart className="h-5 w-5" />
-                            <MessageCircle className="h-5 w-5" />
-                            <Share className="h-5 w-5" />
-                          </div>
-                          <span className="text-sm font-bold">{post.likes}</span>
-                        </div>
-                        <p className="font-bold text-sm mb-1">{post.username}</p>
-                        <p className="text-xs opacity-90 line-clamp-2">{post.caption}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                <iframe
+                  src={`${reel.url}embed`}
+                  width="100%"
+                  height="500"
+                  frameBorder="0"
+                  scrolling="no"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                  className="rounded-lg"
+                />
+                <h3 className="mt-2 text-lg font-semibold text-danger">{reel.title}</h3>
+                {reel.thumbnail && <p className="text-gray-300 text-sm">{reel.thumbnail}</p>}
+              </div>
             ))}
           </div>
+
+
 
           {/* CTA */}
           <div className="text-center">
