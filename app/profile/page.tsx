@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import {
@@ -24,11 +25,14 @@ import {
 
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
-import { useUser } from "@/context/user-context" // ✅ get context
+import { useUser } from "@/context/user-context"
+// ⬅️ add setContact in your user-context
+ // ✅ get context
 
 export default function ProfilePage() {
+
   const router = useRouter()
-  const { profile, contact, loading } = useUser()
+  const { profile, contact, loading,setContact } = useUser()
 
   // ----- Orders -----
   const [orders, setOrders] = useState<any[]>([])
@@ -92,49 +96,102 @@ export default function ProfilePage() {
     })
   }, [contact, editOpen])
 
-  const handleSave = async () => {
-    if (!contact?._id) return
 
-    try {
-      setSaving(true)
 
-      const res = await fetch("/api/update-contact", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contactId: contact._id,
-          info: {
-            addresses: {
-              items: [
-                {
-                  address: {
-                    addressLine1: form.addressLine1,
-                    city: form.city,
-                    subdivision: form.subdivision,
-                    postalCode: form.postalCode,
-                    country: form.country,
-                    countryFullname: form.countryFullname,
-                  },
-                },
-              ],
-            },
-          },
-        }),
-      })
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Failed to update")
+const handleSave = async () => {
+  if (!contact?._id) return
 
-      console.log("✅ Contact updated:", data.contact)
-      setEditOpen(false)
-      router.refresh()
-    } catch (err: any) {
-      console.error("❌ Save failed:", err)
-      alert(err.message)
-    } finally {
+  try {
+    setSaving(true)
+
+    // --- Validation ---
+    if (form.country.length !== 2) {
+      toast.error("❌ Country code must be 2 letters (e.g., IN, US, UK)")
       setSaving(false)
+      return
     }
+
+    const digits = form.phone.replace(/\D/g, "")
+    if (digits.length < 10) {
+      toast.error("❌ Phone number must be at least 10 digits")
+      setSaving(false)
+      return
+    }
+
+    const res = await fetch("/api/update-contact", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contactId: contact._id,
+        info: {
+          emails: {
+            items: [
+              {
+                email: form.email,
+                primary: true,
+                tag: "UNTAGGED",
+              },
+            ],
+          },
+          phones: {
+            items: [
+              {
+                countryCode: form.country.toUpperCase(),
+                phone: digits,
+                primary: true,
+                tag: "MOBILE",
+              },
+            ],
+          },
+          addresses: {
+            items: [
+              {
+                tag: "SHIPPING",
+                address: {
+                  addressLine1: form.addressLine1,
+                  city: form.city,
+                  subdivision: form.subdivision,
+                  postalCode: form.postalCode,
+                  country: form.country.toUpperCase(),
+                  countryFullname: form.countryFullname,
+                },
+              },
+            ],
+          },
+        },
+      }),
+    })
+
+    const data = await res.json()
+    if (!res.ok) {
+      // handle duplication or backend errors
+      if (res.status === 409) {
+        toast.error("⚠️ Phone number already exists for another contact")
+      } else {
+        toast.error(`❌ ${data.error || "Failed to update"}`)
+      }
+      throw new Error(data.error || "Failed to update")
+    }
+
+    console.log("✅ Contact updated:", data.contact)
+
+    // Update context immediately
+    setContact(data.contact)
+
+    setEditOpen(false)
+    toast.success("✅ Contact updated successfully!")
+  } catch (err: any) {
+    console.error("❌ Save failed:", err)
+    toast.error(err.message || "Something went wrong")
+  } finally {
+    setSaving(false)
   }
+}
+
+
+
+
 
   if (loading) {
     return (

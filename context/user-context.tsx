@@ -12,7 +12,9 @@ type UserContextType = {
   contact: Contact | null;
   loading: boolean;
   refreshUser: () => Promise<void>;
+  setContact: (contact: Contact | null) => void; // ✅ add this
 };
+
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -99,7 +101,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ profile, contact, loading, refreshUser }}>
+    <UserContext.Provider value={{ profile, contact, loading, refreshUser,setContact }}>
       {children}
     </UserContext.Provider>
   );

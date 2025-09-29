@@ -4,7 +4,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
-import { Toaster as SonnerToaster } from "@/components/ui/sonner"
+import { Toaster } from "sonner"
 import { CartProvider } from "@/context/cart-context"
 import { UserProvider } from "@/context/user-context"
 import "./globals.css"
@@ -54,7 +54,7 @@ export default function RootLayout({
               </UserProvider>
         </Suspense>
         <Analytics />
-        <SonnerToaster position="top-center" richColors />
+         <Toaster richColors position="top-center" />
 
       </body>
     </html>

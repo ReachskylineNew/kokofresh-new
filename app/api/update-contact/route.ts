@@ -1,69 +1,98 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient, ApiKeyStrategy } from "@wix/sdk"
-import { contacts } from "@wix/crm"
+import { getWixAdminClient } from "../../utillity/wixadminclient"
 
 export async function PATCH(req: NextRequest) {
   try {
     const { contactId, info } = await req.json()
-
     if (!contactId) {
       return NextResponse.json({ error: "Missing contactId" }, { status: 400 })
     }
 
-    const wixAdminClient = createClient({
-      modules: { contacts },
-      auth: ApiKeyStrategy({
-        apiKey: process.env.WIX_API_KEY!,
-        siteId: process.env.WIX_SITE_ID!,
-        accountId: process.env.WIX_ACCOUNT_ID!,
-      }),
-    })
+    const wixAdminClient = getWixAdminClient()
 
-    // 1. Fetch existing contact
+    // 1. Fetch existing contact (to get revision + existing structure)
     const contact = await wixAdminClient.contacts.getContact(contactId)
     if (!contact) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 })
     }
 
-    let updatedInfo = { ...contact.info, ...info }
+    // ✅ Start with current info
+    let updatedInfo = { ...contact.info }
 
-    // 2. If updating addresses, rebuild with _id + formatted
+    // 2a. Update addresses
     if (info?.addresses?.items?.length) {
-      const formAddr = info.addresses.items[0].address
-      const existingAddr = contact.info?.addresses?.items?.[0] // pick the first one (shipping)
-
-      if (existingAddr) {
-        const newAddr = {
-          _id: existingAddr._id, // ✅ keep the same ID so Wix updates
-          tag: existingAddr.tag || "SHIPPING",
+      updatedInfo.addresses = {
+        items: info.addresses.items.map((formAddr: any, i: number) => ({
+          tag: formAddr.tag || (i === 0 ? "SHIPPING" : "BILLING"),
           address: {
-            ...existingAddr.address, // keep old fields
-            ...formAddr, // overwrite with new form fields
-            formatted: `${formAddr.addressLine1}\n${formAddr.city}, ${formAddr.subdivision} ${formAddr.postalCode}\n${formAddr.countryFullname}`,
+            addressLine1: formAddr.address.addressLine1,
+            city: formAddr.address.city,
+            subdivision: formAddr.address.subdivision,
+            postalCode: formAddr.address.postalCode,
+            country: formAddr.address.country,
+            countryFullname: formAddr.address.countryFullname,
+            formatted: `${formAddr.address.addressLine1}\n${formAddr.address.city}, ${formAddr.address.subdivision} ${formAddr.address.postalCode}\n${formAddr.address.countryFullname}`,
           },
-        }
-
-        updatedInfo = {
-          ...contact.info,
-          addresses: { items: [newAddr] },
-        }
+        })),
       }
     }
 
-    // 3. Build payload with revision
-    const payload = {
-      info: updatedInfo,
-      revision: contact.revision,
+    // 2b. Update phones
+    if (info?.phones?.items?.length) {
+      const formPhone = info.phones.items[0]
+
+      // ⚡ Wix expects plain digits or dashed format, not "+91..."
+      const digits = formPhone.phone.replace(/\D/g, "")
+
+      updatedInfo.phones = {
+        items: [
+          {
+            countryCode: formPhone.countryCode || "IN",
+            phone: digits, // ← leave as digits, Wix builds e164Phone itself
+            primary: true,
+            tag: formPhone.tag || "MOBILE",
+          },
+        ],
+      }
     }
 
-    // 4. Update in Wix
+    // 2c. Update emails
+    if (info?.emails?.items?.length) {
+      const formEmail = info.emails.items[0]
+
+      updatedInfo.emails = {
+        items: [
+          {
+            email: formEmail.email,
+            primary: true,
+            tag: formEmail.tag || "UNTAGGED",
+          },
+        ],
+      }
+    }
+
+    // 3. Call Wix API with doc-compliant signature
     const updated = await wixAdminClient.contacts.updateContact(
       contactId,
-      payload,
-      contact.revision
+      updatedInfo,        // ✅ just info object
+      contact.revision    // ✅ revision
     )
 
-    return NextResponse.json({ contact: updated.contact })
+    console.log("📞 After update:", updated.contact.primaryInfo)
+
+    // 4. Return trimmed response
+    return NextResponse.json({
+      contact: {
+        _id: updated.contact._id,
+        revision: updated.contact.revision,
+        primaryInfo: updated.contact.primaryInfo,
+        info: {
+          emails: updated.contact.info?.emails,
+          phones: updated.contact.info?.phones,
+          addresses: updated.contact.info?.addresses,
+        },
+      },
+    })
   } catch (err: any) {
     console.error("❌ Update Contact Error:", err?.response?.data || err)
     return NextResponse.json({ error: err.message || "Failed to update" }, { status: 500 })
