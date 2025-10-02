@@ -184,7 +184,7 @@ export default function HomePage() {
     </p>
 
     <p className="text-lg md:text-xl mb-12 text-gray-200 max-w-3xl mx-auto leading-relaxed">
-      Small batch. Slow grind. 100% real. The spices your grandma would approve of, but your TikTok feed will
+      Small batch. Slow grind. 100% real. The spices your grandma would approve of, but your insta feed will
       obsess over.
     </p>
 
@@ -363,7 +363,7 @@ export default function HomePage() {
             </div>
             <div>
               <div className="text-3xl md:text-4xl font-black text-primary mb-2">50M+</div>
-              <div className="text-sm text-muted-foreground">TikTok Views</div>
+              <div className="text-sm text-muted-foreground">insta Views</div>
             </div>
             <div>
               <div className="text-3xl md:text-4xl font-black text-primary mb-2">24/7</div>

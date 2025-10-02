@@ -5,6 +5,7 @@ import { members } from "@wix/members"
 import { currentCart } from "@wix/ecom"
 import { collections, products } from "@wix/stores"
 import { contacts } from "@wix/crm"
+import {submissions } from "@wix/forms"
 import Cookies from "js-cookie"
 
 function safeParseCookie(key: string) {
@@ -21,7 +22,7 @@ const accessToken = safeParseCookie("accessToken")
 const refreshToken = safeParseCookie("refreshToken")
 
 export const wixClient = createClient({
-  modules: { products, collections, currentCart, members, contacts },
+  modules: { products, collections, currentCart, members, contacts,submissions },
   auth: OAuthStrategy({
     clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID!,
     tokens: {

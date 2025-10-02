@@ -42,6 +42,7 @@
     "@wix/crm": "^1.0.1045",
     "@wix/data": "^1.0.294",
     "@wix/ecom": "^1.0.827",
+    "@wix/forms": "^1.0.330",
     "@wix/members": "^1.0.116",
     "@wix/redirects": "^1.0.97",
     "@wix/sdk": "^1.14.3",

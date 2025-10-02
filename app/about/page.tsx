@@ -190,7 +190,7 @@ export default function AboutPage() {
                 name: "Sneha Gupta",
                 role: "Community & Content Lead",
                 image: "/young-indian-woman-content-creator-with-spices.jpg",
-                bio: "The voice behind our viral content. She makes spices cool (and TikTok famous).",
+                bio: "The voice behind our viral content. She makes spices cool (and insta famous).",
                 social: "@sneha.spices",
               },
             ].map((member, index) => (

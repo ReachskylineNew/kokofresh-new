@@ -38,47 +38,66 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<VisitorAuth | null>(null);
 
-const ensureAuth = async (): Promise<VisitorAuth> => {
-  if (auth && Date.now() < auth.expires_at) return auth;
+  /** 🔑 Bootstrap anonymous visitor auth if missing */
+  const initAuth = async (): Promise<VisitorAuth> => {
+    const res = await fetch("https://www.wixapis.com/oauth/visitor/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clientId: APP_ID,
+        grantType: "anonymousVisitor",
+      }),
+    });
 
-  const accessRaw = Cookies.get("accessToken");
-  const refreshRaw = Cookies.get("refreshToken");
+    const data = await res.json();
 
-  let parsedAccess: any = null;
-  let parsedRefresh: any = null;
+    if (data.access_token && data.refresh_token) {
+      const newAuth: VisitorAuth = {
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+        expires_at: (data.expires_at ?? Math.floor(Date.now() / 1000) + 3600) * 1000,
+      };
 
-  if (accessRaw) parsedAccess = JSON.parse(accessRaw);
-  if (refreshRaw) parsedRefresh = JSON.parse(refreshRaw);
+      Cookies.set("accessToken", JSON.stringify({ value: newAuth.access_token, expiresAt: data.expires_at }), { expires: 1 });
+      Cookies.set("refreshToken", JSON.stringify({ value: newAuth.refresh_token }), { expires: 7 });
 
-  if (parsedAccess?.value && parsedRefresh?.value) {
-    const newAuth: VisitorAuth = {
-      access_token: parsedAccess.value,
-      refresh_token: parsedRefresh.value,
-      expires_at: parsedAccess.expiresAt
-        ? parsedAccess.expiresAt * 1000
-        : Date.now() + 3600 * 1000,
-    };
-    setAuth(newAuth);
-    return newAuth;
-  }
+      setAuth(newAuth);
+      return newAuth;
+    }
 
-  throw new Error("No valid auth tokens in cookies");
-};
+    throw new Error("Failed to initialize visitor auth");
+  };
 
+  /** ✅ Ensure we have valid auth tokens */
+  const ensureAuth = async (): Promise<VisitorAuth> => {
+    if (auth && Date.now() < auth.expires_at) return auth;
 
-  // Initial load
-  useEffect(() => {
-    (async () => {
-      try {
-        const activeAuth = await ensureAuth();
-        await load(activeAuth);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, []);
+    const accessRaw = Cookies.get("accessToken");
+    const refreshRaw = Cookies.get("refreshToken");
 
-  // Load cart
+    let parsedAccess: any = null;
+    let parsedRefresh: any = null;
+
+    if (accessRaw) parsedAccess = JSON.parse(accessRaw);
+    if (refreshRaw) parsedRefresh = JSON.parse(refreshRaw);
+
+    if (parsedAccess?.value && parsedRefresh?.value) {
+      const newAuth: VisitorAuth = {
+        access_token: parsedAccess.value,
+        refresh_token: parsedRefresh.value,
+        expires_at: parsedAccess.expiresAt
+          ? parsedAccess.expiresAt * 1000
+          : Date.now() + 3600 * 1000,
+      };
+      setAuth(newAuth);
+      return newAuth;
+    }
+
+    // 🔄 fallback: bootstrap new auth
+    return await initAuth();
+  };
+
+  /** Load cart */
   const load = async (authData = auth) => {
     if (!authData) return;
     setLoading(true);
@@ -102,55 +121,54 @@ const ensureAuth = async (): Promise<VisitorAuth> => {
     }
   };
 
-const add = async (
-  productId: string,
-  qty: number,
-  options?: { name: string; value: string }[],
-  variantId?: string
-) => {
-  const activeAuth = await ensureAuth();
+  /** Add item */
+  const add = async (
+    productId: string,
+    qty: number,
+    options?: { name: string; value: string }[],
+    variantId?: string
+  ) => {
+    const activeAuth = await ensureAuth();
 
-  // Convert array of options into object { weight: "200gms", ... }
-  const optionsObj =
-    options?.reduce((acc, opt) => ({ ...acc, [opt.name]: opt.value }), {}) || {};
+    const optionsObj =
+      options?.reduce((acc, opt) => ({ ...acc, [opt.name]: opt.value }), {}) || {};
 
-  const payload = {
-    lineItems: [
-      {
-        catalogReference: {
-          appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e", // ✅ correct appId
-          catalogItemId: productId, // product ID passed from UI
-          options: {
-            ...(variantId ? { variantId } : {}),
-            ...(Object.keys(optionsObj).length ? { options: optionsObj } : {}),
+    const payload = {
+      lineItems: [
+        {
+          catalogReference: {
+            appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e", // ✅ Wix Stores appId
+            catalogItemId: productId,
+            options: {
+              ...(variantId ? { variantId } : {}),
+              ...(Object.keys(optionsObj).length ? { options: optionsObj } : {}),
+            },
           },
+          quantity: qty,
         },
-        quantity: qty,
+      ],
+    };
+
+    const res = await fetch(`${BASE_URL}/carts/current/add-to-cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${activeAuth.access_token}`,
       },
-    ],
+      body: JSON.stringify(payload),
+    });
+
+    if (res.status === 401) {
+      const refreshed = await initAuth();
+      return add(productId, qty, options, variantId);
+    }
+
+    const data = await res.json();
+    setCart(data?.cart || { lineItems: [] });
+    return data?.cart;
   };
 
-  const res = await fetch(`${BASE_URL}/carts/current/add-to-cart`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${activeAuth.access_token}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (res.status === 401) {
-    const refreshed = await ensureAuth();
-    return add(productId, qty, options, variantId); // retry with fresh token
-  }
-
-  const data = await res.json();
-  setCart(data?.cart || { lineItems: [] });
-  return data?.cart;
-};
-
-
-  // Update quantity
+  /** Update item quantity */
   const updateQuantity = async (lineItemId: string, qty: number) => {
     const activeAuth = await ensureAuth();
 
@@ -167,7 +185,7 @@ const add = async (
     setCart(data?.cart || { lineItems: [] });
   };
 
-  // Remove item
+  /** Remove item */
   const remove = async (lineItemId: string) => {
     const activeAuth = await ensureAuth();
 
@@ -184,64 +202,62 @@ const add = async (
     setCart(data?.cart || { lineItems: [] });
   };
 
-const checkout = async () => {
-  const activeAuth = await ensureAuth();
+  /** Checkout */
+  const checkout = async () => {
+    const activeAuth = await ensureAuth();
 
-  if (!cart?.lineItems?.length) {
-    console.error("Cannot checkout, cart is empty");
-    return;
-  }
-
-  try {
-    // 1. Estimate totals (important for shipping/tax)
-    const estimateRes = await fetch(`${BASE_URL}/carts/current/estimate-totals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${activeAuth.access_token}`,
-      },
-      body: JSON.stringify({
-        calculateTax: false,
-        calculateShipping: true,
-      }),
-    });
-
-    if (!estimateRes.ok) {
-      const errorText = await estimateRes.text();
-      throw new Error(`Estimate totals failed: ${errorText}`);
+    if (!cart?.lineItems?.length) {
+      console.error("Cannot checkout, cart is empty");
+      return;
     }
 
-    // 2. Create checkout session
-    const checkoutRes = await fetch(`${BASE_URL}/carts/current/create-checkout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${activeAuth.access_token}`,
-      },
-      body: JSON.stringify({ channelType: "WEB" }),
-    });
+    try {
+      await fetch(`${BASE_URL}/carts/current/estimate-totals`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${activeAuth.access_token}`,
+        },
+        body: JSON.stringify({
+          calculateTax: false,
+          calculateShipping: true,
+        }),
+      });
 
-    if (!checkoutRes.ok) {
-      const errorText = await checkoutRes.text();
-      throw new Error(`Create checkout failed: ${errorText}`);
+      const checkoutRes = await fetch(`${BASE_URL}/carts/current/create-checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${activeAuth.access_token}`,
+        },
+        body: JSON.stringify({ channelType: "WEB" }),
+      });
+
+      const checkoutData = await checkoutRes.json();
+
+      if (checkoutData.checkoutUrl) {
+        window.location.href = checkoutData.checkoutUrl;
+      } else if (checkoutData.checkoutId) {
+        window.location.href = `https://www.kokofresh.in/checkout?checkoutId=${checkoutData.checkoutId}`;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
     }
+  };
 
-    const checkoutData = await checkoutRes.json();
-
-    // 3. Redirect
-    if (checkoutData.checkoutUrl) {
-      window.location.href = checkoutData.checkoutUrl;
-    } else if (checkoutData.checkoutId) {
-      // fallback: build URL manually
-      window.location.href = `https://www.kokofresh.in/checkout?checkoutId=${checkoutData.checkoutId}`;
-    } else {
-      throw new Error("No checkout URL returned");
-    }
-  } catch (err) {
-    console.error("Checkout error:", err);
-  }
-};
-
+  /** 🔄 Init on mount */
+  useEffect(() => {
+    (async () => {
+      try {
+        const activeAuth = await ensureAuth();
+        await load(activeAuth);
+      } catch (e) {
+        console.error("Cart init failed", e);
+      }
+    })();
+  }, []);
 
   return (
     <CartContext.Provider value={{ cart, loading, add, updateQuantity, remove, checkout }}>
