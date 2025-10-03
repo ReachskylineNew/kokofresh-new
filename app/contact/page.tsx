@@ -24,8 +24,7 @@ import {
   Package,
   Users,
 } from "lucide-react"
-import PhoneInput from "react-phone-input-2"
-import "react-phone-input-2/lib/style.css"
+
 
 
 export default function ContactPage() {
@@ -266,20 +265,19 @@ export default function ContactPage() {
                   />
                 </div>
 
-               <div>
-                  <label className="block text-sm font-bold mb-2">Phone</label>
-                  <PhoneInput
-                    country={"in"}
-                    value={formData.phone}
-                    onChange={handlePhoneChange}
-                    inputStyle={{
-                      width: "100%",
-                      border: "2px solid #ccc",
-                      borderRadius: "8px",
-                      padding: "12px",
-                    }}
-                  />
-                </div>
+           <div>
+  <label className="block text-sm font-bold text-card-foreground mb-2">Phone *</label>
+  <Input
+    type="tel"
+    name="phone"
+    value={formData.phone}
+    onChange={handleChange}
+    placeholder="Enter without +91, we’ll add it automatically"
+    className="border-2 border-muted focus:border-primary"
+    required
+  />
+</div>
+
 
                 <div>
                   <label className="block text-sm font-bold text-card-foreground mb-2">What's This About? *</label>
