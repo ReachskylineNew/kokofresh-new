@@ -2,9 +2,26 @@ import { NextResponse } from "next/server";
 import { createClient, ApiKeyStrategy } from "@wix/sdk";
 import { submissions } from "@wix/forms";
 
+const formId = "43e1b278-34a0-4787-9527-195359e8e69b";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    console.log("📥 Incoming body:", body);
+
+    const incoming = body.submission?.submissions || {};
+
+    // ✅ No remap needed if frontend already uses Wix schema keys
+    const submission = {
+      formId,
+      status: "PENDING" as const,
+      seen: false,
+      submissions: {
+        ...incoming, // trust frontend keys
+      },
+    };
+
+    console.log("🚀 Final payload to Wix:", JSON.stringify(submission, null, 2));
 
     const wixClient = createClient({
       modules: { submissions },
@@ -15,31 +32,23 @@ export async function POST(req: Request) {
       }),
     });
 
-    const payload = {
-      submission: {
-        formId: "1654cfeb-5d1b-4fc0-8589-0ecc2b5b153e",
-        submissions: {
-          formId: "1654cfeb-5d1b-4fc0-8589-0ecc2b5b153e", // 👈 duplicate inside map
-          first_name: body.first_name,
-          last_name: body.last_name,
-          email_5308: body.email_5308,
-          phone_0187: body.phone_0187,
-          leave_us_a_message: body.leave_us_a_message,
-        },
-        status: "PENDING",
-      },
-    };
+    const createdSubmission = await wixClient.submissions.createSubmission(submission);
 
-    console.log("🚀 Final Payload Sent to Wix:", JSON.stringify(payload, null, 2));
+    console.log("✅ Success! Wix returned:", createdSubmission);
 
-    const result = await wixClient.submissions.createSubmission(payload);
-
-    return NextResponse.json(result);
-  } catch (err: any) {
-    console.error("❌ Form submission failed:", err?.response?.data || err);
+    return NextResponse.json({
+      success: true,
+      data: createdSubmission.submissions,
+    });
+  } catch (error: any) {
+    console.error("❌ Form submission failed:", error?.response?.data || error);
     return NextResponse.json(
-      { error: err?.response?.data?.message || "Internal Server Error" },
-      { status: err?.status || 500 }
+      {
+        success: false,
+        error: error?.response?.data?.message || error.message || "Internal Server Error",
+        details: error?.response?.data || null,
+      },
+      { status: error?.status || 500 }
     );
   }
 }

@@ -1,10 +1,13 @@
 "use client"
-import { Navigation } from "@/components/navigation"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
+
+import { useState } from "react"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
 import {
   ArrowRight,
   Mail,
@@ -21,15 +24,107 @@ import {
   Package,
   Users,
 } from "lucide-react"
+import PhoneInput from "react-phone-input-2"
+import "react-phone-input-2/lib/style.css"
+
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    topic: "",
+    message: "",
+    newsletter: false,
+  })
+
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, type, value } = e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : value,
+    })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+    setSuccess(false)
+
+    try {
+      // ✅ Map frontend → Wix schema keys
+      const submissions: Record<string, any> = {}
+
+      if (formData.first_name) submissions["first_name_7a97"] = formData.first_name
+      if (formData.last_name) submissions["last_name_8c5e"] = formData.last_name
+      if (formData.email) submissions["email_0b8a"] = formData.email
+      if (formData.phone) {
+        submissions["phone_6f6c"] = formData.phone.startsWith("+91")
+          ? formData.phone
+          : `+91${formData.phone}`
+      }
+      if (formData.topic) submissions["topic"] = formData.topic
+      if (formData.message) submissions["message"] = formData.message
+      submissions["form_field_4f50"] = formData.newsletter
+
+      const payload = {
+        submission: {
+          submissions,
+          status: "PENDING",
+        },
+      }
+
+      console.log("📦 Final payload:", payload)
+
+      const res = await fetch("/api/form-submission", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      const result = await res.json()
+      if (res.ok && result.success) {
+        setSuccess(true)
+        setFormData({
+          first_name: "",
+          last_name: "",
+          email: "",
+          phone: "",
+          topic: "",
+          message: "",
+          newsletter: false,
+        })
+      } else {
+        setError(result.error || "Something went wrong")
+      }
+    } catch (err) {
+      console.error(err)
+      setError("Network error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+ const handlePhoneChange = (value: string) => {
+  setFormData((prev) => ({ ...prev, phone: value }))
+}
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
 
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/5">
-        {/* Floating spice elements */}
         <div className="absolute top-20 left-10 w-16 h-16 bg-orange-500/20 rounded-full blur-xl float-animation" />
         <div
           className="absolute bottom-32 right-16 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl float-animation"
@@ -119,7 +214,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contact Form */}
+      {/* Contact Form (Updated with working logic) */}
       <section className="py-20 bg-card/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -133,61 +228,118 @@ export default function ContactPage() {
 
           <Card className="border-2 border-primary/20 shadow-xl">
             <CardContent className="p-8">
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-bold text-card-foreground mb-2">First Name *</label>
                     <Input
+                      name="first_name"
+                      value={formData.first_name}
+                      onChange={handleChange}
                       placeholder="What should we call you?"
                       className="border-2 border-muted focus:border-primary"
+                      required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-card-foreground mb-2">Email Address *</label>
+                    <label className="block text-sm font-bold text-card-foreground mb-2">Last Name</label>
                     <Input
-                      type="email"
-                      placeholder="your.email@example.com"
+                      name="last_name"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      placeholder="(Optional)"
                       className="border-2 border-muted focus:border-primary"
                     />
                   </div>
                 </div>
 
                 <div>
+                  <label className="block text-sm font-bold text-card-foreground mb-2">Email Address *</label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="your.email@example.com"
+                    className="border-2 border-muted focus:border-primary"
+                    required
+                  />
+                </div>
+
+               <div>
+                  <label className="block text-sm font-bold mb-2">Phone</label>
+                  <PhoneInput
+                    country={"in"}
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
+                    inputStyle={{
+                      width: "100%",
+                      border: "2px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "12px",
+                    }}
+                  />
+                </div>
+
+                <div>
                   <label className="block text-sm font-bold text-card-foreground mb-2">What's This About? *</label>
-                  <select className="w-full p-3 border-2 border-muted focus:border-primary rounded-md bg-background">
-                    <option>Choose your topic...</option>
-                    <option>Product Questions</option>
-                    <option>Order Support</option>
-                    <option>Recipe Help</option>
-                    <option>Business Inquiry</option>
-                    <option>Feedback & Suggestions</option>
-                    <option>Press & Media</option>
-                    <option>Just Saying Hi!</option>
+                  <select
+                    name="topic"
+                    value={formData.topic}
+                    onChange={handleChange}
+                    className="w-full p-3 border-2 border-muted focus:border-primary rounded-md bg-background"
+                    required
+                  >
+                    <option value="">Choose your topic...</option>
+                    <option value="Product Questions">Product Questions</option>
+                    <option value="Order Support">Order Support</option>
+                    <option value="Recipe Help">Recipe Help</option>
+                    <option value="Business Inquiry">Business Inquiry</option>
+                    <option value="Feedback & Suggestions">Feedback & Suggestions</option>
+                    <option value="Press & Media">Press & Media</option>
+                    <option value="Just Saying Hi!">Just Saying Hi!</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-card-foreground mb-2">Tell Us More *</label>
                   <Textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     placeholder="Spill the tea... or should we say, spill the spices? 🌶️"
                     rows={6}
                     className="border-2 border-muted focus:border-primary resize-none"
+                    required
                   />
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <input type="checkbox" id="newsletter" className="rounded border-2 border-muted" />
+                  <input
+                    type="checkbox"
+                    id="newsletter"
+                    name="newsletter"
+                    checked={formData.newsletter}
+                    onChange={handleChange}
+                    className="rounded border-2 border-muted"
+                  />
                   <label htmlFor="newsletter" className="text-sm text-muted-foreground">
-                    Yes, I want to receive recipe tips, new product updates, and exclusive offers! (We promise not to
-                    spam - we're too busy grinding spices for that)
+                    Yes, I want to receive recipe tips, new product updates, and exclusive offers!
                   </label>
                 </div>
 
+                {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
+                {success && (
+                  <p className="text-green-600 text-sm font-bold">✅ Thank you! Your message has been submitted.</p>
+                )}
+
                 <Button
+                  type="submit"
                   size="lg"
+                  disabled={loading}
                   className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg py-4"
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </form>
@@ -196,7 +348,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
+            {/* FAQ Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -399,6 +551,8 @@ export default function ContactPage() {
           <p className="text-sm mt-6 opacity-75">✨ Response time: Usually under 2 hours ✨</p>
         </div>
       </section>
+
+
 
       <Footer />
     </div>
