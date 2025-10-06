@@ -38,6 +38,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<VisitorAuth | null>(null);
 
+  // Create or refresh visitor tokens and persist them in cookies
+  const fetchAndPersistTokens = async (existingRefreshToken?: string): Promise<VisitorAuth> => {
+    const res = await fetch("/api/visitor-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(existingRefreshToken ? { refreshToken: existingRefreshToken } : {}),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Failed to obtain visitor tokens: ${errorText}`);
+    }
+
+    const data = await res.json();
+    const accessToken = data.access_token as string;
+    const refreshToken = (data.refresh_token as string) || existingRefreshToken;
+    const expiresIn = (data.expires_in as number) ?? 3600; // seconds
+
+    const expiresAtMs = Date.now() + expiresIn * 1000;
+
+    // Persist in cookies in the shape this file expects
+    Cookies.set(
+      "accessToken",
+      JSON.stringify({ value: accessToken, expiresAt: Math.floor(expiresAtMs / 1000) }),
+      { sameSite: "Lax" }
+    );
+    if (refreshToken) {
+      // refresh token usually has long expiry, we still store similarly
+      Cookies.set("refreshToken", JSON.stringify({ value: refreshToken }), { sameSite: "Lax" });
+    }
+
+    const newAuth: VisitorAuth = {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: expiresAtMs,
+    };
+    setAuth(newAuth);
+    return newAuth;
+  };
+
 const ensureAuth = async (): Promise<VisitorAuth> => {
   if (auth && Date.now() < auth.expires_at) return auth;
 
@@ -51,18 +91,23 @@ const ensureAuth = async (): Promise<VisitorAuth> => {
   if (refreshRaw) parsedRefresh = JSON.parse(refreshRaw);
 
   if (parsedAccess?.value && parsedRefresh?.value) {
+    // If access token is near expiry (<= 10s), proactively refresh
+    const expiresAtMs = parsedAccess.expiresAt ? parsedAccess.expiresAt * 1000 : Date.now();
+    if (Date.now() + 10_000 >= expiresAtMs) {
+      return fetchAndPersistTokens(parsedRefresh.value);
+    }
+
     const newAuth: VisitorAuth = {
       access_token: parsedAccess.value,
       refresh_token: parsedRefresh.value,
-      expires_at: parsedAccess.expiresAt
-        ? parsedAccess.expiresAt * 1000
-        : Date.now() + 3600 * 1000,
+      expires_at: expiresAtMs,
     };
     setAuth(newAuth);
     return newAuth;
   }
 
-  throw new Error("No valid auth tokens in cookies");
+  // No cookies yet → create anonymous visitor tokens
+  return fetchAndPersistTokens(parsedRefresh?.value);
 };
 
 
@@ -140,8 +185,18 @@ const add = async (
   });
 
   if (res.status === 401) {
-    const refreshed = await ensureAuth();
-    return add(productId, qty, options, variantId); // retry with fresh token
+    // Try refreshing using refreshToken via backend, then retry once
+    const refreshRaw = Cookies.get("refreshToken");
+    let parsedRefresh: any = null;
+    if (refreshRaw) {
+      try { parsedRefresh = JSON.parse(refreshRaw); } catch {}
+    }
+    try {
+      await fetchAndPersistTokens(parsedRefresh?.value);
+      return add(productId, qty, options, variantId);
+    } catch (e) {
+      // fallthrough to parse error
+    }
   }
 
   const data = await res.json();
