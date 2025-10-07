@@ -177,7 +177,7 @@ export default function HomePage() {
     </div>
 
     <h1 className="font-black text-6xl md:text-8xl lg:text-9xl mb-6 text-balance bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent leading-tight">
-      Flavourz Of India
+      KoKoFresh
     </h1>
 
     <p className="text-2xl md:text-3xl mb-4 text-balance font-bold text-white">
