@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Head from "next/head"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -40,6 +41,8 @@ export default function ProductPage() {
   const [activeTab, setActiveTab] = useState("description")
   const [error, setError] = useState<string | null>(null)
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
+  const [allProducts, setAllProducts] = useState<any[]>([])
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([])
 
   useEffect(() => {
     const load = async () => {
@@ -48,10 +51,6 @@ export default function ProductPage() {
         if (!res.ok) throw new Error("Failed to load product")
         const data = await res.json()
         setProduct(data.product)
-
-        console.log("Product data:", data.product)
-        console.log("Product visibility:", data.product.visibility)
-        console.log("Product inStock:", data.product.stock?.inStock)
 
         if (data.product?.productOptions?.length) {
           const defaults: Record<string, string> = {}
@@ -68,12 +67,61 @@ export default function ProductPage() {
     if (productId) load()
   }, [productId])
 
-  const selectedVariant = product ? getVariant(product, selectedOptions) : null
-  console.log("Selected options:", selectedOptions)
-  console.log("Selected variant:", selectedVariant)
-  console.log("Variant inStock:", selectedVariant?.stock?.inStock)
+  const inferCategory = (p: any): "Masala" | "Chutney" => {
+    const name = (p?.name || "").toLowerCase()
+    const type = (p?.productType || "").toLowerCase()
+    if (type.includes("chutney") || name.includes("chutney")) return "Chutney"
+    return "Masala"
+  }
 
-  const displayPrice = selectedVariant?.variant?.priceData?.price ?? product?.priceData?.price ?? product?.price?.price
+  useEffect(() => {
+    const loadAll = async () => {
+      if (!product) return
+      try {
+        const res = await fetch(`/api/products`, { cache: "no-store" })
+        if (!res.ok) throw new Error("Failed to load products")
+        const data = await res.json()
+        const productsList = (data.products || []).map((p: any) => ({
+          ...p,
+          _category: inferCategory(p),
+        }))
+        setAllProducts(productsList)
+
+        const currentId = product._id || product.id || product.slug
+        const currentCategory = inferCategory(product)
+        const related = productsList
+          .filter((p: any) => (p._id || p.id || p.slug) !== currentId)
+          .filter((p: any) => p._category === currentCategory)
+          .slice(0, 4)
+        setRelatedProducts(related)
+      } catch (e: any) {
+        console.error(e)
+      }
+    }
+    loadAll()
+  }, [product])
+
+  // Keep pretty URL in address bar after product loads
+  useEffect(() => {
+    if (!product) return
+    if (typeof window === "undefined") return
+    const params = new URLSearchParams(window.location.search)
+    const hasQueryId = params.get("id")
+    const isProductPath = window.location.pathname.startsWith("/product")
+    if (isProductPath && hasQueryId) {
+      const prettyPath = `/product/${product?.slug || product?._id || ""}`
+      if (prettyPath && window.location.pathname + window.location.search !== prettyPath) {
+        window.history.replaceState(null, "", prettyPath)
+      }
+    }
+  }, [product])
+
+  const selectedVariant = product ? getVariant(product, selectedOptions) : null
+
+  const displayPrice =
+    selectedVariant?.variant?.priceData?.price ??
+    product?.priceData?.price ??
+    product?.price?.price
 
   const displayPriceFormatted =
     selectedVariant?.variant?.priceData?.formatted?.price ??
@@ -83,16 +131,27 @@ export default function ProductPage() {
 
   const inStock = selectedVariant?.stock?.inStock ?? product?.stock?.inStock ?? true
 
+  const getProductImage = (p: any): string => {
+    return (
+      p?.media?.mainMedia?.image?.url ||
+      p?.media?.items?.[0]?.image?.url ||
+      "/placeholder.svg"
+    )
+  }
+
+  const getFormattedPrice = (p: any): string => {
+    return (
+      p?.priceData?.formatted?.price ||
+      p?.price?.formatted?.price ||
+      (p?.priceData?.price ? `₹${p.priceData.price}` : "₹0")
+    )
+  }
+
   const handleAddToCart = async () => {
     try {
       if (!inStock) throw new Error("Out of stock")
 
       const optionArray = Object.entries(selectedOptions).map(([name, value]) => ({ name, value }))
-
-      console.log("✅ Using product._id for catalogItemId:", product._id)
-      console.log("✅ VariantId:", selectedVariant?._id)
-      console.log("✅ Options:", optionArray)
-
       await add(product._id, quantity, optionArray, selectedVariant?._id)
 
       toast.success("Added to cart", {
@@ -134,6 +193,23 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
+      {/* ✅ SEO Head Section */}
+      <Head>
+        {product && (
+          <>
+            <title>{product.name} | Koko Fresh</title>
+            <meta
+              name="description"
+              content={product.description?.replace(/<[^>]+>/g, "").slice(0, 150) || ""}
+            />
+            <link
+              rel="canonical"
+              href={`https://www.kokofresh.in/product/${product.slug || product._id}`}
+            />
+          </>
+        )}
+      </Head>
+
       <Navigation />
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
@@ -550,6 +626,55 @@ export default function ProductPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="font-serif text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+              Related {inferCategory(product) === "Masala" ? "Masalas" : "Chutneys"}
+            </h2>
+            <Link href="/shop" className="text-sm text-orange-600 hover:underline">View all</Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {relatedProducts.map((rp: any) => {
+              const rpId = rp._id || rp.id || ""
+              return (
+                <Link key={rpId} href={`/product?id=${rp.slug || rpId}`}>
+                  <Card className="group cursor-pointer overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white rounded-xl">
+                    <CardContent className="p-0">
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={getProductImage(rp)}
+                          alt={rp.name}
+                          className="object-cover w-full h-40 sm:h-44 lg:h-48 group-hover:scale-105 transition-all duration-500"
+                        />
+                        {rp.ribbon && (
+                          <Badge className="absolute top-2 left-2 bg-orange-500 text-white">{rp.ribbon}</Badge>
+                        )}
+                      </div>
+                      <div className="p-3 sm:p-4">
+                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                          {rp.name}
+                        </h3>
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-base sm:text-lg font-bold text-orange-600">
+                            {getFormattedPrice(rp)}
+                          </span>
+                          {rp.stock?.inStock === false && (
+                            <Badge variant="destructive" className="text-xs">Out of Stock</Badge>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

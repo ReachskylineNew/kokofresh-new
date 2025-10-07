@@ -181,14 +181,14 @@ export default function ContactPage() {
                 icon: <Mail className="h-12 w-12 text-primary" />,
                 title: "Email Us",
                 description: "For detailed questions or business inquiries. We reply within 24 hours.",
-                action: "hello@kokofresh.com",
+                action: "help@kokofresh.in",
                 highlight: "Most Detailed",
               },
               {
                 icon: <Phone className="h-12 w-12 text-primary" />,
                 title: "Call Us",
                 description: "Sometimes you just need to talk it out. We get it.",
-                action: "+91 98765 43210",
+                action: "+91 9626899770",
                 highlight: "Most Personal",
               },
             ].map((method, index) => (
@@ -272,7 +272,7 @@ export default function ContactPage() {
     name="phone"
     value={formData.phone}
     onChange={handleChange}
-    placeholder="Enter without +91, we’ll add it automatically"
+    
     className="border-2 border-muted focus:border-primary"
     required
   />
@@ -456,7 +456,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-bold text-lg mb-1">Email Addresses</h3>
                     <p className="text-muted-foreground">
-                      General: hello@kokofresh.com
+                      General: help@kokofresh.in
                       <br />
                       Business: business@kokofresh.com
                       <br />
@@ -466,32 +466,59 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-8">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-                >
-                  <Instagram className="mr-2 h-4 w-4" />
-                  @kokofresh
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-                >
-                  <Twitter className="mr-2 h-4 w-4" />
-                  @kokofresh
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-                >
-                  <Youtube className="mr-2 h-4 w-4" />
-                  Flavourz India
-                </Button>
-              </div>
+            <div className="flex gap-4 mt-8">
+  {/* Instagram */}
+  <Button
+    asChild
+    variant="outline"
+    size="sm"
+    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+  >
+    <a
+      href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Instagram className="mr-2 h-4 w-4" />
+      @koko_fresh_india
+    </a>
+  </Button>
+
+  {/* X (Twitter) */}
+  <Button
+    asChild
+    variant="outline"
+    size="sm"
+    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+  >
+    <a
+      href="https://x.com/KOKOFresh_IN"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Twitter className="mr-2 h-4 w-4" />
+      @KOKOFresh_IN
+    </a>
+  </Button>
+
+  {/* YouTube */}
+  <Button
+    asChild
+    variant="outline"
+    size="sm"
+    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+  >
+    <a
+      href="https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Youtube className="mr-2 h-4 w-4" />
+      KOKO Fresh
+    </a>
+  </Button>
+</div>
+
             </div>
 
 <div className="relative">
@@ -537,14 +564,22 @@ export default function ContactPage() {
               Start Live Chat
               <MessageCircle className="ml-2 h-5 w-5" />
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-lg px-8 py-4 bg-transparent"
-            >
-              <Instagram className="mr-2 h-5 w-5" />
-              DM Us on Instagram
-            </Button>
+      <Button
+  asChild
+  size="lg"
+  variant="outline"
+  className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-lg px-8 py-4 bg-transparent"
+>
+  <a
+    href="https://www.instagram.com/koko_fresh_india?igshid=MmVlMjlkMTBhMg=="
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Instagram className="mr-2 h-5 w-5" />
+    DM Us on Instagram
+  </a>
+</Button>
+
           </div>
           <p className="text-sm mt-6 opacity-75">✨ Response time: Usually under 2 hours ✨</p>
         </div>

@@ -38,6 +38,23 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<any[]>([])
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
 
+  const extractTracking = (order: any): { id: string; url: string } | null => {
+    // Try common Wix eCom order structures for tracking data
+    const possibleIds: (string | undefined)[] = [
+      order?.fulfillments?.[0]?.trackingInfo?.trackingNumber,
+      order?.fulfillments?.[0]?.trackingInfo?.number,
+      order?.shippingInfo?.deliveries?.[0]?.trackingInfo?.trackingNumber,
+      order?.shippingInfo?.deliveries?.[0]?.trackingInfo?.number,
+      order?.shippingInfo?.trackingNumber,
+      order?.trackingNumber,
+    ]
+    const trackingId = possibleIds.find(Boolean) as string | undefined
+    if (!trackingId) return null
+
+    const url = `https://shiprocket.co/tracking/${encodeURIComponent(trackingId)}`
+    return { id: trackingId, url }
+  }
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!contact?._id) return
@@ -46,6 +63,7 @@ export default function ProfilePage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contactId: contact._id }),
+          cache: "no-store",
         })
 
         const data = await res.json()
@@ -55,12 +73,24 @@ export default function ProfilePage() {
 
         setOrders(filteredOrders)
         console.log("🛒 Orders (after local filter):", filteredOrders)
+        try {
+          filteredOrders.forEach((o: any) => {
+            const nums = (o?.tracking || []).map((t: any) => t?.trackingNumber).filter(Boolean)
+            if (nums.length) {
+              console.log("🔎 tracking for order", o._id, nums)
+            } else {
+              console.log("🔎 no tracking for order", o._id)
+            }
+          })
+        } catch {}
       } catch (err) {
         console.error("Failed to fetch orders:", err)
       }
     }
     fetchOrders()
   }, [contact])
+
+  // No separate tracking fetch needed; orders API now returns order.tracking
 
   const toggleExpand = (id: string) => {
     setExpandedOrder(expandedOrder === id ? null : id)
@@ -407,6 +437,10 @@ const handleSave = async () => {
                 ) : (
                   <div className="divide-y divide-border">
                     {orders.map((order, index) => {
+                      const primary = order?.tracking?.[0]
+                      const tracking = primary?.trackingNumber
+                        ? { id: primary.trackingNumber, url: primary.trackingLink || `https://shiprocket.co/tracking/${encodeURIComponent(primary.trackingNumber)}` }
+                        : extractTracking(order)
                       const isExpanded = expandedOrder === order._id
                       return (
                         <div key={order._id} className="bg-background">
@@ -420,10 +454,42 @@ const handleSave = async () => {
                                   <span className="font-bold text-foreground text-base lg:text-lg xl:text-lg">
                                     #{order.number}
                                   </span>
-                                  <Badge className="bg-primary/10 text-primary border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1">
-                                    Track Order
-                                  </Badge>
+                                  {order?.orderStatus && (
+                                    <Badge className={
+                                      `border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1 ` +
+                                      (order.orderStatus === "Delivered"
+                                        ? "bg-green-600 text-white"
+                                        : order.orderStatus === "Shipped"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-amber-500 text-white")
+                                    }>
+                                      {order.orderStatus}
+                                    </Badge>
+                                  )}
+                                  
+                                  {tracking ? (
+                                    <a
+                                      href={tracking.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="inline-flex items-center"
+                                    >
+                                      <Badge className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1">
+                                        Track Package
+                                      </Badge>
+                                    </a>
+                                  ) : (
+                                    <Badge className="bg-primary/10 text-primary border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1">
+                                      Track Order
+                                    </Badge>
+                                  )}
                                 </div>
+                                {tracking && (
+                                  <p className="text-xs lg:text-xs text-muted-foreground mt-1">
+                                    Tracking: {tracking.id}
+                                  </p>
+                                )}
                                 <p className="text-muted-foreground text-sm lg:text-sm">
                                   {new Date(order._createdDate).toLocaleDateString(undefined, {
                                     month: "short",
@@ -452,6 +518,24 @@ const handleSave = async () => {
                           {isExpanded && (
                             <div className="bg-muted/20 px-4 py-4 lg:px-6 lg:py-6 border-t">
                               <div className="space-y-4 lg:space-y-6">
+                                {tracking && (
+                                  <div className="bg-background rounded-xl p-4 lg:p-5 border shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <p className="text-sm lg:text-sm text-muted-foreground">Tracking ID</p>
+                                        <p className="font-semibold text-foreground text-base lg:text-base break-all">{tracking.id}</p>
+                                      </div>
+                                      <a
+                                        href={tracking.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex"
+                                      >
+                                        <Button size="sm" className="h-9 lg:h-9">Open Tracking</Button>
+                                      </a>
+                                    </div>
+                                  </div>
+                                )}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                                   {order.lineItems?.map((item: any, i: number) => (
                                     <div key={i} className="bg-background rounded-xl p-4 lg:p-5 border shadow-sm">
@@ -580,7 +664,7 @@ const handleSave = async () => {
                 </Label>
                 <Input
                   id="phone"
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 9626899770"
                   value={form.phone}
                   onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
                   className="h-12 lg:h-12 text-base lg:text-base"

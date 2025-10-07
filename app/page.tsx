@@ -374,80 +374,116 @@ export default function HomePage() {
       </section>
 
       {/* UGC Section - Social Media Native */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
-              The <span className="text-primary">#FlavourzChallenge</span>
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Our community is serving looks AND flavors. Join the movement.
-            </p>
-            <div className="flex justify-center gap-4 mb-8">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-              >
-                <Instagram className="mr-2 h-4 w-4" />
-                Follow @kokofresh
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-              >
-                <Twitter className="mr-2 h-4 w-4" />
-                Tweet #FlavourzChallenge
-              </Button>
-            </div>
-          </div>
+  <section className="py-20">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
+        The <span className="text-primary">#FlavourzChallenge</span>
+      </h2>
+      <p className="text-xl text-muted-foreground mb-8">
+        Our community is serving looks AND flavors. Join the movement.
+      </p>
 
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {reels.map((reel) => (
-              <div
-                key={reel._id}
-                className="rounded-lg shadow-lg p-2 bg-white/10 backdrop-blur-sm border border-white/20"
-              >
-                <iframe
-                  src={`${reel.url}embed`}
-                  width="100%"
-                  height="500"
-                  frameBorder="0"
-                  scrolling="no"
-                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                  className="rounded-lg"
-                />
-                <h3 className="mt-2 text-lg font-semibold text-danger">{reel.title}</h3>
-                {reel.thumbnail && <p className="text-gray-300 text-sm">{reel.thumbnail}</p>}
-              </div>
-            ))}
-          </div>
+      {/* ✅ Social Buttons with Real Links */}
+      <div className="flex justify-center gap-4 mb-8">
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+        >
+          <a
+            href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Instagram className="mr-2 h-4 w-4" />
+            Follow @kokofresh
+          </a>
+        </Button>
 
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
+        >
+          <a
+            href="https://x.com/KOKOFresh_IN"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Twitter className="mr-2 h-4 w-4" />
+            Tweet #FlavourzChallenge
+          </a>
+        </Button>
+      </div>
+    </div>
 
-
-          {/* CTA */}
-          <div className="text-center">
-            <p className="text-lg text-muted-foreground mb-6">
-              Ready to join the flavor revolution? Tag us and get featured!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold">
-                <Instagram className="mr-2 h-5 w-5" />
-                Post Your Creation
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold bg-transparent"
-              >
-                <Youtube className="mr-2 h-5 w-5" />
-                Watch Tutorials
-              </Button>
-            </div>
-          </div>
+    {/* Reels Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {reels.map((reel) => (
+        <div
+          key={reel._id}
+          className="rounded-lg shadow-lg p-2 bg-white/10 backdrop-blur-sm border border-white/20"
+        >
+          <iframe
+            src={`${reel.url}embed`}
+            width="100%"
+            height="500"
+            frameBorder="0"
+            scrolling="no"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            className="rounded-lg"
+          />
+          <h3 className="mt-2 text-lg font-semibold text-danger">{reel.title}</h3>
+          {reel.thumbnail && (
+            <p className="text-gray-300 text-sm">{reel.thumbnail}</p>
+          )}
         </div>
-      </section>
+      ))}
+    </div>
+
+    {/* CTA Section */}
+    <div className="text-center">
+      <p className="text-lg text-muted-foreground mb-6">
+        Ready to join the flavor revolution? Tag us and get featured!
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <Button
+          asChild
+          size="lg"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
+        >
+          <a
+            href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Instagram className="mr-2 h-5 w-5" />
+            Post Your Creation
+          </a>
+        </Button>
+
+        <Button
+          asChild
+          size="lg"
+          variant="outline"
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-bold bg-transparent"
+        >
+          <a
+            href="https://www.youtube.com/@kokofresh"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Youtube className="mr-2 h-5 w-5" />
+            Watch Tutorials
+          </a>
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Final CTA Banner */}
       <section className="py-20 bg-gradient-to-r from-primary to-secondary text-primary-foreground">

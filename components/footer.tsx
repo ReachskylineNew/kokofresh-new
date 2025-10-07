@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, Twitter, Youtube, Facebook } from "lucide-react"
+import { Instagram, Twitter, Youtube, Linkedin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -16,17 +16,17 @@ export function Footer() {
               Premium Indian spices for the modern kitchen. Every spice tells a story, every blend creates memories.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-primary transition-colors">
                 <Instagram className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://x.com/KOKOFresh_IN" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-muted-foreground hover:text-primary transition-colors">
                 <Youtube className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
+              <Link href="https://www.linkedin.com/company/kokofresh" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary transition-colors">
+                <Linkedin className="h-5 w-5" />
               </Link>
             </div>
           </div>

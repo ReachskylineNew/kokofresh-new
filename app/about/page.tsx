@@ -93,7 +93,7 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <img src="/young-indian-woman-grinding-spices-in-modern-kitch.jpg" alt="Founder grinding spices" className="rounded-2xl shadow-2xl" />
+              <img src="https://static.wixstatic.com/media/e7c120_ce0ff968287e4081b9ab31d83201aa9d~mv2.png" alt="Founder grinding spices" className="rounded-2xl shadow-2xl" />
               <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-xl">
                 <div className="text-3xl font-black mb-2">100K+</div>
                 <div className="text-sm">Happy Customers</div>
@@ -279,14 +279,22 @@ export default function AboutPage() {
               Start Your Flavor Journey
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-lg px-8 py-4 bg-transparent"
-            >
-              <Instagram className="mr-2 h-5 w-5" />
-              Follow Our Journey
-            </Button>
+          <Button
+  asChild
+  size="lg"
+  variant="outline"
+  className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-lg px-8 py-4 bg-transparent"
+>
+  <a
+    href="https://www.instagram.com/koko_fresh_india?igshid=MmVlMjlkMTBhMg=="
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <Instagram className="mr-2 h-5 w-5" />
+    Follow Our Journey
+  </a>
+</Button>
+
           </div>
           <p className="text-sm mt-6 opacity-75">✨ Use code STORY20 for 20% off your first order ✨</p>
         </div>
