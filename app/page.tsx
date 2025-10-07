@@ -22,6 +22,7 @@ import {
   Youtube,
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 
 type Product = {
   _id?: string
@@ -316,34 +317,40 @@ export default function HomePage() {
   </div>
 ) : (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {products.map((product, index) => (
-      <Card
-        key={product._id || product.id || index}
-        className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden border"
-      >
-        <CardContent className="p-0">
-          <div className="relative h-64 overflow-hidden">
-            <img
-              src={getProductImage(product)}
-              alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 text-white">
-              <h3 className="font-bold text-xl">{product.name}</h3>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    ))}
+    {products.map((product, index) => {
+      const pid = product.slug || product._id || product.id || ""
+      return (
+        <Link key={product._id || product.id || index} href={`/product?id=${pid}`}>
+          <Card
+            className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden border"
+          >
+            <CardContent className="p-0">
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={getProductImage(product)}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="font-bold text-xl">{product.name}</h3>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      )
+    })}
   </div>
 )}
 
 
           <div className="text-center mt-12">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4">
-              Shop All Spices
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4">
+              <Link href="/shop">
+                Shop All Spices
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
             </Button>
           </div>
         </div>
@@ -422,27 +429,34 @@ export default function HomePage() {
 
     {/* Reels Grid */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-      {reels.map((reel) => (
-        <div
-          key={reel._id}
-          className="rounded-lg shadow-lg p-2 bg-white/10 backdrop-blur-sm border border-white/20"
-        >
-          <iframe
-            src={`${reel.url}embed`}
-            width="100%"
-            height="500"
-            frameBorder="0"
-            scrolling="no"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            className="rounded-lg"
-          />
-          <h3 className="mt-2 text-lg font-semibold text-danger">{reel.title}</h3>
-          {reel.thumbnail && (
-            <p className="text-gray-300 text-sm">{reel.thumbnail}</p>
-          )}
-        </div>
-      ))}
+  {reels.map((reel) => (
+    <div
+      key={reel._id}
+      className="rounded-lg shadow-lg p-2 bg-white/10 backdrop-blur-sm border border-white/20"
+    >
+      <div className="relative w-full overflow-hidden rounded-lg">
+        <iframe
+          src={`${reel.url}embed`}
+          width="100%"
+          height="500"
+          frameBorder="0"
+          scrolling="no"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+          className="rounded-lg w-full min-h-[450px] md:min-h-[500px] scale-[1.01] origin-top"
+          style={{
+            transformOrigin: "top center",
+          }}
+        />
+      </div>
+
+      {/* <h3 className="mt-2 text-lg font-semibold text-danger">{reel.title}</h3>
+      {reel.thumbnail && (
+        <p className="text-gray-300 text-sm">{reel.thumbnail}</p>
+      )} */}
     </div>
+  ))}
+</div>
+
 
     {/* CTA Section */}
     <div className="text-center">
