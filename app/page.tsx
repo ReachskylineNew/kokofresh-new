@@ -3,6 +3,7 @@ import { Navigation }  from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
   ArrowRight,
   Star,
@@ -20,9 +21,12 @@ import {
   Instagram,
   Twitter,
   Youtube,
+  ShoppingCart,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useCart } from "@/hooks/use-cart"
+import { toast } from "sonner"
 
 type Product = {
   _id?: string
@@ -70,6 +74,7 @@ type Product = {
           price: string
         }
       }
+      visible?: boolean
     }
     stock: {
       inStock: boolean
@@ -102,6 +107,8 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { add } = useCart()
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
 
    const [reels, setReels] = useState<Reel[]>([])
 
@@ -131,6 +138,21 @@ export default function HomePage() {
         // Show first 6 products or filter for featured/bestsellers
         const featuredProducts = productsData.slice(0, 6)
         setProducts(featuredProducts)
+
+
+        // Set default variants
+        const defaultVariants: Record<string, string> = {}
+        featuredProducts.forEach((product: Product) => {
+          const productId = product._id || product.id || ""
+          if (product.variants && product.variants.length > 0) {
+            // Only use visible variants for default selection
+            const visibleVariants = product.variants.filter((variant) => variant.variant.visible)
+            if (visibleVariants.length > 0) {
+              defaultVariants[productId] = visibleVariants[0]._id
+            }
+          }
+        })
+        setSelectedVariants(defaultVariants)
       } catch (e: any) {
         setError(e?.message || "Failed to load products")
       } finally {
@@ -142,6 +164,78 @@ export default function HomePage() {
 
   const getProductImage = (product: Product): string => {
     return product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
+  }
+
+  const getCurrentPrice = (product: Product): number => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.priceData?.price ?? product.price?.price ?? 0
+    }
+
+    const selectedVariantId = selectedVariants[product._id || product.id || ""]
+    const visibleVariants = product.variants.filter((variant) => variant.variant.visible)
+    const selectedVariant = visibleVariants.find((v) => v._id === selectedVariantId) || visibleVariants[0]
+    return selectedVariant?.variant.priceData.price || 0
+  }
+
+  const getFormattedPrice = (product: Product): string => {
+    return (
+      product.priceData?.formatted?.price ??
+      product.price?.formatted?.price ??
+      (product.priceData?.price ? `₹${product.priceData.price}` : "₹0")
+    )
+  }
+
+  const isInStock = (product: Product): boolean => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.stock?.inStock ?? true
+    }
+
+    const selectedVariantId = selectedVariants[product._id || product.id || ""]
+    const visibleVariants = product.variants.filter((variant) => variant.variant.visible)
+    const selectedVariant = visibleVariants.find((v) => v._id === selectedVariantId) || visibleVariants[0]
+    return selectedVariant?.stock.inStock ?? true
+  }
+
+  const handleVariantChange = (productId: string, variantId: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [productId]: variantId,
+    }))
+  }
+
+  const isMadeToOrder = (product: Product): boolean => {
+    return product.ribbons?.some((ribbon) => ribbon.text === "Made to Order") || false
+  }
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      if (!isInStock(product)) throw new Error("Out of stock")
+      
+      const productId = product._id || product.id || ""
+      const selectedVariantId = selectedVariants[productId]
+      const visibleVariants = product.variants?.filter((variant) => variant.variant.visible) || []
+      const selectedVariant = visibleVariants.find((v) => v._id === selectedVariantId) || visibleVariants[0]
+
+      // Build options array for hook
+      const optionsArray = selectedVariant
+        ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
+            name,
+            value,
+          }))
+        : []
+
+      await add(productId, 1, optionsArray, selectedVariantId)
+
+      const weightText = selectedVariant
+        ? ` (${Object.values(selectedVariant.choices).join(", ")})`
+        : ""
+      toast.success("Added to cart", {
+        description: `${product.name}${weightText}`,
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Add to cart failed"
+      toast.error(message)
+    }
   }
   return (
     <div className="min-h-screen bg-background">
@@ -318,23 +412,159 @@ export default function HomePage() {
 ) : (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {products.map((product, index) => {
+      const currentPrice = getCurrentPrice(product)
+      const productId = product._id || product.id || ""
+      const selectedVariantId = selectedVariants[productId]
+      const visibleVariants = product.variants?.filter((variant) => variant.variant.visible) || []
+      const selectedVariant = visibleVariants.find((v) => v._id === selectedVariantId) || visibleVariants[0]
+      
       const pid = product.slug || product._id || product.id || ""
+
       return (
-        <Link key={product._id || product.id || index} href={`/product?id=${pid}`}>
-          <Card
-            className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden border"
-          >
+        <Link key={productId} href={`/product?id=${pid}`}>
+          <Card className="group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1">
             <CardContent className="p-0">
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative overflow-hidden">
                 <img
                   src={getProductImage(product)}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover w-full h-40 sm:h-48 lg:h-64 group-hover:scale-110 transition-all duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="font-bold text-xl">{product.name}</h3>
+
+                <div className="absolute top-2 left-2 flex flex-col gap-1">
+                  {product.bestseller && (
+                    <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                      ✨ Bestseller
+                    </Badge>
+                  )}
+                  {product.limitedEdition && (
+                    <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                      🔥 Limited
+                    </Badge>
+                  )}
+                  {isMadeToOrder(product) && (
+                    <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                      👨‍🍳 Made to Order
+                    </Badge>
+                  )}
+                  {!isInStock(product) && (
+                    <Badge className="bg-gray-900/90 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                      Out of Stock
+                    </Badge>
+                  )}
                 </div>
+
+                <button className="absolute top-2 right-2 p-2 bg-white/95 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
+                  <Heart className="h-3 w-3 text-gray-600 hover:text-red-500 transition-colors" />
+                </button>
+              </div>
+
+              <div className="p-3 sm:p-4 lg:p-6">
+                <div className="flex items-start justify-between mb-1 sm:mb-2 lg:mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-200">
+                      {product.name}
+                    </h3>
+                  </div>
+                  {typeof product.rating === "number" && (
+                    <div className="flex items-center gap-1 bg-yellow-50 px-2 lg:px-3 py-1 lg:py-2 rounded-full ml-2 lg:ml-3 flex-shrink-0">
+                      <Star className="h-3 w-3 lg:h-4 lg:w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs lg:text-sm font-semibold text-yellow-700">
+                        {product.rating}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 lg:gap-2 mb-2 lg:mb-4">
+                  {product.region && (
+                    <span className="text-xs lg:text-sm text-orange-700 font-semibold bg-orange-50 px-2 lg:px-3 py-1 lg:py-2 rounded-full border border-orange-100">
+                      📍 {product.region}
+                    </span>
+                  )}
+                  {product.category && (
+                    <span className="text-xs lg:text-sm text-gray-600 font-medium bg-gray-50 px-2 lg:px-3 py-1 lg:py-2 rounded-full">
+                      {product.category}
+                    </span>
+                  )}
+                </div>
+
+                {product.variants && product.variants.length > 0 && (
+                  <div className="mb-2 sm:mb-3 lg:mb-4 space-y-2 lg:space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs lg:text-sm font-medium text-gray-700">Weight:</span>
+                      <select
+                        value={selectedVariantId || ""}
+                        onChange={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleVariantChange(productId, e.target.value)
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                        }}
+                        className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
+                      >
+                        {product.variants
+                          .filter((variant) => variant.variant.visible)
+                          .map((variant) => (
+                            <option key={variant._id} value={variant._id}>
+                              {variant.choices.weight}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
+                        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {(!product.variants || product.variants.length === 0) && (
+                  <div className="mb-2 sm:mb-3 lg:mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
+                        ₹{currentPrice}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    try {
+                      if (!isInStock(product)) throw new Error("Out of stock")
+                      const exportProductId = product._id || product.id || ""
+                      const selectedVariantId = selectedVariant?._id
+
+                      // Build options array for hook
+                      const optionsArray = selectedVariant
+                        ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
+                            name,
+                            value,
+                          }))
+                        : []
+
+                      await add(exportProductId, 1, optionsArray, selectedVariantId)
+
+                      const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
+                      toast.success("Added to cart", { description: `${product.name}${weightText}` })
+                    } catch (err) {
+                      const message = err instanceof Error ? err.message : "Add to cart failed"
+                      toast.error(message)
+                    }
+                  }}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </Button>
               </div>
             </CardContent>
           </Card>
