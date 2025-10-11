@@ -8,6 +8,7 @@ import { Suspense } from "react"
 import { Toaster } from "sonner"
 import { CartProvider } from "@/context/cart-context"
 import { UserProvider } from "@/context/user-context"
+import { WishlistProvider } from "@/context/wishlist-context"
 import "./globals.css"
 
 
@@ -47,12 +48,12 @@ export default function RootLayout({
       
         <Suspense fallback={<div>Loading...</div>}>
         <UserProvider>
-
-    
           <CartProvider>
-            {children}
+            <WishlistProvider>
+              {children}
+            </WishlistProvider>
           </CartProvider>
-              </UserProvider>
+        </UserProvider>
         </Suspense>
         <Analytics />
          <Toaster richColors position="top-center" />

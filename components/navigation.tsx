@@ -2,20 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
+import { useWishlist } from "@/context/wishlist-context";
 import NavUser from "./NavUser";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cart } = useCart();
+  const { wishlist } = useWishlist();
 
   const totalQuantity =
     cart?.lineItems?.reduce(
       (sum: number, item: any) => sum + (item.quantity || 0),
       0
     ) || 0;
+
+  const wishlistCount = wishlist?.length || 0;
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -46,7 +50,19 @@ export function Navigation() {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            {/* Wishlist */}
+            <Link href="/wishlist">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center text-white shadow">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+
             {/* Cart */}
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative">
@@ -85,6 +101,14 @@ export function Navigation() {
                   {item}
                 </Link>
               ))}
+              <Link
+                href="/wishlist"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-foreground hover:text-primary font-medium transition-colors flex items-center gap-2"
+              >
+                <Heart className="h-4 w-4" />
+                Wishlist {wishlistCount > 0 && `(${wishlistCount})`}
+              </Link>
               <NavUser />
             </div>
           </div>

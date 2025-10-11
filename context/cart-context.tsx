@@ -29,6 +29,7 @@ type CartContextType = {
   updateQuantity: (lineItemId: string, qty: number) => Promise<void>;
   remove: (lineItemId: string) => Promise<void>;
   checkout: () => Promise<void>;
+  reload: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -71,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const newAuth: VisitorAuth = {
       access_token: accessToken,
-      refresh_token: refreshToken,
+      refresh_token: refreshToken || "",
       expires_at: expiresAtMs,
     };
     setAuth(newAuth);
@@ -121,6 +122,32 @@ const ensureAuth = async (): Promise<VisitorAuth> => {
         console.error(e);
       }
     })();
+  }, []);
+
+  // Listen for authentication changes and reload cart
+  useEffect(() => {
+    const handleAuthChange = () => {
+      // Small delay to ensure cookies are updated
+      setTimeout(async () => {
+        try {
+          const activeAuth = await ensureAuth();
+          await load(activeAuth);
+        } catch (e) {
+          console.error("Failed to reload cart on auth change:", e);
+        }
+      }, 100);
+    };
+
+    // Listen for storage events (when tokens are updated in other tabs)
+    window.addEventListener('storage', handleAuthChange);
+    
+    // Listen for custom auth change events
+    window.addEventListener('authChanged', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleAuthChange);
+      window.removeEventListener('authChanged', handleAuthChange);
+    };
   }, []);
 
   // Load cart
@@ -298,8 +325,18 @@ const checkout = async () => {
 };
 
 
+  // Reload cart function
+  const reload = async () => {
+    try {
+      const activeAuth = await ensureAuth();
+      await load(activeAuth);
+    } catch (e) {
+      console.error("Failed to reload cart:", e);
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cart, loading, add, updateQuantity, remove, checkout }}>
+    <CartContext.Provider value={{ cart, loading, add, updateQuantity, remove, checkout, reload }}>
       {children}
     </CartContext.Provider>
   );

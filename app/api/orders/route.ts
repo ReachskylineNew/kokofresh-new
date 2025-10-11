@@ -100,18 +100,17 @@ export async function POST(req: NextRequest) {
           }]
         : []
 
-      // Derive a simple orderStatus for UI, based on Wix statuses
-      // Wix fulfillment statuses: Pending, Accepted, Ready, In_Delivery, Fulfilled
-      // Map to UI: Processing (Pending/Accepted/Ready), Shipped (In_Delivery or partially Fulfilled), Delivered (all Fulfilled)
+      // Simple order status based on fulfillment status
       let orderStatus = "Processing"
       const normalized = fList.map((f: any) => String(f?.status || "").toUpperCase())
+      
       if (fList.length > 0 && normalized.some((s: string) => s)) {
         const allFulfilled = normalized.length > 0 && normalized.every((s: string) => s === "FULFILLED")
         const anyInDelivery = normalized.some((s: string) => s === "IN_DELIVERY")
         const anyFulfilled = normalized.some((s: string) => s === "FULFILLED")
 
         if (allFulfilled) {
-          orderStatus = "Delivered"
+          orderStatus = "Shipped"
         } else if (anyInDelivery || anyFulfilled) {
           orderStatus = "Shipped"
         } else {
@@ -121,15 +120,19 @@ export async function POST(req: NextRequest) {
         // Fallback to order-level fulfillmentStatus when fulfillment items don't expose status
         const orderFulfillmentStatus = String(ord?.fulfillmentStatus || "").toUpperCase()
         if (orderFulfillmentStatus === "FULFILLED") {
-          orderStatus = "Delivered"
+          orderStatus = "Shipped"
         } else if (orderFulfillmentStatus === "PARTIALLY_FULFILLED" || orderFulfillmentStatus === "IN_DELIVERY") {
           orderStatus = "Shipped"
         } else {
           orderStatus = "Processing"
         }
       }
-
-      return { ...ord, tracking: [...fTracks, ...sTrack], orderStatus }
+      
+      return { 
+        ...ord, 
+        tracking: [...fTracks, ...sTrack], 
+        orderStatus
+      }
     })
 
     return NextResponse.json({ orders: enriched })

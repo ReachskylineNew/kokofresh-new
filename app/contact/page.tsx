@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { PhoneInput } from "react-international-phone"
+import "react-international-phone/style.css"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -68,9 +70,8 @@ export default function ContactPage() {
       if (formData.last_name) submissions["last_name_8c5e"] = formData.last_name
       if (formData.email) submissions["email_0b8a"] = formData.email
       if (formData.phone) {
-        submissions["phone_6f6c"] = formData.phone.startsWith("+91")
-          ? formData.phone
-          : `+91${formData.phone}`
+        // PhoneInput already provides formatted number with country code
+        submissions["phone_6f6c"] = formData.phone
       }
       if (formData.topic) submissions["topic"] = formData.topic
       if (formData.message) submissions["message"] = formData.message
@@ -115,7 +116,7 @@ export default function ContactPage() {
   }
 
  const handlePhoneChange = (value: string) => {
-  setFormData((prev) => ({ ...prev, phone: value }))
+  setFormData((prev) => ({ ...prev, phone: value || "" }))
 }
 
   return (
@@ -265,18 +266,29 @@ export default function ContactPage() {
                   />
                 </div>
 
-           <div>
-  <label className="block text-sm font-bold text-card-foreground mb-2">Phone *</label>
-  <Input
-    type="tel"
-    name="phone"
+                <div>
+  <label className="block text-sm font-bold text-card-foreground mb-2">
+    Phone *
+  </label>
+
+  <PhoneInput
+    defaultCountry="in"
     value={formData.phone}
-    onChange={handleChange}
-    
-    className="border-2 border-muted focus:border-primary"
-    required
+    onChange={(value) => handlePhoneChange(value)}
+    inputClassName="!w-full border-2 border-muted focus:border-primary rounded-md h-12 text-base"
+    className="!w-full"
+    countrySelectorStyleProps={
+        {
+          buttonClassName:
+            "border-muted hover:bg-primary/10 rounded-l-md focus:outline-none",
+          dropdownArrowClassName: "text-muted-foreground",
+          searchPlaceholder: "Search country...",
+          showSearch: true, // 👈 enables country search feature
+        } as any
+      }
   />
 </div>
+
 
 
                 <div>

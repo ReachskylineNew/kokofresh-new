@@ -21,6 +21,7 @@ import {
   Package,
   ChevronDown,
   ChevronRight,
+  Download,
 } from "lucide-react"
 
 import { Navigation } from "@/components/navigation"
@@ -37,10 +38,13 @@ export default function ProfilePage() {
   // ----- Orders -----
   const [orders, setOrders] = useState<any[]>([])
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null)
+  const [downloadingInvoices, setDownloadingInvoices] = useState<Set<string>>(new Set())
+  
 
   const extractTracking = (order: any): { id: string; url: string } | null => {
     // Try common Wix eCom order structures for tracking data
     const possibleIds: (string | undefined)[] = [
+      order?.tracking?.[0]?.trackingNumber,
       order?.fulfillments?.[0]?.trackingInfo?.trackingNumber,
       order?.fulfillments?.[0]?.trackingInfo?.number,
       order?.shippingInfo?.deliveries?.[0]?.trackingInfo?.trackingNumber,
@@ -54,6 +58,7 @@ export default function ProfilePage() {
     const url = `https://shiprocket.co/tracking/${encodeURIComponent(trackingId)}`
     return { id: trackingId, url }
   }
+
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -96,6 +101,59 @@ export default function ProfilePage() {
     setExpandedOrder(expandedOrder === id ? null : id)
   }
 
+  // ----- Invoice Download -----
+  const handleDownloadInvoice = async (orderId: string) => {
+    try {
+      setDownloadingInvoices(prev => new Set(prev).add(orderId))
+      
+      // Generate PDF invoice directly
+      const res = await fetch("/api/invoice-generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || "Failed to generate invoice")
+      }
+
+      // Get the PDF blob and filename from response headers
+      const pdfBlob = await res.blob()
+      const contentDisposition = res.headers.get('Content-Disposition')
+      let filename = `Invoice_${orderId}.pdf`
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="([^"]+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+      
+      // Create download link
+      const url = URL.createObjectURL(pdfBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+      toast.success("Invoice downloaded successfully! 📄")
+      
+    } catch (error: any) {
+      console.error("Failed to download invoice:", error)
+      toast.error(error.message || "Unable to generate invoice. Please contact support.")
+    } finally {
+      setDownloadingInvoices(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(orderId)
+        return newSet
+      })
+    }
+  }
+
   // ----- Edit Contact (NEW) -----
   const [editOpen, setEditOpen] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -125,9 +183,6 @@ export default function ProfilePage() {
       countryFullname: addr?.countryFullname || "",
     })
   }, [contact, editOpen])
-
-
-
 
 const handleSave = async () => {
   if (!contact?._id) return
@@ -436,196 +491,251 @@ const handleSave = async () => {
                   </div>
                 ) : (
                   <div className="divide-y divide-border">
-                    {orders.map((order, index) => {
-                      const primary = order?.tracking?.[0]
-                      const tracking = primary?.trackingNumber
-                        ? { id: primary.trackingNumber, url: primary.trackingLink || `https://shiprocket.co/tracking/${encodeURIComponent(primary.trackingNumber)}` }
-                        : extractTracking(order)
-                      const isExpanded = expandedOrder === order._id
-                      return (
-                        <div key={order._id} className="bg-background">
-                          <div
-                            className="p-4 lg:p-6 cursor-pointer hover:bg-muted/30 transition-all duration-200 active:bg-muted/50"
-                            onClick={() => toggleExpand(order._id)}
-                          >
-                            <div className="flex items-center justify-between mb-3 lg:mb-4">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 lg:gap-3 mb-1 lg:mb-2">
-                                  <span className="font-bold text-foreground text-base lg:text-lg xl:text-lg">
-                                    #{order.number}
-                                  </span>
-                                  {order?.orderStatus && (
-                                    <Badge className={
-                                      `border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1 ` +
-                                      (order.orderStatus === "Delivered"
-                                        ? "bg-green-600 text-white"
-                                        : order.orderStatus === "Shipped"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-amber-500 text-white")
-                                    }>
-                                      {order.orderStatus}
-                                    </Badge>
-                                  )}
-                                  
-                                  {tracking ? (
-                                    <a
-                                      href={tracking.url}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      onClick={(e) => e.stopPropagation()}
-                                      className="inline-flex items-center"
-                                    >
-                                      <Badge className="bg-green-600 hover:bg-green-700 text-white border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1">
-                                        Track Package
-                                      </Badge>
-                                    </a>
-                                  ) : (
-                                    <Badge className="bg-primary/10 text-primary border-0 text-xs lg:text-xs px-2 py-0.5 lg:px-3 lg:py-1">
-                                      Track Order
-                                    </Badge>
-                                  )}
-                                </div>
-                                {tracking && (
-                                  <p className="text-xs lg:text-xs text-muted-foreground mt-1">
-                                    Tracking: {tracking.id}
-                                  </p>
-                                )}
-                                <p className="text-muted-foreground text-sm lg:text-sm">
-                                  {new Date(order._createdDate).toLocaleDateString(undefined, {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                  })}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3 lg:gap-4">
-                                <div className="text-right">
-                                  <p className="font-bold text-foreground text-lg lg:text-lg xl:text-lg">
-                                    {order.priceSummary?.total?.formattedAmount || "—"}
-                                  </p>
-                                </div>
-                                <div className="w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center">
-                                  {isExpanded ? (
-                                    <ChevronDown className="h-5 w-5 lg:h-5 lg:w-5 text-muted-foreground" />
-                                  ) : (
-                                    <ChevronRight className="h-5 w-5 lg:h-5 lg:w-5 text-muted-foreground" />
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+      
 
-                          {isExpanded && (
-                            <div className="bg-muted/20 px-4 py-4 lg:px-6 lg:py-6 border-t">
-                              <div className="space-y-4 lg:space-y-6">
-                                {tracking && (
-                                  <div className="bg-background rounded-xl p-4 lg:p-5 border shadow-sm">
-                                    <div className="flex items-center justify-between">
-                                      <div>
-                                        <p className="text-sm lg:text-sm text-muted-foreground">Tracking ID</p>
-                                        <p className="font-semibold text-foreground text-base lg:text-base break-all">{tracking.id}</p>
-                                      </div>
-                                      <a
-                                        href={tracking.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex"
-                                      >
-                                        <Button size="sm" className="h-9 lg:h-9">Open Tracking</Button>
-                                      </a>
-                                    </div>
-                                  </div>
-                                )}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                                  {order.lineItems?.map((item: any, i: number) => (
-                                    <div key={i} className="bg-background rounded-xl p-4 lg:p-5 border shadow-sm">
-                                      <div className="flex gap-3 lg:gap-4">
-                                        {item.image ? (
-                                          <img
-                                            src={
-                                              item.image.replace(
-                                                "wix:image://v1/",
-                                                "https://static.wixstatic.com/media/",
-                                              ) || "/placeholder.svg"
-                                            }
-                                            alt={item.productName?.original}
-                                            className="w-16 h-16 lg:w-18 lg:h-18 object-cover rounded-lg border flex-shrink-0"
-                                          />
-                                        ) : (
-                                          <div className="w-16 h-16 lg:w-18 lg:h-18 bg-muted flex items-center justify-center rounded-lg border flex-shrink-0">
-                                            <Package className="h-6 w-6 lg:h-7 lg:w-7 text-muted-foreground" />
-                                          </div>
-                                        )}
-                                        <div className="flex-1 min-w-0">
-                                          <p className="font-bold text-foreground text-base lg:text-base mb-1 lg:mb-2 line-clamp-2">
-                                            {item.productName?.original}
-                                          </p>
-                                          <p className="text-xs lg:text-xs text-muted-foreground mb-2 lg:mb-3">
-                                            SKU: {item.physicalProperties?.sku || "—"}
-                                          </p>
-                                          <div className="flex items-center justify-between">
-                                            <div className="space-y-1 lg:space-y-2">
-                                              <p className="text-sm lg:text-sm font-semibold text-foreground">
-                                                {item.price?.formattedAmount || "—"}
-                                              </p>
-                                              <p className="text-xs lg:text-xs text-muted-foreground bg-muted px-2 py-1 lg:px-3 lg:py-2 rounded-full w-fit">
-                                                Qty: {item.quantity}
-                                              </p>
-                                            </div>
-                                            <p className="font-bold text-foreground text-lg lg:text-lg">
-                                              {item.totalPriceAfterTax?.formattedAmount || "—"}
-                                            </p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
+{orders.map((order, index) => {
+  const primary = order?.tracking?.[0];
+  const tracking = primary?.trackingNumber
+    ? { id: primary.trackingNumber, url: primary.trackingLink || `https://shiprocket.co/tracking/${encodeURIComponent(primary.trackingNumber)}` }
+    : extractTracking(order);
+  const isExpanded = expandedOrder === order._id;
 
-                                <div className="bg-background rounded-xl p-4 lg:p-5 border shadow-sm">
-                                  <div className="space-y-2 lg:space-y-3 text-sm lg:text-sm">
-                                    <div className="flex justify-between items-center py-1 lg:py-2">
-                                      <span className="text-muted-foreground">Subtotal</span>
-                                      <span className="font-semibold text-foreground">
-                                        {order.priceSummary?.subtotal?.formattedAmount || "—"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between items-center py-1 lg:py-2">
-                                      <span className="text-muted-foreground">Shipping</span>
-                                      <span className="font-semibold text-foreground">
-                                        {order.priceSummary?.shipping?.formattedAmount || "—"}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between items-center py-1 lg:py-2">
-                                      <span className="text-muted-foreground">Tax</span>
-                                      <span className="font-semibold text-foreground">
-                                        {order.priceSummary?.tax?.formattedAmount || "—"}
-                                      </span>
-                                    </div>
-                                    <div className="border-t pt-2 lg:pt-3 mt-2 lg:mt-3">
-                                      <div className="flex justify-between items-center py-1 lg:py-2">
-                                        <span className="font-bold text-foreground lg:text-base">Total</span>
-                                        <span className="font-bold text-foreground text-lg lg:text-lg">
-                                          {order.priceSummary?.total?.formattedAmount || "—"}
-                                        </span>
-                                      </div>
-                                      <div className="flex justify-between items-center py-1 lg:py-2">
-                                        <span className="font-bold text-green-600 dark:text-green-400 lg:text-base">
-                                          Amount Paid
-                                        </span>
-                                        <span className="font-bold text-green-600 dark:text-green-400 lg:text-lg">
-                                          {order.balanceSummary?.paid?.formattedAmount || "—"}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )
-                    })}
+  return (
+    <div key={order._id} className="bg-background overflow-hidden rounded-xl">
+      {/* --- Order Header --- */}
+      <div
+        className="p-3 sm:p-4 lg:p-6 cursor-pointer hover:bg-muted/30 transition-all duration-200 active:bg-muted/50"
+        onClick={() => toggleExpand(order._id)}
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 lg:mb-4">
+          {/* Left Side */}
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3 mb-1 lg:mb-2">
+              <span className="font-bold text-foreground text-sm sm:text-base lg:text-lg">
+                #{order.number}
+              </span>
+
+
+              {tracking ? (
+                <a
+                  href={tracking.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center"
+                >
+                  <Badge className="bg-green-600 hover:bg-green-700 text-white border-0 text-[11px] sm:text-xs px-2 py-0.5">
+                    Track Package
+                  </Badge>
+                </a>
+              ) : (
+                <Badge className="bg-primary/10 text-primary border-0 text-[11px] sm:text-xs px-2 py-0.5">
+                  Track Order
+                </Badge>
+              )}
+            </div>
+
+            {tracking && (
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">
+                Tracking: {tracking.id}
+              </p>
+            )}
+
+            <p className="text-muted-foreground text-xs sm:text-sm mt-1">
+              {new Date(order._createdDate).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </p>
+          </div>
+
+          {/* Right Side */}
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4">
+            <p className="font-bold text-foreground text-base sm:text-lg">
+              {order.priceSummary?.total?.formattedAmount || "—"}
+            </p>
+            <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* --- Order Details --- */}
+      {isExpanded && (
+        <div className="bg-muted/20 px-3 py-3 sm:px-4 sm:py-4 lg:px-6 lg:py-6 border-t space-y-3 sm:space-y-4 lg:space-y-6">
+          
+          {/* Tracking Info */}
+          {tracking && (
+            <div className="bg-background rounded-xl p-3 sm:p-4 lg:p-5 border shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tracking ID</p>
+                  <p className="font-semibold text-foreground text-sm sm:text-base break-all">{tracking.id}</p>
+                </div>
+                <a href={tracking.url} target="_blank" rel="noreferrer" className="inline-flex">
+                  <Button size="sm" className="h-8 sm:h-9 text-xs sm:text-sm">Open Tracking</Button>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Products */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+            {order.lineItems?.map((item: any, i: number) => (
+              <div key={i} className="bg-background rounded-xl p-3 sm:p-4 lg:p-5 border shadow-sm">
+                <div className="flex gap-3 sm:gap-4">
+                  {item.image ? (
+                    <img
+                      src={
+                        item.image.replace("wix:image://v1/", "https://static.wixstatic.com/media/") || "/placeholder.svg"
+                      }
+                      alt={item.productName?.original}
+                      className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-muted flex items-center justify-center rounded-lg border flex-shrink-0">
+                      <Package className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-foreground text-sm sm:text-base mb-1 line-clamp-2">
+                      {item.productName?.original}
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground mb-2">
+                      SKU: {item.physicalProperties?.sku || "—"}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          {item.price?.formattedAmount || "—"}
+                        </p>
+                        <p className="text-[11px] sm:text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full w-fit">
+                          Qty: {item.quantity}
+                        </p>
+                      </div>
+                      <p className="font-bold text-foreground text-sm sm:text-lg">
+                        {item.totalPriceAfterTax?.formattedAmount || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Shipping Info */}
+          {order.shippingInfo?.logistics?.shippingDestination?.address && (
+            <div className="bg-gradient-to-br from-primary/5 to-background rounded-2xl border border-border/50 shadow-sm p-4 sm:p-5 mt-4 sm:mt-6 hover:shadow-md transition-all duration-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <h4 className="font-bold text-foreground text-base sm:text-lg">Shipping Details</h4>
+                </div>
+                <Badge className="bg-primary/10 text-primary border-0 font-semibold text-xs sm:text-sm mt-2 sm:mt-0">
+                  {order.shippingInfo?.title || "Standard Shipping"}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                <div className="space-y-1.5">
+                  <p className="font-semibold text-foreground text-sm sm:text-base">
+                    {order.shippingInfo?.logistics?.shippingDestination?.contactDetails?.firstName}{" "}
+                    {order.shippingInfo?.logistics?.shippingDestination?.contactDetails?.lastName}
+                  </p>
+                  <p>{order.shippingInfo?.logistics?.shippingDestination?.address?.addressLine1}</p>
+                  <p>
+                    {order.shippingInfo?.logistics?.shippingDestination?.address?.city},{" "}
+                    {order.shippingInfo?.logistics?.shippingDestination?.address?.subdivisionFullname}
+                  </p>
+                  <p>
+                    {order.shippingInfo?.logistics?.shippingDestination?.address?.postalCode},{" "}
+                    {order.shippingInfo?.logistics?.shippingDestination?.address?.countryFullname}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 sm:text-right">
+                  <div className="flex sm:justify-end items-center gap-1 text-muted-foreground">
+                    <Phone className="h-4 w-4 text-green-600" />
+                    <span>{order.shippingInfo?.logistics?.shippingDestination?.contactDetails?.phone || "—"}</span>
+                  </div>
+                  {order.shippingInfo?.logistics?.deliveryTime && (
+                    <div className="flex sm:justify-end items-center gap-1 mt-1">
+                      <Package className="h-4 w-4 text-blue-500" />
+                      <span>{order.shippingInfo?.logistics?.deliveryTime}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Order Summary */}
+          <div className="bg-background rounded-xl p-4 sm:p-5 border shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3">
+              <h4 className="font-semibold text-foreground text-base sm:text-lg">Order Summary</h4>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownloadInvoice(order._id);
+                }}
+                disabled={downloadingInvoices.has(order._id)}
+                className="h-8 sm:h-9 text-xs sm:text-sm mt-2 sm:mt-0"
+              >
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                {downloadingInvoices.has(order._id) ? "Downloading..." : "Download Invoice"}
+              </Button>
+            </div>
+
+            <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+              <div className="flex justify-between items-center py-1">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-semibold text-foreground">
+                  {order.priceSummary?.subtotal?.formattedAmount || "—"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="font-semibold text-foreground">
+                  {order.priceSummary?.shipping?.formattedAmount || "—"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-semibold text-foreground">
+                  {order.priceSummary?.tax?.formattedAmount || "—"}
+                </span>
+              </div>
+              <div className="border-t pt-2 mt-2">
+                <div className="flex justify-between items-center py-1">
+                  <span className="font-bold text-foreground">Total</span>
+                  <span className="font-bold text-foreground text-base sm:text-lg">
+                    {order.priceSummary?.total?.formattedAmount || "—"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-1">
+                  <span className="font-bold text-green-600 dark:text-green-400">Amount Paid</span>
+                  <span className="font-bold text-green-600 dark:text-green-400 text-base sm:text-lg">
+                    {order.balanceSummary?.paid?.formattedAmount || "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+})}
+
                   </div>
                 )}
               </CardContent>

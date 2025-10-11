@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import  ManufacturingProcess  from "../components/ProcessSection"
 import {
   ArrowRight,
   Star,
@@ -610,6 +611,7 @@ export default function HomePage() {
         </div>
       </section>
 
+<ManufacturingProcess/>
       {/* UGC Section - Social Media Native */}
   <section className="py-20">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -7,12 +7,39 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Plus, Minus, Trash2, Heart, Shield, Truck, ArrowLeft } from "lucide-react"
 import { useCart } from "../../hooks/use-cart"
+import { useWishlist } from "../../context/wishlist-context"
+import { useUser } from "../../context/user-context"
 import { ShoppingCart } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 
 
 export default function CartPage() {
   const { cart, updateQuantity, remove, checkout, loading } = useCart()
+  const { addToWishlist } = useWishlist()
+  const { contact } = useUser()
+
+  const handleSaveForLater = async (item: any) => {
+    if (!contact) {
+      toast.error("Please sign in to save items for later")
+      return
+    }
+
+    console.log("🛒 Cart item being saved:", item);
+
+    try {
+      const success = await addToWishlist(item)
+      if (success) {
+        await remove(item.id)
+        toast.success("Item saved for later!")
+      } else {
+        toast.error("Failed to save item for later. Check console for details.")
+      }
+    } catch (error) {
+      console.error("❌ Error saving for later:", error)
+      toast.error("Failed to save item for later. Check console for details.")
+    }
+  }
 
   // ✅ Normalize items (lineItems from API)
   const items = cart?.lineItems || []
@@ -165,7 +192,18 @@ export default function CartPage() {
                                   </span>
                                 </button>
 
-                                <button className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                                <button 
+                                  onClick={() => handleSaveForLater(item)}
+                                  className="md:hidden flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                                >
+                                  <Heart className="h-3 w-3" />
+                                  <span className="hover:underline">Save for later</span>
+                                </button>
+
+                                <button 
+                                  onClick={() => handleSaveForLater(item)}
+                                  className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                                >
                                   <Heart className="h-4 w-4" />
                                   <span className="hover:underline">Save for later</span>
                                 </button>

@@ -70,6 +70,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
       await refreshUser();
 
+      // Dispatch auth change event to notify cart context
+      window.dispatchEvent(new CustomEvent('authChanged'));
+
       localStorage.removeItem("oAuthRedirectData");
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (err) {
@@ -87,6 +90,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
       if (userProfile?.contactId) {
         const contactDetails = await getContactDetails(userProfile.contactId);
         setContact(contactDetails);
+      }
+
+      // Dispatch auth change event if user profile was loaded successfully
+      if (userProfile) {
+        window.dispatchEvent(new CustomEvent('authChanged'));
       }
     } finally {
       setLoading(false);
