@@ -624,39 +624,43 @@ export default function HomePage() {
       </p>
 
       {/* ✅ Social Buttons with Real Links */}
-      <div className="flex justify-center gap-4 mb-8">
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-        >
-          <a
-            href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Instagram className="mr-2 h-4 w-4" />
-            Follow @kokofresh
-          </a>
-        </Button>
+    {/* ✅ Social Buttons with Responsive Centering & Wrapping */}
+<div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mb-8">
+  <Button
+    asChild
+    variant="outline"
+    size="sm"
+    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent whitespace-nowrap"
+  >
+    <a
+      href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center"
+    >
+      <Instagram className="mr-2 h-4 w-4" />
+      Follow @kokofresh
+    </a>
+  </Button>
 
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-        >
-          <a
-            href="https://x.com/KOKOFresh_IN"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Twitter className="mr-2 h-4 w-4" />
-            Tweet #FlavourzChallenge
-          </a>
-        </Button>
-      </div>
+  <Button
+    asChild
+    variant="outline"
+    size="sm"
+    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent whitespace-nowrap"
+  >
+    <a
+      href="https://x.com/KOKOFresh_IN"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center"
+    >
+      <Twitter className="mr-2 h-4 w-4" />
+      Tweet #FlavourzChallenge
+    </a>
+  </Button>
+</div>
+
     </div>
 
     {/* Reels Grid */}
