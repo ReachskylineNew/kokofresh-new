@@ -246,7 +246,7 @@ export default function HomePage() {
   className="relative min-h-screen flex flex-col items-center justify-center bg-[#FFF9E8] overflow-hidden text-center lg:text-left lg:flex-row lg:justify-between"
   style={{
     backgroundImage:
-      "url('https://sdmntprcentralindia.oaiusercontent.com/files/00000000-1424-6208-a11b-dfa4de9351c3/raw?se=2025-10-13T13%3A08%3A38Z&sp=r&sv=2024-08-04&sr=b&scid=6c0d4e78-3087-5558-b48f-42ca4adab152&skoid=3cb6de21-012a-49c9-9402-a1ebf8d0bd06&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-12T21%3A16%3A38Z&ske=2025-10-13T21%3A16%3A38Z&sks=b&skv=2024-08-04&sig=5Fs6h79uRYDiEozRSsmtzsWnCNFM/dENJs3KQUi9qoI%3D')",
+      "url('https://static.wixstatic.com/media/e7c120_294d31f68bc24e59bc484e68fa8fe663~mv2.png')",
     backgroundSize: "cover",
     backgroundPosition: "center",
   }}
@@ -256,52 +256,53 @@ export default function HomePage() {
   <div className="absolute bottom-6 right-6 w-48 h-48 sm:w-72 sm:h-72 bg-[#DD9627]/20 rounded-full blur-3xl opacity-40" />
 
   {/* Content */}
-  <div className="relative z-10 w-full max-w-2xl px-6 sm:px-10 py-16 sm:py-20 lg:pl-24">
-    <div className="inline-flex items-center gap-2 bg-[#FFF9E8]/80 border border-[#DD9627]/20 rounded-full px-3 py-1.5 mb-4 sm:px-4 sm:py-2">
-      <span className="text-xs sm:text-sm font-semibold text-[#B47B2B] tracking-wide uppercase">
-        India’s Freshest Spice Revolution 🌿
-      </span>
+<div className="relative z-10 w-full max-w-2xl px-6 sm:px-10 py-16 sm:py-20 lg:pl-24 text-center lg:text-left">
+  <div className="inline-flex items-center gap-2 bg-[#FFF9E8]/80 border border-[#DD9627]/20 rounded-full px-3 py-1.5 mb-4 sm:px-4 sm:py-2 mx-auto lg:mx-0">
+    <span className="text-xs sm:text-sm font-semibold text-[#B47B2B] tracking-wide uppercase">
+      India’s Freshest Spice Revolution 🌿
+    </span>
+  </div>
+
+<h1 className="font-black text-4xl sm:text-5xl md:text-6xl leading-[1.1] mb-4 text-[#4B2E05]">
+  Authentic <br />
+  &amp; Handcrafted <br />
+  <span className="text-[#DD9627]">Spice Masala.</span>
+</h1>
+
+  <p className="text-base sm:text-lg text-gray-700 mb-8 leading-relaxed max-w-md mx-auto lg:mx-0">
+   At Kokofresh, we redefine freshness. Our spices are sourced from trusted farms, slow-roasted in small batches, and sealed to perfection — ensuring every pinch delivers the purest taste of India.
+  </p>
+
+  <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4">
+    <Button
+      size="lg"
+      className="bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md transition-all duration-300"
+    >
+      Shop Now
+    </Button>
+    <Button
+      size="lg"
+      variant="outline"
+      className="border-2 border-[#DD9627] text-[#B47B2B] hover:bg-[#DD9627] hover:text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full transition-all duration-300"
+    >
+      Explore Collections
+    </Button>
+  </div>
+
+  {/* Social Proof */}
+  <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-10 text-gray-600 text-sm sm:text-base">
+    <div className="flex items-center gap-2">
+      <Star className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
+      <span>4.9★ from 10K+ reviews</span>
     </div>
-
-    <h1 className="font-black text-4xl sm:text-5xl md:text-6xl leading-tight mb-4 text-[#4B2E05]">
-      Authentic Flavour.
-      <br />
-      <span className="text-[#DD9627]">Uncompromised Freshness.</span>
-    </h1>
-
-    <p className="text-base sm:text-lg text-gray-700 mb-8 leading-relaxed max-w-md mx-auto lg:mx-0">
-      Discover spices crafted from the finest ingredients — sun-dried, slow-roasted, and packed with care.
-      From our farms to your kitchen, freshness takes the spotlight.
-    </p>
-
-    <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4">
-      <Button
-        size="lg"
-        className="bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md transition-all duration-300"
-      >
-        Shop Now
-      </Button>
-      <Button
-        size="lg"
-        variant="outline"
-        className="border-2 border-[#DD9627] text-[#B47B2B] hover:bg-[#DD9627] hover:text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full transition-all duration-300"
-      >
-        Explore Collections
-      </Button>
-    </div>
-
-    {/* Social Proof */}
-    <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-10 text-gray-600 text-sm sm:text-base">
-      <div className="flex items-center gap-2">
-        <Star className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
-        <span>4.9★ from 10K+ reviews</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
-        <span>100% Authentic</span>
-      </div>
+    <div className="flex items-center gap-2">
+      <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
+      <span>100% Authentic</span>
     </div>
   </div>
+</div>
+
+
 </section>
 
       {/* <section
@@ -406,25 +407,29 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              {
-                icon: <Clock className="h-12 w-12 text-[#DD9627]" />,
-                title: "Fresh AF",
-                description: "Ground weekly, not yearly. Our spices are fresher than your latest playlist.",
-                stat: "< 7 days old",
-              },
-              {
-                icon: <Shield className="h-12 w-12 text-[#DD9627]" />,
-                title: "Zero BS",
-                description: "No fillers, no artificial colors, no cap. Just pure, authentic Indian spices.",
-                stat: "100% Pure",
-              },
-              {
-                icon: <Zap className="h-12 w-12 text-[#DD9627]" />,
-                title: "Instant Glow-Up",
-                description: "Transform your basic meals into main character energy with one sprinkle.",
-                stat: "5-min meals",
-              },
-            ].map((usp, index) => (
+  {
+    icon: <Clock className="h-12 w-12 text-[#DD9627]" />,
+    title: "Handcrafted Heritage",
+    description:
+      "Rooted in India’s spice traditions, every blend is carefully handcrafted to preserve authentic regional flavors.",
+    stat: "Traditional Process",
+  },
+  {
+    icon: <Shield className="h-12 w-12 text-[#DD9627]" />,
+    title: "100% Natural Ingredients",
+    description:
+      "No preservatives, no artificial colors — only farm-fresh spices sourced directly from trusted growers.",
+    stat: "Pure & Clean",
+  },
+  {
+    icon: <Zap className="h-12 w-12 text-[#DD9627]" />,
+    title: "Artisanal Crafted",
+    description:
+      "Small-batch roasted and ground to perfection, ensuring unmatched freshness, aroma, and taste in every pack.",
+    stat: "Freshly Made",
+  },
+]
+.map((usp, index) => (
               <Card
                 key={index}
                 className="group hover:shadow-xl transition-all duration-300 border-2 border-[#EDCC32] hover:border-[#DD9627] bg-card"
