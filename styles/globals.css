@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,41 +10,32 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
+  --primary: #dd9627; /* warm gold (primary brand) */
+  --primary-foreground: #111111; /* dark text for strong contrast on gold */
 
-  /* ✅ Updated primary color */
-  --primary: oklch(0.62 0.162 63.64); /* #B46A11 */
-  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #b47b2b; /* bronze/brown (secondary) */
+  --secondary-foreground: #ffffff; /* light text for darker secondary bg */
 
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-
-  /* ✅ Accent matches primary */
-  --accent: oklch(0.62 0.162 63.64);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: #fed649; /* bright yellow (accent) */
+  --accent-foreground: #111111; /* dark text on bright accent */
 
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: color-mix(in oklab, #edcc32 35%, #000 0%); /* focus ring in brand yellow */
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-
+  --ring: #edcc32;
+  --chart-1: #dd9627; /* primary */
+  --chart-2: #b47b2b; /* secondary */
+  --chart-3: #fed649; /* accent */
+  --chart-4: #edcc32; /* accent-2 */
+  --chart-5: color-mix(in oklab, #b47b2b 70%, #000 10%); /* deeper bronze */
   --radius: 0.625rem;
-
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-
-  /* ✅ Sidebar primary matches brand */
-  --sidebar-primary: oklch(0.62 0.162 63.64);
+  --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
@@ -58,38 +49,31 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
+  --primary: #fed649; /* brighter primary for dark backgrounds */
+  --primary-foreground: #111111; /* dark text on bright yellow */
 
-  /* ✅ Keep same primary in dark mode */
-  --primary: oklch(0.62 0.162 63.64);
-  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #b47b2b; /* bronze works well in dark mode too */
+  --secondary-foreground: #ffffff; /* white for contrast */
 
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-
-  --accent: oklch(0.62 0.162 63.64);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: #edcc32; /* deep yellow accent */
+  --accent-foreground: #111111; /* dark text on bright accent */
 
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
+  --border: color-mix(in oklab, #edcc32 25%, #fff 0%);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-
+  --ring: #edcc32;
+  --chart-1: #fed649;
+  --chart-2: #dd9627;
+  --chart-3: #edcc32;
+  --chart-4: #b47b2b;
+  --chart-5: color-mix(in oklab, #dd9627 75%, #fff 0%);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-
-  /* ✅ Sidebar brand in dark mode */
-  --sidebar-primary: oklch(0.62 0.162 63.64);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);

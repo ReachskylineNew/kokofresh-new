@@ -35,6 +35,7 @@ export default function NavUser() {
 
   return wixClient.auth.loggedIn() ? (
     <div className="flex items-center gap-3">
+      {/* 👤 Profile Avatar / Image */}
       <Link
         href="/profile"
         className="flex items-center gap-3 hover:opacity-90 transition"
@@ -45,31 +46,41 @@ export default function NavUser() {
               profile.profile.photo.url
             )}`}
             alt={profile?.profile?.nickname || "Profile"}
-            className="w-8 h-8 rounded-full border shadow"
+            className="w-8 h-8 rounded-full border-2 border-[#FED649] shadow-sm"
           />
         ) : (
-          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold shadow">
+          <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#FED649]/30 text-[#DD9627] font-bold border border-[#FED649]/50 shadow-sm">
             {getInitials(profile?.profile?.nickname || "U")}
           </div>
         )}
 
         <div className="hidden sm:flex flex-col">
-          <span className="text-sm font-medium text-foreground">
+          <span className="text-sm font-medium text-[#4B3A1F]">
             {profile?.profile?.nickname || "User"}
           </span>
-          {/* ✅ contact is already in context if you want to show */}
-          {/* <span className="text-xs text-muted-foreground">
+          {/* Optional email display */}
+          {/* <span className="text-xs text-[#B47B2B]/70">
             {contact?.primaryInfo?.email}
           </span> */}
         </div>
       </Link>
 
-      <Button variant="outline" size="sm" onClick={logout}>
+      {/* 🔓 Logout Button */}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={logout}
+        className="border-2 border-[#DD9627] text-[#DD9627] hover:bg-[#DD9627] hover:text-white font-semibold transition-colors"
+      >
         Sign Out
       </Button>
     </div>
   ) : (
-    <Button size="sm" variant="default" onClick={login}>
+    <Button
+      size="sm"
+      onClick={login}
+      className="bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold border-0 shadow-sm transition-colors"
+    >
       Sign In
     </Button>
   );

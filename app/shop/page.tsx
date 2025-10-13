@@ -1,6 +1,5 @@
 "use client"
 
-
 import { useEffect, useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
@@ -58,6 +57,7 @@ type Product = {
           price: string
         }
       }
+      visible: boolean // ✅ Add visible property
     }
     stock: {
       inStock: boolean
@@ -109,43 +109,49 @@ export default function ShopPage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
 
-useEffect(() => {
-  const load = async () => {
-    try {
-      setIsLoading(true)
-      const res = await fetch("/api/products", { cache: "no-store" })
-      if (!res.ok) throw new Error("Failed to load products")
-      const data = await res.json()
-      const productsData = (data.products || []).map((p: Product) => {
-        // ✅ derive category
-        let category = "Masala"
-        if (p.name?.toLowerCase().includes("chutney powder")) {
-          category = "Chutney"
-        }
-        return { ...p, category }
-      })
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setIsLoading(true)
+        const res = await fetch("/api/products", { cache: "no-store" })
+        if (!res.ok) throw new Error("Failed to load products")
+        const data = await res.json()
+        const productsData = (data.products || []).map((p: Product) => {
+          // ✅ derive category
+          let category = "Masala"
+          if (p.name?.toLowerCase().includes("chutney powder")) {
+            category = "Chutney"
+          }
+          return { ...p, category }
+        })
 
-      console.log("Fetched products with category:", productsData)
-      setProducts(productsData)
+        console.log("Fetched products with category:", productsData)
+        setProducts(productsData)
 
-      // set default variants
-      const defaultVariants: Record<string, string> = {}
-      productsData.forEach((product: Product) => {
-        const productId = product._id || product.id || ""
-        if (product.variants && product.variants.length > 0) {
-          defaultVariants[productId] = product.variants[0]._id
-        }
-      })
-      setSelectedVariants(defaultVariants)
-    } catch (e: any) {
-      setError(e?.message || "Failed to load products")
-    } finally {
-      setIsLoading(false)
+        // set default variants
+        const defaultVariants: Record<string, string> = {}
+        productsData.forEach((product: Product) => {
+          const productId = product._id || product.id || ""
+          if (product.variants && product.variants.length > 0) {
+            // Find the first visible variant to set as default
+            const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
+            if (firstVisibleVariant) {
+              defaultVariants[productId] = firstVisibleVariant._id
+            } else {
+              // Fallback if no visible variant found (though unlikely if data is clean)
+              defaultVariants[productId] = product.variants[0]._id
+            }
+          }
+        })
+        setSelectedVariants(defaultVariants)
+      } catch (e: any) {
+        setError(e?.message || "Failed to load products")
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }
-  load()
-}, [])
-
+    load()
+  }, [])
 
   const getCurrentPrice = (product: Product): number => {
     if (!product.variants || product.variants.length === 0) {
@@ -153,7 +159,10 @@ useEffect(() => {
     }
 
     const selectedVariantId = selectedVariants[product._id || product.id || ""]
-    const selectedVariant = product.variants.find((v) => v._id === selectedVariantId) || product.variants[0]
+    const selectedVariant =
+      product.variants.find((v) => v._id === selectedVariantId) ||
+      product.variants.find((v) => v.variant.visible) ||
+      product.variants[0]
     return selectedVariant.variant.priceData.price
   }
 
@@ -191,7 +200,10 @@ useEffect(() => {
     }
 
     const selectedVariantId = selectedVariants[product._id || product.id || ""]
-    const selectedVariant = product.variants.find((v) => v._id === selectedVariantId) || product.variants[0]
+    const selectedVariant =
+      product.variants.find((v) => v._id === selectedVariantId) ||
+      product.variants.find((v) => v.variant.visible) ||
+      product.variants[0]
     return selectedVariant.stock.inStock
   }
 
@@ -293,11 +305,11 @@ useEffect(() => {
       >
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-3 sm:mb-4 lg:mb-6 bg-white/10 text-yellow-400 border-yellow-500/30 px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 text-xs sm:text-sm lg:text-base font-medium">
+            <Badge className="mb-3 sm:mb-4 lg:mb-6 bg-[#FED649] hover:bg-[#e6c33f] text-black px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 text-xs sm:text-sm lg:text-base font-medium">
               Premium Collection
             </Badge>
 
-            <h1 className="font-sans text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-black mb-3 sm:mb-4 lg:mb-6 text-balance bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent leading-tight">
+            <h1 className="font-sans text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-black mb-3 sm:mb-4 lg:mb-6 text-balance bg-gradient-to-r from-[#FED649] via-[#DD9627] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
               Authentic Indian Spices
             </h1>
 
@@ -309,14 +321,14 @@ useEffect(() => {
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 justify-center px-2 sm:px-0">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold w-full sm:w-auto"
+                className="bg-[#DD9627] hover:bg-[#B47B2B] text-white px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold w-full sm:w-auto"
               >
                 Shop Collection
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold bg-transparent w-full sm:w-auto"
+                className="border-2 border-[#FED649] text-[#FED649] hover:bg-[#FED649] hover:text-black px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold bg-transparent w-full sm:w-auto"
               >
                 Learn More
               </Button>
@@ -438,8 +450,6 @@ useEffect(() => {
             <div className="sticky top-24">
               {/* Filter Panel - Restored original desktop spacing */}
               <div className={`space-y-3 sm:space-y-4 lg:space-y-6 ${isFilterOpen ? "block" : "hidden lg:block"}`}>
-              
-
                 <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
                   <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
                     Category
@@ -514,7 +524,9 @@ useEffect(() => {
                 const productId = product._id || product.id || ""
                 const selectedVariantId = selectedVariants[productId]
                 const selectedVariant =
-                  product.variants?.find((v) => v._id === selectedVariantId) || product.variants?.[0]
+                  product.variants?.find((v) => v._id === selectedVariantId) ||
+                  product.variants?.find((v) => v.variant.visible) ||
+                  product.variants?.[0]
 
                 return (
                   <Link key={productId} href={`/product?id=${product.slug || productId}`}>
@@ -530,25 +542,28 @@ useEffect(() => {
                           // List View - Restored original desktop spacing
                           <div className="flex flex-col sm:flex-row h-full">
                             <div className="w-full sm:w-64 md:w-80 lg:w-96 flex-shrink-0 relative overflow-hidden">
-                              <img
-                                src={getCurrentImage(product) || "/placeholder.svg"}
-                                alt={product.name}
-                                className="object-cover w-full h-40 sm:h-full group-hover:scale-110 transition-all duration-700"
-                              />
+                             <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-xl">
+  <img
+    src={getCurrentImage(product) || "/placeholder.svg"}
+    alt={product.name}
+    className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
+  />
+</div>
+
 
                               <div className="absolute top-2 left-2 flex flex-col gap-1 lg:gap-2">
                                 {product.bestseller && (
-                                  <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#DD9627] text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     ✨ Bestseller
                                   </Badge>
                                 )}
                                 {product.limitedEdition && (
-                                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#B47B2B] text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     🔥 Limited
                                   </Badge>
                                 )}
                                 {isMadeToOrder(product) && (
-                                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#FED649] text-black text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     👨‍🍳 Made to Order
                                   </Badge>
                                 )}
@@ -568,14 +583,14 @@ useEffect(() => {
                               <div>
                                 <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
                                   <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-900 mb-1 sm:mb-2 lg:mb-3 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-200">
+                                    <h3 className="font-bold text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-900 mb-1 sm:mb-2 lg:mb-3 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
                                       {product.name}
                                     </h3>
                                   </div>
                                   {typeof product.rating === "number" && (
-                                    <div className="flex items-center gap-1 bg-yellow-50 px-2 sm:px-3 lg:px-4 py-1 lg:py-2 rounded-full ml-2 sm:ml-3 lg:ml-4 flex-shrink-0">
-                                      <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                                      <span className="text-xs sm:text-sm lg:text-base font-semibold text-yellow-700">
+                                    <div className="flex items-center gap-1 bg-[#FFF6CC] px-2 sm:px-3 lg:px-4 py-1 lg:py-2 rounded-full ml-2 sm:ml-3 lg:ml-4 flex-shrink-0 border border-[#FED649]/40">
+                                      <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                                      <span className="text-xs sm:text-sm lg:text-base font-semibold text-[#B47B2B]">
                                         {product.rating}
                                       </span>
                                     </div>
@@ -584,8 +599,9 @@ useEffect(() => {
 
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 lg:gap-4 mb-2 sm:mb-3 lg:mb-6">
                                   {product.region && (
-                                    <span className="text-xs sm:text-sm lg:text-base text-orange-700 font-semibold bg-orange-50 px-2 sm:px-3 lg:px-4 py-1 lg:py-2 rounded-full border border-orange-100">
-                                      📍 {product.region}
+                                    <span className="text-xs sm:text-sm lg:text-base text-[#B47B2B] font-semibold px-2 sm:px-3 lg:px-4 py-1 lg:py-2 rounded-full border border-[#DD9627]">
+                                      {"📍 "}
+                                      {product.region}
                                     </span>
                                   )}
                                   {product.category && (
@@ -595,48 +611,47 @@ useEffect(() => {
                                   )}
                                 </div>
 
-                               {product.variants && product.variants.length > 0 && (
-  <div className="mb-2 sm:mb-3 lg:mb-6 space-y-2 lg:space-y-4">
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 lg:gap-4">
-      <span className="text-xs sm:text-sm lg:text-base font-medium text-gray-700">
-        Weight:
-      </span>
-      <select
-        value={selectedVariantId || ""}
-        onChange={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          handleVariantChange(productId, e.target.value)
-        }}
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-        }}
-        className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 lg:py-3 text-xs sm:text-sm lg:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white min-w-24 lg:min-w-32"
-      >
-        {product.variants
-          .filter((variant) => variant.variant.visible) // ✅ Only show visible ones
-          .map((variant) => (
-            <option key={variant._id} value={variant._id}>
-              {variant.choices.weight}
-            </option>
-          ))}
-      </select>
-    </div>
+                                {product.variants && product.variants.length > 0 && (
+                                  <div className="mb-2 sm:mb-3 lg:mb-6 space-y-2 lg:space-y-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 lg:gap-4">
+                                      <span className="text-xs sm:text-sm lg:text-base font-medium text-gray-700">
+                                        Weight:
+                                      </span>
+                                      <select
+                                        value={selectedVariantId || ""}
+                                        onChange={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          handleVariantChange(productId, e.target.value)
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                        }}
+                                        className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 lg:py-3 text-xs sm:text-sm lg:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DD9627] focus:border-transparent bg-white min-w-24 lg:min-w-32"
+                                      >
+                                        {product.variants
+                                          .filter((variant) => variant.variant.visible) // ✅ Only show visible ones
+                                          .map((variant) => (
+                                            <option key={variant._id} value={variant._id}>
+                                              {variant.choices.weight}
+                                            </option>
+                                          ))}
+                                      </select>
+                                    </div>
 
-    <div className="flex items-center justify-between">
-      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-orange-600">
-        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
-      </span>
-    </div>
-  </div>
-)}
-
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-[#B47B2B]">
+                                        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
 
                                 {(!product.variants || product.variants.length === 0) && (
                                   <div className="mb-2 sm:mb-3 lg:mb-6">
                                     <div className="flex items-center justify-between">
-                                      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-orange-600">
+                                      <span className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-[#B47B2B]">
                                         ₹{currentPrice}
                                       </span>
                                     </div>
@@ -645,7 +660,7 @@ useEffect(() => {
                               </div>
 
                               <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                className="w-full bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -688,25 +703,28 @@ useEffect(() => {
                           // Grid View - Restored original desktop spacing
                           <>
                             <div className="relative overflow-hidden">
-                              <img
-                                src={getCurrentImage(product) || "/placeholder.svg"}
-                                alt={product.name}
-                                className="object-cover w-full h-40 sm:h-48 lg:h-64 group-hover:scale-110 transition-all duration-700"
-                              />
+                            <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-xl">
+  <img
+    src={getCurrentImage(product) || "/placeholder.svg"}
+    alt={product.name}
+    className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
+  />
+</div>
+
 
                               <div className="absolute top-2 left-2 flex flex-col gap-1">
                                 {product.bestseller && (
-                                  <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#DD9627] text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     ✨ Bestseller
                                   </Badge>
                                 )}
                                 {product.limitedEdition && (
-                                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#B47B2B] text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     🔥 Limited
                                   </Badge>
                                 )}
                                 {isMadeToOrder(product) && (
-                                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge className="bg-[#FED649] text-black text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     👨‍🍳 Made to Order
                                   </Badge>
                                 )}
@@ -725,14 +743,14 @@ useEffect(() => {
                             <div className="p-3 sm:p-4 lg:p-6">
                               <div className="flex items-start justify-between mb-1 sm:mb-2 lg:mb-3">
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors duration-200">
+                                  <h3 className="font-bold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
                                     {product.name}
                                   </h3>
                                 </div>
                                 {typeof product.rating === "number" && (
-                                  <div className="flex items-center gap-1 bg-yellow-50 px-2 lg:px-3 py-1 lg:py-2 rounded-full ml-2 lg:ml-3 flex-shrink-0">
-                                    <Star className="h-3 w-3 lg:h-4 lg:w-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="text-xs lg:text-sm font-semibold text-yellow-700">
+                                  <div className="flex items-center gap-1 px-2 lg:px-3 py-1 lg:py-2 rounded-full ml-2 lg:ml-3 flex-shrink-0 bg-[#FFF6CC] border border-[#FED649]/40">
+                                    <Star className="h-3 w-3 lg:h-4 lg:w-4 fill-[#FED649] text-[#FED649]" />
+                                    <span className="text-xs lg:text-sm font-semibold text-[#B47B2B]">
                                       {product.rating}
                                     </span>
                                   </div>
@@ -741,8 +759,9 @@ useEffect(() => {
 
                               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 lg:gap-2 mb-2 lg:mb-4">
                                 {product.region && (
-                                  <span className="text-xs lg:text-sm text-orange-700 font-semibold bg-orange-50 px-2 lg:px-3 py-1 lg:py-2 rounded-full border border-orange-100">
-                                    📍 {product.region}
+                                  <span className="text-xs lg:text-sm text-[#B47B2B] font-semibold px-2 lg:px-3 py-1 lg:py-2 rounded-full border border-[#DD9627]">
+                                    {"📍 "}
+                                    {product.region}
                                   </span>
                                 )}
                                 {product.category && (
@@ -752,46 +771,45 @@ useEffect(() => {
                                 )}
                               </div>
 
-                          {product.variants && product.variants.length > 0 && (
-  <div className="mb-2 sm:mb-3 lg:mb-4 space-y-2 lg:space-y-3">
-    <div className="flex items-center justify-between">
-      <span className="text-xs lg:text-sm font-medium text-gray-700">Weight:</span>
-      <select
-        value={selectedVariantId || ""}
-        onChange={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          handleVariantChange(productId, e.target.value)
-        }}
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-        }}
-        className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white"
-      >
-        {product.variants
-          .filter((variant) => variant.variant.visible) // ✅ only visible variants
-          .map((variant) => (
-            <option key={variant._id} value={variant._id}>
-              {variant.choices.weight}
-            </option>
-          ))}
-      </select>
-    </div>
+                              {product.variants && product.variants.length > 0 && (
+                                <div className="mb-2 sm:mb-3 lg:mb-4 space-y-2 lg:space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs lg:text-sm font-medium text-gray-700">Weight:</span>
+                                    <select
+                                      value={selectedVariantId || ""}
+                                      onChange={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        handleVariantChange(productId, e.target.value)
+                                      }}
+                                      onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                      }}
+                                      className="px-2 lg:px-3 py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DD9627] focus:border-transparent bg-white"
+                                    >
+                                      {product.variants
+                                        .filter((variant) => variant.variant.visible) // ✅ only visible variants
+                                        .map((variant) => (
+                                          <option key={variant._id} value={variant._id}>
+                                            {variant.choices.weight}
+                                          </option>
+                                        ))}
+                                    </select>
+                                  </div>
 
-    <div className="flex items-center justify-between">
-      <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
-        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
-      </span>
-    </div>
-  </div>
-)}
-
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-base sm:text-lg lg:text-xl font-bold text-[#B47B2B]">
+                                      {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
 
                               {(!product.variants || product.variants.length === 0) && (
                                 <div className="mb-2 sm:mb-3 lg:mb-4">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-base sm:text-lg lg:text-xl font-bold text-orange-600">
+                                    <span className="text-base sm:text-lg lg:text-xl font-bold text-[#B47B2B]">
                                       ₹{currentPrice}
                                     </span>
                                   </div>
@@ -799,7 +817,7 @@ useEffect(() => {
                               )}
 
                               <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                className="w-full bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -879,8 +897,8 @@ useEffect(() => {
   )
 }
 
-
-  {/* <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
+{
+  /* <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
                   <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
                     Shop by Region
                   </h3>
@@ -899,4 +917,5 @@ useEffect(() => {
                       </button>
                     ))}
                   </div>
-                </Card> */}
+                </Card> */
+}

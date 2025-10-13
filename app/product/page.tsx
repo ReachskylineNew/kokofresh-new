@@ -118,10 +118,7 @@ export default function ProductPage() {
 
   const selectedVariant = product ? getVariant(product, selectedOptions) : null
 
-  const displayPrice =
-    selectedVariant?.variant?.priceData?.price ??
-    product?.priceData?.price ??
-    product?.price?.price
+  const displayPrice = selectedVariant?.variant?.priceData?.price ?? product?.priceData?.price ?? product?.price?.price
 
   const displayPriceFormatted =
     selectedVariant?.variant?.priceData?.formatted?.price ??
@@ -132,11 +129,7 @@ export default function ProductPage() {
   const inStock = selectedVariant?.stock?.inStock ?? product?.stock?.inStock ?? true
 
   const getProductImage = (p: any): string => {
-    return (
-      p?.media?.mainMedia?.image?.url ||
-      p?.media?.items?.[0]?.image?.url ||
-      "/placeholder.svg"
-    )
+    return p?.media?.mainMedia?.image?.url || p?.media?.items?.[0]?.image?.url || "/placeholder.svg"
   }
 
   const getFormattedPrice = (p: any): string => {
@@ -192,20 +185,14 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       {/* ✅ SEO Head Section */}
       <Head>
         {product && (
           <>
             <title>{product.name} | Koko Fresh</title>
-            <meta
-              name="description"
-              content={product.description?.replace(/<[^>]+>/g, "").slice(0, 150) || ""}
-            />
-            <link
-              rel="canonical"
-              href={`https://www.kokofresh.in/product/${product.slug || product._id}`}
-            />
+            <meta name="description" content={product.description?.replace(/<[^>]+>/g, "").slice(0, 150) || ""} />
+            <link rel="canonical" href={`https://www.kokofresh.in/product/${product.slug || product._id}`} />
           </>
         )}
       </Head>
@@ -214,7 +201,7 @@ export default function ProductPage() {
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 sm:mb-6 lg:mb-8">
-          <Link href="/shop" className="hover:text-orange-600 transition-colors flex items-center gap-1">
+          <Link href="/shop" className="hover:text-[#DD9627] transition-colors flex items-center gap-1">
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Back to Shop</span>
             <span className="sm:hidden">Back</span>
@@ -230,14 +217,13 @@ export default function ProductPage() {
                   product.media?.mainMedia?.image?.url ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
-                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
                 className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
-                <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm">
+                <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
                   {product.ribbon}
                 </Badge>
               )}
@@ -253,7 +239,7 @@ export default function ProductPage() {
                   onClick={() => setSelectedImage(index)}
                   className={`relative overflow-hidden rounded-md sm:rounded-lg transition-all duration-200 flex-shrink-0 ${
                     selectedImage === index
-                      ? "ring-2 sm:ring-3 ring-orange-500 shadow-lg scale-105"
+                      ? "ring-2 sm:ring-3 ring-[#EDCC32] shadow-lg scale-105"
                       : "hover:scale-105 hover:shadow-md"
                   }`}
                 >
@@ -272,11 +258,11 @@ export default function ProductPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
                   </div>
                   <span className="text-xs sm:text-sm text-muted-foreground">(4.9)</span>
                 </div>
@@ -291,13 +277,13 @@ export default function ProductPage() {
               </h1>
             </div>
 
-            <Card className="border-2 border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 shadow-lg">
+            <Card className="border-2 border-[#FED649]/40 bg-[#FFF6CC] shadow-lg">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <div className="flex items-baseline gap-2 mb-2">
                       {displayPriceFormatted && (
-                        <span className="font-bold text-2xl sm:text-3xl text-orange-600">{displayPriceFormatted}</span>
+                        <span className="font-bold text-2xl sm:text-3xl text-[#B47B2B]">{displayPriceFormatted}</span>
                       )}
                       <Badge variant={inStock ? "default" : "destructive"} className="text-xs">
                         {inStock ? "In Stock" : "Out of Stock"}
@@ -315,30 +301,29 @@ export default function ProductPage() {
                   {opt.name}:
                 </label>
                 <div className="flex flex-wrap gap-2">
-                 {opt.choices
-  .filter((choice: any) => choice.visible) // ✅ only visible choices
-  .map((choice: any) => (
-    <button
-      key={choice.value}
-      onClick={() =>
-        setSelectedOptions((prev) => ({
-          ...prev,
-          [opt.name]: choice.value,
-        }))
-      }
-      disabled={!choice.inStock}
-      className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
-        selectedOptions[opt.name] === choice.value
-          ? "border-orange-500 bg-orange-500 text-white shadow-lg"
-          : choice.inStock
-          ? "border-gray-200 hover:border-orange-300 hover:bg-orange-50"
-          : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-      }`}
-    >
-      {choice.value}
-    </button>
-  ))}
-
+                  {opt.choices
+                    .filter((choice: any) => choice.visible) // ✅ only visible choices
+                    .map((choice: any) => (
+                      <button
+                        key={choice.value}
+                        onClick={() =>
+                          setSelectedOptions((prev) => ({
+                            ...prev,
+                            [opt.name]: choice.value,
+                          }))
+                        }
+                        disabled={!choice.inStock}
+                        className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
+                          selectedOptions[opt.name] === choice.value
+                            ? "border-[#DD9627] bg-[#DD9627] text-white shadow-lg"
+                            : choice.inStock
+                              ? "border-gray-200 hover:border-[#EDCC32] hover:bg-[#FFF6CC]"
+                              : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        {choice.value}
+                      </button>
+                    ))}
                 </div>
               </div>
             ))}
@@ -348,19 +333,19 @@ export default function ProductPage() {
                 Quantity:
               </label>
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                <div className="flex items-center border-2 border-orange-200 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
+                <div className="flex items-center border-2 border-[#FED649]/40 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 sm:p-4 hover:bg-orange-50 transition-colors text-orange-600"
+                    className="p-3 sm:p-4 hover:bg-[#FFF6CC] transition-colors text-[#DD9627]"
                   >
                     <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
-                  <span className="px-6 sm:px-8 py-3 sm:py-4 border-x-2 border-orange-200 font-bold text-base sm:text-lg min-w-[60px] sm:min-w-[80px] text-center bg-orange-50">
+                  <span className="px-6 sm:px-8 py-3 sm:py-4 border-x-2 border-[#FED649]/40 font-bold text-base sm:text-lg min-w-[60px] sm:min-w-[80px] text-center bg-[#FFF6CC]">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 sm:p-4 hover:bg-orange-50 transition-colors text-orange-600"
+                    className="p-3 sm:p-4 hover:bg-[#FFF6CC] transition-colors text-[#DD9627]"
                   >
                     <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
@@ -375,30 +360,30 @@ export default function ProductPage() {
               <CardContent className="p-3 sm:p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
-                    <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0" />
+                    <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-green-700">Free Delivery</div>
+                      <div className="font-medium text-[#B47B2B]">Free Delivery</div>
                       <div className="text-xs text-muted-foreground">On orders above ₹500</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
-                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#B47B2B] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-blue-700">Secure Payment</div>
+                      <div className="font-medium text-[#B47B2B]">Secure Payment</div>
                       <div className="text-xs text-muted-foreground">100% Safe & Secure</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
-                    <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 flex-shrink-0" />
+                    <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-[#EDCC32] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-orange-700">Made to Order</div>
+                      <div className="font-medium text-[#B47B2B]">Made to Order</div>
                       <div className="text-xs text-muted-foreground">Fresh preparation</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
-                    <ChefHat className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
+                    <ChefHat className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-purple-700">Authentic Recipe</div>
+                      <div className="font-medium text-[#B47B2B]">Authentic Recipe</div>
                       <div className="text-xs text-muted-foreground">Traditional taste</div>
                     </div>
                   </div>
@@ -409,7 +394,7 @@ export default function ProductPage() {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
                 size="lg"
-                className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="flex-1 bg-[#DD9627] hover:bg-[#B47B2B] text-white py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                 onClick={handleAddToCart}
                 disabled={!inStock}
               >
@@ -436,7 +421,8 @@ export default function ProductPage() {
                       __html: product.description
                         .replace(/<p><strong>/g, '<p class="font-semibold text-gray-800">')
                         .replace(/<strong>/g, '<span class="font-semibold text-gray-800">')
-                        .replace(/<\/strong>/g, "</span>"),
+                        .replace(/<\/strong>/g, "</span>")
+                        .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
                     }}
                   />
                 </div>
@@ -453,8 +439,8 @@ export default function ProductPage() {
                   key={tab}
                   className={`px-2 sm:px-4 py-3 sm:py-4 font-medium capitalize transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
                     activeTab === tab
-                      ? "border-b-2 sm:border-b-3 border-orange-500 text-orange-600"
-                      : "text-gray-600 hover:text-orange-600"
+                      ? "border-b-2 sm:border-b-3 border-[#DD9627] text-[#DD9627]"
+                      : "text-gray-600 hover:text-[#B47B2B]"
                   }`}
                   onClick={() => setActiveTab(tab)}
                 >
@@ -489,8 +475,8 @@ export default function ProductPage() {
               <div className="space-y-6 sm:space-y-8">
                 <div className="mb-6 sm:mb-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                      <Info className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                    <div className="p-2 bg-[#FFF6CC] rounded-lg">
+                      <Info className="h-5 w-5 sm:h-6 sm:w-6 text-[#DD9627]" />
                     </div>
                     <div>
                       <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
@@ -506,10 +492,10 @@ export default function ProductPage() {
                 {product.additionalInfoSections?.map((section: any, index: number) => (
                   <div
                     key={index}
-                    className="bg-gradient-to-r from-orange-50/50 to-amber-50/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-orange-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+                    className="bg-gradient-to-r from-[#FFF6CC]/50 to-[#FFF6CC]/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-[#FED649]/20 shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
                     <div className="flex items-start gap-4 mb-4 sm:mb-6">
-                      <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
+                      <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#DD9627] text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -535,7 +521,7 @@ export default function ProductPage() {
                                 '<li class="text-gray-700 pl-2" style="font-size: clamp(14px, 2.5vw, 16px); line-height: 1.7;">',
                               )
                               .replace(/<strong>/g, '<strong class="font-semibold text-gray-900">')
-                              .replace(/<em>/g, '<em class="italic text-orange-700">'),
+                              .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
                           }}
                         />
                       </div>
@@ -543,21 +529,21 @@ export default function ProductPage() {
 
                     {index < product.additionalInfoSections?.length - 1 && (
                       <div className="flex justify-center mt-6 sm:mt-8">
-                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-orange-300 to-transparent"></div>
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#FED649] to-transparent"></div>
                       </div>
                     )}
                   </div>
                 ))}
 
                 {product.additionalInfoSections?.length > 0 && (
-                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-blue-50 border border-blue-200 rounded-xl">
+                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-[#FFF6CC] border border-[#EDCC32]/50 rounded-xl">
                     <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                      <div className="flex-shrink-0 w-6 h-6 bg-[#EDCC32] text-black rounded-full flex items-center justify-center text-xs font-bold">
                         💡
                       </div>
                       <div>
-                        <h4 className="font-semibold text-blue-900 mb-2 text-sm sm:text-base">Pro Tip</h4>
-                        <p className="text-blue-800 text-sm sm:text-base leading-relaxed">
+                        <h4 className="font-semibold text-[#B47B2B] mb-2 text-sm sm:text-base">Pro Tip</h4>
+                        <p className="text-[#B47B2B] text-sm sm:text-base leading-relaxed">
                           For the best results, follow the instructions in order and take your time with each step. If
                           you have any questions, feel free to contact our support team.
                         </p>
@@ -602,23 +588,22 @@ export default function ProductPage() {
                 <div className="space-y-4">
                   <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Variants</h3>
                   <div className="space-y-3">
-                   {product.variants
-  ?.filter((variant: any) => variant.variant.visible) // ✅ only visible variants
-  .map((variant: any, index: number) => (
-    <div key={index} className="p-3 sm:p-4 border border-gray-200 rounded-lg">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-        <span className="font-medium text-sm sm:text-base">
-          {Object.entries(variant.choices)
-            .map(([key, value]) => `${value}`)
-            .join(", ")}
-        </span>
-        <span className="text-orange-600 font-semibold text-sm sm:text-base">
-          {variant.variant.priceData.formatted.price}
-        </span>
-      </div>
-    </div>
-  ))}
-
+                    {product.variants
+                      ?.filter((variant: any) => variant.variant.visible) // ✅ only visible variants
+                      .map((variant: any, index: number) => (
+                        <div key={index} className="p-3 sm:p-4 border border-[#FED649]/40 rounded-lg">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                            <span className="font-medium text-sm sm:text-base">
+                              {Object.entries(variant.choices)
+                                .map(([key, value]) => `${value}`)
+                                .join(", ")}
+                            </span>
+                            <span className="text-[#B47B2B] font-semibold text-sm sm:text-base">
+                              {variant.variant.priceData.formatted.price}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -634,7 +619,9 @@ export default function ProductPage() {
             <h2 className="font-serif text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
               Related {inferCategory(product) === "Masala" ? "Masalas" : "Chutneys"}
             </h2>
-            <Link href="/shop" className="text-sm text-orange-600 hover:underline">View all</Link>
+            <Link href="/shop" className="text-sm text-primary hover:underline">
+              View all
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -646,24 +633,26 @@ export default function ProductPage() {
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden">
                         <img
-                          src={getProductImage(rp)}
+                          src={getProductImage(rp) || "/placeholder.svg"}
                           alt={rp.name}
                           className="object-cover w-full h-40 sm:h-44 lg:h-48 group-hover:scale-105 transition-all duration-500"
                         />
                         {rp.ribbon && (
-                          <Badge className="absolute top-2 left-2 bg-orange-500 text-white">{rp.ribbon}</Badge>
+                          <Badge className="absolute top-2 left-2 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
+                            {rp.ribbon}
+                          </Badge>
                         )}
                       </div>
                       <div className="p-3 sm:p-4">
-                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 group-hover:text-[#DD9627] transition-colors">
                           {rp.name}
                         </h3>
                         <div className="mt-2 flex items-center justify-between">
-                          <span className="text-base sm:text-lg font-bold text-orange-600">
-                            {getFormattedPrice(rp)}
-                          </span>
+                          <span className="text-base sm:text-lg font-bold text-[#B47B2B]">{getFormattedPrice(rp)}</span>
                           {rp.stock?.inStock === false && (
-                            <Badge variant="destructive" className="text-xs">Out of Stock</Badge>
+                            <Badge variant="destructive" className="text-xs">
+                              Out of Stock
+                            </Badge>
                           )}
                         </div>
                       </div>
