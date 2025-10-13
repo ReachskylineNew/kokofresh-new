@@ -238,16 +238,82 @@ export default function HomePage() {
       <Navigation />
 
       {/* Hero Section - Gen Z Vibes */}
-      <section
+
+
+
+
+<section
+  className="relative min-h-screen flex flex-col items-center justify-center bg-[#FFF9E8] overflow-hidden text-center lg:text-left lg:flex-row lg:justify-between"
+  style={{
+    backgroundImage:
+      "url('https://sdmntprcentralindia.oaiusercontent.com/files/00000000-1424-6208-a11b-dfa4de9351c3/raw?se=2025-10-13T13%3A08%3A38Z&sp=r&sv=2024-08-04&sr=b&scid=6c0d4e78-3087-5558-b48f-42ca4adab152&skoid=3cb6de21-012a-49c9-9402-a1ebf8d0bd06&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-12T21%3A16%3A38Z&ske=2025-10-13T21%3A16%3A38Z&sks=b&skv=2024-08-04&sig=5Fs6h79uRYDiEozRSsmtzsWnCNFM/dENJs3KQUi9qoI%3D')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
+>
+  {/* Decorative Circles */}
+  <div className="absolute top-0 left-0 w-40 h-40 sm:w-56 sm:h-56 bg-[#FED649]/30 rounded-full blur-3xl opacity-50" />
+  <div className="absolute bottom-6 right-6 w-48 h-48 sm:w-72 sm:h-72 bg-[#DD9627]/20 rounded-full blur-3xl opacity-40" />
+
+  {/* Content */}
+  <div className="relative z-10 w-full max-w-2xl px-6 sm:px-10 py-16 sm:py-20 lg:pl-24">
+    <div className="inline-flex items-center gap-2 bg-[#FFF9E8]/80 border border-[#DD9627]/20 rounded-full px-3 py-1.5 mb-4 sm:px-4 sm:py-2">
+      <span className="text-xs sm:text-sm font-semibold text-[#B47B2B] tracking-wide uppercase">
+        India’s Freshest Spice Revolution 🌿
+      </span>
+    </div>
+
+    <h1 className="font-black text-4xl sm:text-5xl md:text-6xl leading-tight mb-4 text-[#4B2E05]">
+      Authentic Flavour.
+      <br />
+      <span className="text-[#DD9627]">Uncompromised Freshness.</span>
+    </h1>
+
+    <p className="text-base sm:text-lg text-gray-700 mb-8 leading-relaxed max-w-md mx-auto lg:mx-0">
+      Discover spices crafted from the finest ingredients — sun-dried, slow-roasted, and packed with care.
+      From our farms to your kitchen, freshness takes the spotlight.
+    </p>
+
+    <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-3 sm:gap-4">
+      <Button
+        size="lg"
+        className="bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md transition-all duration-300"
+      >
+        Shop Now
+      </Button>
+      <Button
+        size="lg"
+        variant="outline"
+        className="border-2 border-[#DD9627] text-[#B47B2B] hover:bg-[#DD9627] hover:text-white font-semibold text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-full transition-all duration-300"
+      >
+        Explore Collections
+      </Button>
+    </div>
+
+    {/* Social Proof */}
+    <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-10 text-gray-600 text-sm sm:text-base">
+      <div className="flex items-center gap-2">
+        <Star className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
+        <span>4.9★ from 10K+ reviews</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627]" />
+        <span>100% Authentic</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+      {/* <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-cover bg-center"
         style={{
           backgroundImage: "url('https://static.wixstatic.com/media/e7c120_1ee1c0b437b94cf9a07e89f845073a2e~mv2.jpg')",
         }}
       >
-        {/* Overlay for readability */}
+  
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/40" />
 
-        {/* Floating spice elements (toned down for new bg) */}
+        
         <div className="absolute top-20 left-10 w-16 h-16 bg-[#DD9627]/20 rounded-full blur-xl float-animation" />
         <div
           className="absolute bottom-32 right-16 w-24 h-24 bg-[#FED649]/20 rounded-full blur-xl float-animation"
@@ -259,7 +325,7 @@ export default function HomePage() {
         />
 
         <div className="relative z-10 text-center max-w-6xl mx-auto px-4">
-          {/* Trending Badge */}
+      
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-8">
             <TrendingUp className="h-4 w-4 text-[#FED649]" />
             <span className="text-sm font-medium text-[#FED649]">#1 Trending Spice Brand</span>
@@ -296,7 +362,7 @@ export default function HomePage() {
             </Button>
           </div>
 
-          {/* Social Proof Badges */}
+         
           <div className="flex flex-wrap justify-center gap-8 text-sm text-gray-200">
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 text-[#FED649] fill-[#FED649]" />
@@ -312,9 +378,9 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Announcement Banner */}
+   
       <section className="bg-[#DD9627] text-white py-4">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 text-sm md:text-base font-medium">
@@ -325,7 +391,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* USP Section - Why We're Different */}
+     
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
