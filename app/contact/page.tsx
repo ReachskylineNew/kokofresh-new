@@ -123,103 +123,114 @@ export default function ContactPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/5">
-        <div className="absolute top-20 left-10 w-16 h-16 bg-orange-500/20 rounded-full blur-xl float-animation" />
-        <div
-          className="absolute bottom-32 right-16 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl float-animation"
-          style={{ animationDelay: "1s" }}
-        />
+<section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-black">
+  <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
+    {/* Tagline Pill */}
+    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
+      <MessageCircle className="h-4 w-4 text-white" />
+      <span className="text-sm font-medium text-white/80">We’re Here to Help</span>
+    </div>
 
-        <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-2 mb-8">
-            <MessageCircle className="h-4 w-4" />
-            <span className="text-sm font-medium">We're Here to Help</span>
-          </div>
+    {/* Main Heading - matches KOKOFRESH font & gradient */}
+    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide mb-6 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
+      Let’s Talk Spices
+    </h1>
 
-          <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 text-balance bg-gradient-to-r from-yellow-400 via-orange-400 to-red-500 bg-clip-text text-transparent leading-tight">
-            Let's Talk Spices
-          </h1>
+    {/* Subheading */}
+    <p className="text-2xl md:text-3xl mb-4 font-bold text-white">
+      Got Questions? We've Got <span className="text-[#FED649]">Answers</span> 🌶️
+    </p>
 
-          <p className="text-2xl md:text-3xl mb-4 text-balance font-bold">
-            Got Questions? We've Got <span className="text-primary">Answers</span> 🌶️
-          </p>
+    {/* Description */}
+    <p className="text-lg md:text-xl mb-12 text-white/80 max-w-3xl mx-auto leading-relaxed">
+      Whether you need cooking tips, have feedback, or just want to chat about spices — we’re always up for a flavorful conversation.
+    </p>
+  </div>
+</section>
 
-          <p className="text-lg md:text-xl mb-12 text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Whether you need cooking tips, have feedback, or just want to chat about spices, we're always down for a
-            conversation. Hit us up!
-          </p>
-        </div>
-      </section>
 
       {/* Contact Methods */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
-              Choose Your <span className="text-primary">Vibe</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">Pick the way you want to connect. We're everywhere you are.</p>
-          </div>
+<section className="py-20 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#3B2B13]">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Section Heading */}
+    <div className="text-center mb-16">
+      <h2 className="font-serif text-4xl md:text-6xl font-bold tracking-wide mb-6 text-[#3B2B13]">
+        Choose Your{" "}
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4B3A1F] via-[#7B5617] to-[#3B2B13]">
+          Vibe
+        </span>
+      </h2>
+      <p className="text-xl text-[#4B3A1F]/90">
+        Pick the way you want to connect. We're everywhere you are.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: <MessageCircle className="h-12 w-12 text-primary" />,
-                title: "Live Chat",
-                description: "Instant answers, real humans. Available 9 AM - 9 PM IST.",
-                action: "Start Chatting",
-                highlight: "Fastest Response",
-              },
-              {
-                icon: <Instagram className="h-12 w-12 text-primary" />,
-                title: "Social DMs",
-                description: "Slide into our DMs on Instagram or Twitter. We're pretty active.",
-                action: "@kokofresh",
-                highlight: "Most Fun",
-              },
-              {
-                icon: <Mail className="h-12 w-12 text-primary" />,
-                title: "Email Us",
-                description: "For detailed questions or business inquiries. We reply within 24 hours.",
-                action: "help@kokofresh.in",
-                highlight: "Most Detailed",
-              },
-              {
-                icon: <Phone className="h-12 w-12 text-primary" />,
-                title: "Call Us",
-                description: "Sometimes you just need to talk it out. We get it.",
-                action: "+91 9626899770",
-                highlight: "Most Personal",
-              },
-            ].map((method, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/50 bg-card cursor-pointer"
-              >
-                <CardContent className="p-8 text-center">
-                  <div className="mb-6 flex justify-center">{method.icon}</div>
-                  <div className="inline-block bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-xs mb-4">
-                    {method.highlight}
-                  </div>
-                  <h3 className="font-bold text-2xl mb-4 text-card-foreground">{method.title}</h3>
-                  <p className="text-muted-foreground mb-6 leading-relaxed">{method.description}</p>
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold">
-                    {method.action}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+    {/* Contact Options Grid */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center">
+  {[
+    {
+      icon: <Instagram className="h-12 w-12 text-[#4B3A1F]" />,
+      title: "Social DMs",
+      description:
+        "Slide into our DMs on Instagram or Twitter. We're pretty active.",
+      action: "@kokofresh",
+      highlight: "Most Fun",
+    },
+    {
+      icon: <Mail className="h-12 w-12 text-[#4B3A1F]" />,
+      title: "Email Us",
+      description:
+        "For detailed questions or business inquiries. We reply within 24 hours.",
+      action: "help@kokofresh.in",
+      highlight: "Most Detailed",
+    },
+    {
+      icon: <Phone className="h-12 w-12 text-[#4B3A1F]" />,
+      title: "Call Us",
+      description: "Sometimes you just need to talk it out. We get it.",
+      action: "+91 9626899770",
+      highlight: "Most Personal",
+    },
+  ].map((method, index) => (
+    <Card
+      key={index}
+      className="group hover:shadow-xl transition-all duration-300 border-2 border-[#C79A25]/40 bg-white/90 backdrop-blur-md text-[#3B2B13]"
+    >
+      <CardContent className="p-8 text-center">
+        <div className="mb-6 flex justify-center">{method.icon}</div>
+        <div className="inline-block bg-[#FED649]/30 text-[#4B3A1F] font-semibold px-3 py-1 rounded-full text-xs mb-4">
+          {method.highlight}
         </div>
-      </section>
+        <h3 className="font-serif font-bold text-2xl mb-4 text-[#3B2B13]">
+          {method.title}
+        </h3>
+        <p className="text-[#4B3A1F]/80 mb-6 leading-relaxed">
+          {method.description}
+        </p>
+        <Button className="w-full bg-[#3B2B13] hover:bg-[#4B3A1F] text-[#FED649] font-bold shadow-md">
+          {method.action}
+        </Button>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
+  </div>
+</section>
+
+
 
       {/* Contact Form (Updated with working logic) */}
       <section className="py-20 bg-card/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
-              Drop Us a <span className="text-primary">Line</span>
-            </h2>
+            <h2 className="font-serif font-bold text-4xl md:text-6xl mb-6 text-balance">
+  Drop Us a{" "}
+  <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+    Line
+  </span>
+</h2>
+
             <p className="text-xl text-muted-foreground">
               Fill out the form below and we'll get back to you faster than you can say "garam masala"
             </p>
@@ -342,15 +353,16 @@ export default function ContactPage() {
                   <p className="text-green-600 text-sm font-bold">✅ Thank you! Your message has been submitted.</p>
                 )}
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg py-4"
-                >
-                  {loading ? "Sending..." : "Send Message"}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+           <Button
+  type="submit"
+  size="lg"
+  disabled={loading}
+  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-90 text-black font-bold text-lg py-4 flex items-center justify-center"
+>
+  {loading ? "Sending..." : "Send Message"}
+  <ArrowRight className="ml-2 h-5 w-5" />
+</Button>
+
               </form>
             </CardContent>
           </Card>
@@ -358,228 +370,249 @@ export default function ContactPage() {
       </section>
 
             {/* FAQ Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
-              Quick <span className="text-primary">Answers</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              The questions everyone asks (and the answers that'll save you time)
-            </p>
-          </div>
+<section className="py-20 bg-black text-white font-sans">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Header */}
+    <div className="text-center mb-16">
+      <h2 className="font-serif font-bold text-4xl md:text-6xl mb-6 text-balance">
+        Quick{" "}
+        <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+          Answers
+        </span>
+      </h2>
+      <p className="text-lg md:text-xl text-[#FED649]/80 font-light">
+        The questions everyone asks (and the answers that'll save you time)
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                icon: <Package className="h-8 w-8 text-primary" />,
-                question: "How fresh are your spices really?",
-                answer: "Ground within 7 days of shipping. We literally have a 'grind date' on every package. No cap.",
-              },
-              {
-                icon: <Clock className="h-8 w-8 text-primary" />,
-                question: "How fast do you ship?",
-                answer:
-                  "2-3 days across India. Free shipping on orders above ₹499. We're faster than your food delivery app.",
-              },
-              {
-                icon: <Heart className="h-8 w-8 text-primary" />,
-                question: "Are your spices organic?",
-                answer:
-                  "Most of them, yes! We source from certified organic farms. Check individual product pages for details.",
-              },
-              {
-                icon: <Users className="h-8 w-8 text-primary" />,
-                question: "Do you have bulk pricing?",
-                answer:
-                  "Perfect for restaurants, hostels, or if you're just really into spices. DM us for custom quotes.",
-              },
-              {
-                icon: <Zap className="h-8 w-8 text-primary" />,
-                question: "Can I return products?",
-                answer: "If you're not 100% happy, we'll make it right. 30-day return policy, no questions asked.",
-              },
-              {
-                icon: <Headphones className="h-8 w-8 text-primary" />,
-                question: "Do you provide recipe support?",
-                answer:
-                  "Yes! Our team includes actual chefs. Hit us up for cooking tips, recipe modifications, or flavor pairing advice.",
-              },
-            ].map((faq, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 mt-1">{faq.icon}</div>
-                    <div>
-                      <h3 className="font-bold text-lg mb-2 text-card-foreground">{faq.question}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+    {/* FAQ Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {[
+        {
+          icon: <Package className="h-8 w-8 text-[#FED649]" />,
+          question: "How fresh are your spices really?",
+          answer:
+            "Ground within 7 days of shipping. We literally have a 'grind date' on every package. No cap.",
+        },
+        {
+          icon: <Clock className="h-8 w-8 text-[#FED649]" />,
+          question: "How fast do you ship?",
+          answer:
+            "2–3 days across India. Free shipping on orders above ₹499. We're faster than your food delivery app.",
+        },
+        {
+          icon: <Heart className="h-8 w-8 text-[#FED649]" />,
+          question: "Are your spices organic?",
+          answer:
+            "Most of them, yes! We source from certified organic farms. Check individual product pages for details.",
+        },
+        {
+          icon: <Users className="h-8 w-8 text-[#FED649]" />,
+          question: "Do you have bulk pricing?",
+          answer:
+            "Perfect for restaurants, hostels, or if you're just really into spices. DM us for custom quotes.",
+        },
+        {
+          icon: <Zap className="h-8 w-8 text-[#FED649]" />,
+          question: "Can I return products?",
+          answer:
+            "If you're not 100% happy, we'll make it right. 30-day return policy, no questions asked.",
+        },
+        {
+          icon: <Headphones className="h-8 w-8 text-[#FED649]" />,
+          question: "Do you provide recipe support?",
+          answer:
+            "Yes! Our team includes actual chefs. Hit us up for cooking tips, recipe modifications, or flavor pairing advice.",
+        },
+      ].map((faq, index) => (
+        <Card
+          key={index}
+          className="bg-[#0D0D0D] border border-[#DD9627]/30 hover:border-[#FED649]/60 transition-all duration-300"
+        >
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 mt-1">{faq.icon}</div>
+              <div>
+                <h3 className="font-serif text-xl font-semibold mb-2 text-[#FED649] tracking-wide">
+                  {faq.question}
+                </h3>
+                <p className="text-[#E6E6E6]/90 leading-relaxed font-light tracking-wide">
+                  {faq.answer}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</section>
+
+
 
       {/* Office Info */}
-      <section className="py-20 bg-card/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+ <section className="py-20 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#2C1B00] font-sans">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      {/* Left Content */}
+      <div>
+        <h2 className="font-serif font-black text-4xl md:text-5xl mb-6 text-balance">
+          Come Say <span className="text-black">Hi</span>
+        </h2>
+
+        <div className="space-y-6">
+          <div className="flex items-start gap-4">
+            <MapPin className="h-6 w-6 text-black mt-1 flex-shrink-0" />
             <div>
-              <h2 className="font-black text-4xl md:text-5xl mb-6 text-balance">
-                Come Say <span className="text-primary">Hi</span>
-              </h2>
-
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <MapPin className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Our HQ</h3>
-                    <p className="text-muted-foreground">
-                      CKGFlavorz FoodTech Pvt Ltd
-                      <br />
-                      112, 17th main road, MIG KHB Colony
-                      <br />
-                      5th block, Koramangala
-                      <br />
-                      Bangalore 560095
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <Clock className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Office Hours</h3>
-                    <p className="text-muted-foreground">
-                      Monday - Friday: 9:00 AM - 6:00 PM IST
-                      <br />
-                      Saturday: 10:00 AM - 4:00 PM IST
-                      <br />
-                      Sunday: Closed (we're grinding spices)
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <Mail className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg mb-1">Email Addresses</h3>
-                    <p className="text-muted-foreground">
-                      General: help@kokofresh.in
-                      <br />
-                      Business: business@kokofresh.com
-                      <br />
-                      Press: press@kokofresh.com
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-            <div className="flex gap-4 mt-8">
-  {/* Instagram */}
-  <Button
-    asChild
-    variant="outline"
-    size="sm"
-    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-  >
-    <a
-      href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Instagram className="mr-2 h-4 w-4" />
-      @koko_fresh_india
-    </a>
-  </Button>
-
-  {/* X (Twitter) */}
-  <Button
-    asChild
-    variant="outline"
-    size="sm"
-    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-  >
-    <a
-      href="https://x.com/KOKOFresh_IN"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Twitter className="mr-2 h-4 w-4" />
-      @KOKOFresh_IN
-    </a>
-  </Button>
-
-  {/* YouTube */}
-  <Button
-    asChild
-    variant="outline"
-    size="sm"
-    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent"
-  >
-    <a
-      href="https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Youtube className="mr-2 h-4 w-4" />
-      KOKO Fresh
-    </a>
-  </Button>
-</div>
-
+              <h3 className="font-bold text-lg mb-1 text-black">Our HQ</h3>
+              <p className="text-black/80 leading-relaxed">
+                CKGFlavorz FoodTech Pvt Ltd
+                <br />
+                112, 17th main road, MIG KHB Colony
+                <br />
+                5th block, Koramangala
+                <br />
+                Bangalore 560095
+              </p>
             </div>
+          </div>
 
-<div className="relative">
-  <div className="rounded-2xl shadow-2xl overflow-hidden bg-card border-2 border-primary/20">
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.243859362772!2d77.6278958153479!3d12.935432919215295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae15d1a6edc6db%3A0xb1d6f26a9a7b6ef4!2sCKGFlavorz%20FoodTech%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-      width="100%"
-      height="400"
-      style={{ border: 0 }}
-      allowFullScreen
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-      className="w-full h-96"
-      title="CKGFlavorz FoodTech Office Location"
-    />
-  </div>
-  <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-xl">
-    <div className="text-2xl font-black mb-2">📍</div>
-    <div className="text-sm">Find Us Here</div>
-  </div>
-</div>
+          <div className="flex items-start gap-4">
+            <Clock className="h-6 w-6 text-black mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-bold text-lg mb-1 text-black">Office Hours</h3>
+              <p className="text-black/80 leading-relaxed">
+                Monday - Friday: 9:00 AM - 6:00 PM IST
+                <br />
+                Saturday: 10:00 AM - 4:00 PM IST
+                <br />
+                Sunday: Closed (we're grinding spices)
+              </p>
+            </div>
+          </div>
 
-
-
+          <div className="flex items-start gap-4">
+            <Mail className="h-6 w-6 text-black mt-1 flex-shrink-0" />
+            <div>
+              <h3 className="font-bold text-lg mb-1 text-black">Email Addresses</h3>
+              <p className="text-black/80 leading-relaxed">
+                General: help@kokofresh.in
+                <br />
+                Business: business@kokofresh.com
+                <br />
+                Press: press@kokofresh.com
+              </p>
+            </div>
           </div>
         </div>
-      </section>
+
+        {/* Social Buttons */}
+        <div className="flex flex-wrap gap-4 mt-8">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="border-black text-black hover:bg-black hover:text-[#FED649] transition"
+          >
+            <a
+              href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram className="mr-2 h-4 w-4" />
+              @koko_fresh_india
+            </a>
+          </Button>
+
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="border-black text-black hover:bg-black hover:text-[#FED649] transition"
+          >
+            <a
+              href="https://x.com/KOKOFresh_IN"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Twitter className="mr-2 h-4 w-4" />
+              @KOKOFresh_IN
+            </a>
+          </Button>
+
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="border-black text-black hover:bg-black hover:text-[#FED649] transition"
+          >
+            <a
+              href="https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Youtube className="mr-2 h-4 w-4" />
+              KOKO Fresh
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      {/* Right Map Card */}
+      <div className="relative">
+        <div className="rounded-2xl shadow-2xl overflow-hidden bg-white border-2 border-black/30">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.243859362772!2d77.6278958153479!3d12.935432919215295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae15d1a6edc6db%3A0xb1d6f26a9a7b6ef4!2sCKGFlavorz%20FoodTech%20Pvt%20Ltd!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            width="100%"
+            height="400"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-96"
+            title="CKGFlavorz FoodTech Office Location"
+          />
+        </div>
+
+        <div className="absolute -bottom-6 -left-6 bg-black text-[#FED649] rounded-2xl p-6 shadow-xl">
+          <div className="text-2xl font-black mb-2">📍</div>
+          <div className="text-sm font-medium">Find Us Here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">Still Have Questions?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Don't be shy! We love talking about spices almost as much as we love making them. Reach out and let's start
-            a conversation.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-4"
-            >
-              Start Live Chat
-              <MessageCircle className="ml-2 h-5 w-5" />
-            </Button>
-      <Button
+<section className="py-20 bg-white text-gray-900">
+  <div className="max-w-4xl mx-auto px-4 text-center">
+    <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
+      Still Have{" "}
+      <span className="bg-gradient-to-r from-[#DD962Let’s Talk Spices7] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+        Questions?
+      </span>
+    </h2>
+    <p className="text-xl mb-10 text-muted-foreground">
+      Don’t be shy! We love talking about spices almost as much as we love making them.
+      Reach out and let’s start a conversation.
+    </p>
+
+    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+      {/* Gradient Background Button */}
+      {/* <Button
+        size="lg"
+        className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black hover:from-[#DD9627]/90 hover:via-[#FED649]/90 hover:to-[#B47B2B]/90 font-bold text-lg px-8 py-4 flex items-center justify-center"
+      >
+        Start Live Chat
+        <MessageCircle className="ml-2 h-5 w-5" />
+      </Button> */}
+
+      {/* Gradient Border / Outline Button */}
+<Button
   asChild
   size="lg"
-  variant="outline"
-  className="border-2 border-white text-white hover:bg-white hover:text-primary font-bold text-lg px-8 py-4 bg-transparent"
+  className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold text-lg px-8 py-4 flex items-center justify-center hover:brightness-90"
 >
   <a
     href="https://www.instagram.com/koko_fresh_india?igshid=MmVlMjlkMTBhMg=="
@@ -591,10 +624,18 @@ export default function ContactPage() {
   </a>
 </Button>
 
-          </div>
-          <p className="text-sm mt-6 opacity-75">✨ Response time: Usually under 2 hours ✨</p>
-        </div>
-      </section>
+    </div>
+
+    <p className="text-sm mt-8 text-muted-foreground">
+      ✨ Response time: Usually under 2 hours ✨
+    </p>
+  </div>
+</section>
+
+
+
+
+
 
 
 

@@ -33,12 +33,15 @@ export default function NavUser() {
 
   if (loading) return null;
 
+  const linkClasses =
+    "text-white/90 text-sm lg:text-base font-semibold px-3 py-2 rounded-md transition-colors duration-300 hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-[#DD9627] hover:via-[#FED649] hover:to-[#B47B2B]";
+
   return wixClient.auth.loggedIn() ? (
     <div className="flex items-center gap-3">
       {/* 👤 Profile Avatar / Image */}
       <Link
         href="/profile"
-        className="flex items-center gap-3 hover:opacity-90 transition"
+        className={`flex items-center gap-2 ${linkClasses}`}
       >
         {profile?.profile?.photo?.url ? (
           <img
@@ -53,24 +56,14 @@ export default function NavUser() {
             {getInitials(profile?.profile?.nickname || "U")}
           </div>
         )}
-
-        <div className="hidden sm:flex flex-col">
-          <span className="text-sm font-medium text-[#4B3A1F]">
-            {profile?.profile?.nickname || "User"}
-          </span>
-          {/* Optional email display */}
-          {/* <span className="text-xs text-[#B47B2B]/70">
-            {contact?.primaryInfo?.email}
-          </span> */}
-        </div>
+        <span>{profile?.profile?.nickname || "User"}</span>
       </Link>
 
-      {/* 🔓 Logout Button */}
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={logout}
-        className="border-2 border-[#DD9627] text-[#DD9627] hover:bg-[#DD9627] hover:text-white font-semibold transition-colors"
+        className={`${linkClasses} border border-[#DD9627]`}
       >
         Sign Out
       </Button>
@@ -79,7 +72,7 @@ export default function NavUser() {
     <Button
       size="sm"
       onClick={login}
-      className="bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold border-0 shadow-sm transition-colors"
+      className={`${linkClasses} bg-[#DD9627] border-0`}
     >
       Sign In
     </Button>

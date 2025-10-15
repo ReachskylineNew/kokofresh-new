@@ -14,6 +14,7 @@ import {
   Target,
   Zap,
   Instagram,
+  Leaf
 } from "lucide-react"
 
 export default function AboutPage() {
@@ -22,146 +23,239 @@ export default function AboutPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section
-        className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')",
-        }}
-      >
-   <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/40" />
+    {/* Hero Section */}
+{/* Breadcrumb */}
+
+
+{/* Hero Section */}
+{/* Breadcrumb */}
+
+
+{/* Hero Section */}
+<section className="relative flex flex-col items-center justify-start bg-black pt-8 pb-20 overflow-hidden">
+  <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
+    {/* Tagline Pill */}
+    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
+      <Heart className="h-4 w-4 text-[#FED649]" />
+      <span className="text-sm font-medium text-white/80">Our Story Since 2020</span>
+    </div>
+
+    {/* Main Heading */}
+    <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
+      Crafted with Heart, Grounded in Tradition
+    </h1>
+
+    {/* Description */}
+    <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+      What started as a small kitchen experiment became a passion to preserve India’s authentic regional flavors.  
+      At <span className="text-[#FED649] font-semibold">KokoFresh</span>, we believe every spice tells a story — of warmth, purity, and the people who craft it.
+    </p>
+  </div>
+</section>
 
 
 
-        {/* Floating glow elements */}
-        <div className="absolute top-20 left-10 w-16 h-16 bg-[#FED649]/30 rounded-full blur-xl float-animation" />
-        <div
-          className="absolute bottom-32 right-16 w-24 h-24 bg-[#DD9627]/25 rounded-full blur-xl float-animation"
-          style={{ animationDelay: "1s" }}
+
+
+<section className="py-20 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#3B2B13]">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      {/* LEFT: Text Content */}
+      <div>
+        {/* Tagline Pill */}
+        <div className="inline-flex items-center gap-2 bg-[#3B2B13]/20 border border-[#3B2B13]/30 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
+          <Sparkles className="h-4 w-4 text-[#FED649]" />
+          <span className="text-sm font-bold text-[#3B2B13]/90">The KokoFresh Story</span>
+        </div>
+
+        {/* Heading */}
+        <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
+  From a{' '}
+  <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4B3A1F] via-[#7B5617] to-[#3B2B13]">
+    Home Kitchen
+  </span>{' '}
+  to Your Heart
+</h2>
+
+
+        {/* Story Description */}
+        <div className="space-y-6 text-lg text-[#3B2B13]/90 leading-relaxed">
+          <p>
+            KokoFresh began as a humble idea in a small home kitchen — an effort to
+            recreate the <strong>flavors and memories that defined our childhood</strong> and
+            preserve the timeless authenticity of regional Indian cuisines.
+          </p>
+
+          <p>
+            Along this journey, we discovered something beautiful — the same dish never
+            tastes the same across India. Each region, each family adds its own warmth
+            and story. That realization inspired us to <strong>celebrate these differences</strong>
+            by crafting authentic regional <em>FlavorZ</em>, so you can bring the
+            <strong> taste of your home </strong> to your kitchen, wherever you are in the world.
+          </p>
+
+          <p>
+            Today, KokoFresh is a <strong>community of women</strong> who lovingly recreate
+            generational recipes born in their local kitchens — carefully blending tradition,
+            purity, and passion into every pack.
+          </p>
+        </div>
+      </div>
+
+      {/* RIGHT: Image */}
+      <div className="relative">
+        <img
+          src="https://static.wixstatic.com/media/e7c120_ce0ff968287e4081b9ab31d83201aa9d~mv2.png"
+          alt="Women crafting traditional recipes"
+          className="rounded-2xl shadow-2xl"
         />
-
-        <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
-          <div className="inline-flex items-center gap-2 bg-white/70 border border-[#DD9627]/20 rounded-full px-4 py-2 mb-8">
-            <Heart className="h-4 w-4 text-[#DD9627]" />
-            <span className="text-sm font-medium text-[#B47B2B]">Our Story Since 2020</span>
-          </div>
-
-          <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
-            More Than Just Spices
-          </h1>
-
-          <p className="text-2xl md:text-3xl mb-4 font-bold text-[#4B2E05]">
-            We're Building a <span className="text-[#DD9627]">Flavor Revolution</span> 🌿
-          </p>
-
-          <p className="text-lg md:text-xl mb-12 text-[#5C3C0D] max-w-3xl mx-auto leading-relaxed">
-            From a small kitchen experiment to India’s most loved handcrafted spice brand — this is how we’re
-            redefining freshness, one masala at a time.
-          </p>
+        <div className="absolute -bottom-6 -right-6 bg-[#3B2B13]/30 text-white rounded-2xl p-6 shadow-xl backdrop-blur-sm">
+          <div className="text-3xl font-black mb-2 text-[#FED649]">100K+</div>
+          <div className="text-sm font-semibold text-[#FFF6D2]">Happy Kitchens Served</div>
         </div>
-      </section>
+      </div>
 
-      {/* Our Story Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-[#FED649]/30 text-[#B47B2B] rounded-full px-4 py-2 mb-6">
-                <Sparkles className="h-4 w-4" />
-                <span className="text-sm font-bold">The Origin Story</span>
-              </div>
+    </div>
+  </div>
+</section>
 
-              <h2 className="font-black text-4xl md:text-5xl mb-6">
-                Started in a <span className="text-[#DD9627]">College Dorm</span>
-              </h2>
 
-              <div className="space-y-6 text-lg text-[#5C3C0D] leading-relaxed">
-                <p>
-                  It all started when our founder Priya couldn’t find decent spices that didn’t taste like cardboard.
-                  Living away from home, missing her mom’s cooking, she decided to do something about it.
-                </p>
-                <p>
-                  What began as grinding spices in her tiny dorm kitchen quickly became a community favorite. Students
-                  lined up for her “magic masalas” that made instant noodles taste like home.
-                </p>
-                <p>
-                  Four years later, Kokofresh stands for purity, flavor, and authenticity — a perfect balance between
-                  Indian heritage and modern craftsmanship.
-                </p>
-              </div>
-            </div>
 
-            <div className="relative">
-              <img
-                src="https://static.wixstatic.com/media/e7c120_ce0ff968287e4081b9ab31d83201aa9d~mv2.png"
-                alt="Founder grinding spices"
-                className="rounded-2xl shadow-2xl"
-              />
-              <div className="absolute -bottom-6 -right-6 bg-[#DD9627] text-white rounded-2xl p-6 shadow-xl">
-                <div className="text-3xl font-black mb-2">100K+</div>
-                <div className="text-sm">Happy Customers</div>
-              </div>
-            </div>
-          </div>
+{/* Ingredients Section */}
+{/* Ingredients Section */}
+<section className="py-20 bg-card/30">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      {/* LEFT: Image */}
+      <div className="relative order-2 lg:order-1">
+        <img
+          src="https://static.wixstatic.com/media/e7c120_d89fe093aebc4e71966f824a8ee1813e~mv2.webp"
+          alt="Farm-sourced ingredients"
+          className="rounded-2xl shadow-2xl"
+        />
+        <div className="absolute -bottom-6 -right-6 bg-[#DD9627] text-black rounded-2xl p-6 shadow-xl">
+          <div className="text-3xl font-black mb-2">100%</div>
+          <div className="text-sm font-semibold">Pure Ingredients</div>
         </div>
-      </section>
+      </div>
+
+      {/* RIGHT: Text */}
+      <div className="order-1 lg:order-2">
+        <div className="inline-flex items-center gap-2 bg-[#FED649]/30 text-[#B47B2B] rounded-full px-4 py-2 mb-6">
+          <Leaf className="h-4 w-4" />
+          <span className="text-sm font-bold">Our Ingredients & Promise</span>
+        </div>
+
+        <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
+          Sourced with{" "}
+          <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+            Purity and Purpose
+          </span>
+        </h2>
+
+        <Card className="bg-white/90 border-2 border-primary/20 shadow-xl">
+          <CardContent className="p-8 space-y-6 text-[#3B2B13] leading-relaxed">
+            <p>
+              At KokoFresh, every ingredient begins its journey at
+              <strong> trusted partner farms</strong> — where purity is a promise, not a claim.
+              Each spice is handpicked and tested to ensure <strong>zero adulteration,
+              complete traceability,</strong> and <strong>uncompromised quality.</strong>
+            </p>
+
+            <p>
+              Our blends undergo <strong>rigorous quality checks</strong> to remain
+              <strong> 100% pure, unadulterated,</strong> and completely
+              <strong> free from palm oil and cottonseed oil</strong> — so what reaches
+              your kitchen is <strong>exactly what nature intended.</strong>
+            </p>
+
+            <p>
+              From farm to pack, every blend carries the
+              <strong> aroma of tradition</strong> and the <strong>trust of authenticity</strong>,
+              lovingly sealed for your kitchen.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
 
       {/* Mission & Values */}
-      <section className="py-20 bg-[#FFF9E8]/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-black text-4xl md:text-6xl mb-6">
-              What We <span className="text-[#DD9627]">Stand For</span>
-            </h2>
-            <p className="text-xl text-[#5C3C0D] max-w-3xl mx-auto">
-              Our values aren't just pretty words — they’re the essence of Kokofresh. Every blend reflects this promise.
-            </p>
-          </div>
+      {/* Mission & Values */}
+{/* Mission & Values */}
+<section className="py-20 bg-black text-white font-sans">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Section Heading */}
+    <div className="text-center mb-16">
+      <h2 className="font-serif font-bold text-4xl md:text-6xl mb-6 text-balance">
+        What We{" "}
+        <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+          Stand For
+        </span>
+      </h2>
+      <p className="text-lg md:text-xl text-[#FED649]/80 font-light max-w-3xl mx-auto">
+        Our values aren't just pretty words — they’re the essence of Kokofresh. Every blend reflects this promise.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Target className="h-12 w-12 text-[#DD9627]" />,
-                title: "Authenticity First",
-                description:
-                  "No shortcuts, no compromises. Every spice is made with care and taste straight from Indian kitchens.",
-                stat: "100% Authentic",
-              },
-              {
-                icon: <Zap className="h-12 w-12 text-[#DD9627]" />,
-                title: "Innovation Always",
-                description:
-                  "We honor tradition while reimagining freshness — small-batch roasted, naturally preserved, perfectly packed.",
-                stat: "Always Fresh",
-              },
-              {
-                icon: <Users className="h-12 w-12 text-[#DD9627]" />,
-                title: "Community Driven",
-                description:
-                  "Our customers inspire our blends. Every product carries the stories and flavors you help create.",
-                stat: "For the People",
-              },
-            ].map((value, index) => (
-              <Card
-                key={index}
-                className="group hover:shadow-xl transition-all duration-300 border-2 border-[#FED649]/40 bg-white"
-              >
-                <CardContent className="p-8 text-center">
-                  <div className="mb-6 flex justify-center">{value.icon}</div>
-                  <h3 className="font-bold text-2xl mb-4 text-[#4B2E05]">{value.title}</h3>
-                  <p className="text-[#5C3C0D] mb-4 leading-relaxed">{value.description}</p>
-                  <div className="inline-block bg-[#FED649]/60 text-[#B47B2B] font-bold px-4 py-2 rounded-full text-sm">
-                    {value.stat}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+    {/* Values Grid */}
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  {[
+    {
+      icon: <Target className="h-12 w-12 text-[#FED649]" />,
+      title: "Authenticity First",
+      description:
+        "No shortcuts, no compromises. Every spice is made with care and taste straight from Indian kitchens.",
+      stat: "100% Authentic",
+    },
+    {
+      icon: <Zap className="h-12 w-12 text-[#FED649]" />,
+      title: "Innovation Always",
+      description:
+        "We honor tradition while reimagining freshness — small-batch roasted, naturally preserved, perfectly packed.",
+      stat: "Always Fresh",
+    },
+    {
+      icon: <Users className="h-12 w-12 text-[#FED649]" />,
+      title: "Community Driven",
+      description:
+        "Our customers inspire our blends. Every product carries the stories and flavors you help create.",
+      stat: "For the People",
+    },
+  ].map((value, index) => (
+    <Card
+      key={index}
+      className="bg-[#0D0D0D] border border-[#DD9627]/30 hover:border-[#FED649]/60 transition-all duration-300"
+    >
+      <CardContent className="p-8 text-center">
+        <div className="mb-6 flex justify-center">{value.icon}</div>
+        <h3 className="font-serif font-bold text-2xl mb-4 text-[#FED649]">
+          {value.title}
+        </h3>
+        <p className="text-[#E6E6E6]/90 mb-4 leading-relaxed font-light">
+          {value.description}
+        </p>
+        <div className="inline-block bg-[#FED649] text-black font-semibold px-5 py-2 rounded-full text-sm">
+          {value.stat}
         </div>
-      </section>
+      </CardContent>
+    </Card>
+  ))}
+</div>
+
+  </div>
+</section>
+
+
 
       {/* Team Section - Meet the Spice Squad */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-black text-4xl md:text-6xl mb-4">
@@ -217,10 +311,10 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Awards & Recognition */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-black text-4xl md:text-6xl mb-4">
@@ -270,44 +364,60 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-[#DD9627] via-[#B47B2B] to-[#FED649] text-white">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <h2 className="font-black text-4xl md:text-6xl mb-6">
-            Ready to Join Our Story?
-          </h2>
-          <p className="text-xl mb-8 opacity-90">
-            Every customer becomes part of our journey. Let’s write the next chapter together — one flavorful meal at a time.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button
-              size="lg"
-              className="bg-white text-[#DD9627] hover:bg-white/90 font-bold text-lg px-8 py-4"
-            >
-              Start Your Flavor Journey
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-[#DD9627] font-bold text-lg px-8 py-4 bg-transparent"
-            >
-              <a
-                href="https://www.instagram.com/koko_fresh_india"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Instagram className="mr-2 h-5 w-5" />
-                Follow Our Journey
-              </a>
-            </Button>
-          </div>
-          <p className="text-sm mt-6 opacity-75">✨ Use code STORY20 for 20% off your first order ✨</p>
-        </div>
-      </section>
+<section className="py-20 bg-white text-gray-900">
+  <div className="max-w-4xl mx-auto text-center px-4">
+    {/* Heading */}
+    <h2 className="font-black text-4xl md:text-6xl mb-6 text-balance">
+      Ready to{" "}
+      <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+        Join Our Story?
+      </span>
+    </h2>
+
+    {/* Description */}
+    <p className="text-xl mb-8 text-muted-foreground">
+      Every customer becomes part of our journey. Let’s write the next chapter together — one flavorful meal at a time.
+    </p>
+
+    {/* Buttons */}
+    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+      {/* Solid Gradient Button */}
+      <Button
+        size="lg"
+        className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold text-lg px-8 py-4 flex items-center justify-center hover:brightness-90"
+      >
+        Start Your Flavor Journey
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
+
+      {/* Outline / Gradient Border Button */}
+      <Button
+        asChild
+        size="lg"
+        className="border-2 border-[#DD9627] text-[#DD9627] font-bold text-lg px-8 py-4 flex items-center justify-center bg-transparent hover:bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:text-black transition-all duration-300"
+      >
+        <a
+          href="https://www.instagram.com/koko_fresh_india"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Instagram className="mr-2 h-5 w-5" />
+          Follow Our Journey
+        </a>
+      </Button>
+    </div>
+
+    {/* Footer note */}
+    <p className="text-sm mt-6 text-muted-foreground">
+      ✨ Use code STORY20 for 20% off your first order ✨
+    </p>
+  </div>
+</section>
+
+
 
       <Footer />
     </div>

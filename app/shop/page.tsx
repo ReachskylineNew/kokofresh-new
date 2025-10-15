@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart, Heart, Grid3X3, List, Search, SlidersHorizontal, X } from "lucide-react"
+import { Star, ShoppingCart, Heart, Grid3X3,ArrowRight, Sparkles, List, Search, SlidersHorizontal, X } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
@@ -292,50 +292,50 @@ export default function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+<div className="min-h-screen bg-primary/5 text-[#3B2B13] font-sans">
+
       <Navigation />
 
       {/* Hero Section - Restored original desktop spacing and typography while keeping mobile optimizations */}
-      <section
-        className="relative bg-cover bg-center py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28"
-        style={{
-          backgroundImage:
-            "linear-gradient(to bottom right, rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('https://static.wixstatic.com/media/e7c120_1ee1c0b437b94cf9a07e89f845073a2e~mv2.jpg')",
-        }}
-      >
-        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-3 sm:mb-4 lg:mb-6 bg-[#FED649] hover:bg-[#e6c33f] text-black px-2 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 text-xs sm:text-sm lg:text-base font-medium">
-              Premium Collection
-            </Badge>
 
-            <h1 className="font-sans text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-black mb-3 sm:mb-4 lg:mb-6 text-balance bg-gradient-to-r from-[#FED649] via-[#DD9627] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
-              Authentic Indian Spices
-            </h1>
+  {/* Breadcrumb */}
 
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed mb-4 sm:mb-6 lg:mb-8 px-2 sm:px-0">
-              Discover handpicked spices from every corner of India, crafted with tradition and perfected for the modern
-              kitchen.
-            </p>
 
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 justify-center px-2 sm:px-0">
-              <Button
-                size="lg"
-                className="bg-[#DD9627] hover:bg-[#B47B2B] text-white px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold w-full sm:w-auto"
-              >
-                Shop Collection
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-2 border-[#FED649] text-[#FED649] hover:bg-[#FED649] hover:text-black px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 text-sm sm:text-base lg:text-lg font-semibold bg-transparent w-full sm:w-auto"
-              >
-                Learn More
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+{/* Breadcrumb */}
+
+
+{/* Hero */}
+<section className="relative flex flex-col items-center justify-start bg-black pt-8 pb-16">
+  <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
+    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
+      <Sparkles className="h-4 w-4 text-[#FED649]" />
+      <span className="text-sm font-medium text-white/80">Shop KokoFresh</span>
+    </div>
+
+    <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
+      Spices That Speak Flavor
+    </h1>
+
+    <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+      Discover handcrafted masalas made with love, tradition, and purity — straight from our home to your kitchen.
+    </p>
+  </div>
+</section>
+<section className="bg-black text-center">
+  <div className="max-w-7xl mx-auto px-4 py-5">
+    <nav className="flex items-center justify-center space-x-3 text-lg md:text-xl text-white/80 font-semibold tracking-wide">
+      <a href="/" className="hover:text-[#FED649] transition-colors duration-200">
+        Home
+      </a>
+      <span className="text-[#FED649] font-bold">/</span>
+      <span className="text-white">Shop</span>
+    </nav>
+  </div>
+</section>
+
+
+
+
 
       {/* Main Content - Restored original desktop spacing while keeping mobile optimizations */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-12">
@@ -371,16 +371,16 @@ export default function ShopPage() {
                   <option value="name">Name A-Z</option>
                 </select>
 
-                <div className="flex border border-border rounded-lg overflow-hidden">
+                <div className="flex border border-[#DD9627]/30 rounded-lg overflow-hidden">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}
+                    className={`p-2 ${viewMode === "grid" ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black" : "bg-white hover:bg-[#FFF6CC] text-[#3B2B13]"}`}
                   >
                     <Grid3X3 className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 ${viewMode === "list" ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}
+                    className={`p-2 ${viewMode === "list" ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black" : "bg-white hover:bg-[#FFF6CC] text-[#3B2B13]"}`}
                   >
                     <List className="h-4 w-4" />
                   </button>
@@ -438,7 +438,7 @@ export default function ShopPage() {
                   </button>
                 </Badge>
               )}
-              <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs">
+              <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs text-[#DD9627] hover:text-[#B47B2B] hover:bg-[#FFF6CC]">
                 Clear all
               </Button>
             </div>
@@ -450,29 +450,29 @@ export default function ShopPage() {
             <div className="sticky top-24">
               {/* Filter Panel - Restored original desktop spacing */}
               <div className={`space-y-3 sm:space-y-4 lg:space-y-6 ${isFilterOpen ? "block" : "hidden lg:block"}`}>
-                <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
-                  <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
+                <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-[#DD9627]/20">
+                  <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-[#3B2B13]">
                     Category
                   </h3>
                   <div className="space-y-1 sm:space-y-2">
                     {categories.map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category)}
-                        className={`block w-full text-left px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-lg text-sm transition-all duration-200 ${
-                          selectedCategory === category
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {category === "all" ? "All Categories" : category}
-                      </button>
+                        <button
+                          key={category}
+                          onClick={() => setSelectedCategory(category)}
+                          className={`block w-full text-left px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 lg:py-3 rounded-lg text-sm transition-all duration-200 ${
+                            selectedCategory === category
+                              ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-semibold"
+                              : "hover:bg-[#FFF6CC] text-[#3B2B13] hover:text-[#DD9627] font-medium"
+                          }`}
+                        >
+                          {category === "all" ? "All Categories" : category}
+                        </button>
                     ))}
                   </div>
                 </Card>
 
-                <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-border/50">
-                  <h3 className="font-sans text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-card-foreground">
+                <Card className="p-3 sm:p-4 lg:p-6 shadow-sm border-[#DD9627]/20">
+                  <h3 className="font-serif text-sm sm:text-base lg:text-lg font-bold mb-2 sm:mb-3 lg:mb-4 text-[#3B2B13]">
                     Special Collections
                   </h3>
                   <div className="space-y-2 sm:space-y-3 lg:space-y-4">
@@ -481,18 +481,18 @@ export default function ShopPage() {
                         type="checkbox"
                         checked={showBestsellers}
                         onChange={(e) => setShowBestsellers(e.target.checked)}
-                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-2"
+                        className="w-4 h-4 rounded border-[#DD9627] text-[#DD9627] focus:ring-[#DD9627] focus:ring-2"
                       />
-                      <span className="text-sm group-hover:text-foreground transition-colors">Bestsellers</span>
+                      <span className="text-sm text-[#3B2B13] group-hover:text-[#DD9627] transition-colors font-medium">Bestsellers</span>
                     </label>
                     <label className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={showLimitedEdition}
                         onChange={(e) => setShowLimitedEdition(e.target.checked)}
-                        className="w-4 h-4 rounded border-border text-primary focus:ring-primary focus:ring-2"
+                        className="w-4 h-4 rounded border-[#DD9627] text-[#DD9627] focus:ring-[#DD9627] focus:ring-2"
                       />
-                      <span className="text-sm group-hover:text-foreground transition-colors">Limited Edition</span>
+                      <span className="text-sm text-[#3B2B13] group-hover:text-[#DD9627] transition-colors font-medium">Limited Edition</span>
                     </label>
                   </div>
                 </Card>
@@ -511,8 +511,8 @@ export default function ShopPage() {
             </div>
 
             {error && (
-              <Card className="p-3 sm:p-4 lg:p-6 mb-3 sm:mb-4 lg:mb-6 border-destructive/20 bg-destructive/5">
-                <p className="text-sm lg:text-base text-destructive font-medium">{error}</p>
+              <Card className="p-3 sm:p-4 lg:p-6 mb-3 sm:mb-4 lg:mb-6 border-[#DD9627]/20 bg-[#FFF9E8]">
+                <p className="text-sm lg:text-base text-[#B47B2B] font-medium">{error}</p>
               </Card>
             )}
 
@@ -531,7 +531,7 @@ export default function ShopPage() {
                 return (
                   <Link key={productId} href={`/product?id=${product.slug || productId}`}>
                     <Card
-                      className={`group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1 ${
+                      className={`group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1 border border-[#DD9627]/20 ${
                         viewMode === "list" ? "flex flex-row max-w-4xl mx-auto" : ""
                       }`}
                       onMouseEnter={() => handleMouseEnter(productId)}
@@ -568,7 +568,7 @@ export default function ShopPage() {
                                   </Badge>
                                 )}
                                 {!isInStock(product) && (
-                                  <Badge className="bg-gray-900/90 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge variant="destructive" className="text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     Out of Stock
                                   </Badge>
                                 )}
@@ -583,7 +583,7 @@ export default function ShopPage() {
                               <div>
                                 <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
                                   <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-900 mb-1 sm:mb-2 lg:mb-3 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
+                                   <h3 className="font-serif font-semibold text-sm sm:text-base lg:text-lg text-[#3B2B13] mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
                                       {product.name}
                                     </h3>
                                   </div>
@@ -660,7 +660,7 @@ export default function ShopPage() {
                               </div>
 
                               <Button
-                                className="w-full bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-sm lg:text-base py-2 lg:py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -729,7 +729,7 @@ export default function ShopPage() {
                                   </Badge>
                                 )}
                                 {!isInStock(product) && (
-                                  <Badge className="bg-gray-900/90 text-white text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
+                                  <Badge variant="destructive" className="text-xs px-2 py-1 rounded-full shadow-lg border-0 font-medium">
                                     Out of Stock
                                   </Badge>
                                 )}
@@ -743,7 +743,7 @@ export default function ShopPage() {
                             <div className="p-3 sm:p-4 lg:p-6">
                               <div className="flex items-start justify-between mb-1 sm:mb-2 lg:mb-3">
                                 <div className="flex-1 min-w-0">
-                                  <h3 className="font-bold text-sm sm:text-base lg:text-lg text-gray-900 mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
+                                  <h3 className="font-serif font-semibold text-sm sm:text-base lg:text-lg text-[#3B2B13] mb-1 lg:mb-2 line-clamp-2 leading-tight group-hover:text-[#DD9627] transition-colors duration-200">
                                     {product.name}
                                   </h3>
                                 </div>
@@ -817,7 +817,7 @@ export default function ShopPage() {
                               )}
 
                               <Button
-                                className="w-full bg-[#DD9627] hover:bg-[#B47B2B] text-white font-semibold py-2 lg:py-3 text-sm lg:text-base rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-0"
+                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-sm lg:text-base py-2 lg:py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -858,16 +858,16 @@ export default function ShopPage() {
             </div>
 
             {filteredProducts.length === 0 && !isLoading && (
-              <Card className="text-center py-12 lg:py-16 border-dashed border-2 border-border">
+              <Card className="text-center py-12 lg:py-16 border-dashed border-2 border-[#DD9627]/20 bg-[#FFF9E8]">
                 <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="h-8 w-8 text-muted-foreground" />
+                  <div className="w-16 h-16 bg-[#FED649]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="h-8 w-8 text-[#B47B2B]" />
                   </div>
-                  <h3 className="font-sans text-lg lg:text-xl font-bold mb-2">No products found</h3>
-                  <p className="text-muted-foreground mb-4 lg:mb-6 text-sm lg:text-base">
+                  <h3 className="font-serif text-lg lg:text-xl font-bold mb-2 text-[#3B2B13]">No products found</h3>
+                  <p className="text-[#6B4A0F]/80 mb-4 lg:mb-6 text-sm lg:text-base">
                     We couldn't find any products matching your current filters. Try adjusting your search criteria.
                   </p>
-                  <Button onClick={clearAllFilters} className="bg-primary hover:bg-primary/90">
+                  <Button onClick={clearAllFilters} className="bg-[#DD9627] hover:bg-[#B47B2B] text-white">
                     Clear All Filters
                   </Button>
                 </div>
@@ -877,12 +877,12 @@ export default function ShopPage() {
             {isLoading && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="overflow-hidden">
-                    <div className="w-full h-48 lg:h-64 bg-muted animate-pulse"></div>
+                  <Card key={i} className="overflow-hidden bg-white border-[#DD9627]/20">
+                    <div className="w-full h-48 lg:h-64 bg-[#FFF6CC] animate-pulse"></div>
                     <div className="p-4 lg:p-6 space-y-3 lg:space-y-4">
-                      <div className="h-4 lg:h-5 bg-muted rounded animate-pulse"></div>
-                      <div className="h-5 lg:h-7 bg-muted rounded animate-pulse w-3/4"></div>
-                      <div className="h-4 lg:h-5 bg-muted rounded animate-pulse w-1/2"></div>
+                      <div className="h-4 lg:h-5 bg-[#FFF6CC] rounded animate-pulse"></div>
+                      <div className="h-5 lg:h-7 bg-[#FFF6CC] rounded animate-pulse w-3/4"></div>
+                      <div className="h-4 lg:h-5 bg-[#FFF6CC] rounded animate-pulse w-1/2"></div>
                     </div>
                   </Card>
                 ))}

@@ -185,7 +185,7 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <div className="min-h-screen bg-primary/5 text-[#3B2B13] font-sans">
       {/* ✅ SEO Head Section */}
       <Head>
         {product && (
@@ -272,7 +272,7 @@ export default function ProductPage() {
                 </Button>
               </div>
 
-              <h1 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#4B2E05] leading-tight">
                 {product.name}
               </h1>
             </div>
@@ -281,14 +281,26 @@ export default function ProductPage() {
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <div className="flex items-baseline gap-2 mb-2">
-                      {displayPriceFormatted && (
-                        <span className="font-bold text-2xl sm:text-3xl text-[#B47B2B]">{displayPriceFormatted}</span>
-                      )}
-                      <Badge variant={inStock ? "default" : "destructive"} className="text-xs">
-                        {inStock ? "In Stock" : "Out of Stock"}
-                      </Badge>
-                    </div>
+<div className="flex items-baseline gap-2 mb-2">
+  {displayPriceFormatted && (
+    <span className="font-bold text-2xl sm:text-3xl text-[#DD9627] leading-tight">
+      {displayPriceFormatted}
+    </span>
+  )}
+  <Badge
+    variant={inStock ? "default" : "destructive"}
+    className={`text-xs font-medium ${
+      inStock
+        ? "bg-[#FFF6CC] text-[#3B2B13] border border-[#DD9627]"
+        : "bg-gray-900 text-white"
+    }`}
+  >
+    {inStock ? "In Stock" : "Out of Stock"}
+  </Badge>
+</div>
+
+
+
                     <p className="text-xs sm:text-sm text-muted-foreground">Inclusive of all taxes</p>
                   </div>
                 </div>
@@ -297,7 +309,7 @@ export default function ProductPage() {
 
             {product.productOptions?.map((opt: any) => (
               <div key={opt.name} className="space-y-2 sm:space-y-3">
-                <label className="text-xs sm:text-sm font-semibold text-gray-800 uppercase tracking-wide">
+                <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                   {opt.name}:
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -315,9 +327,9 @@ export default function ProductPage() {
                         disabled={!choice.inStock}
                         className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
                           selectedOptions[opt.name] === choice.value
-                            ? "border-[#DD9627] bg-[#DD9627] text-white shadow-lg"
+                            ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
                             : choice.inStock
-                              ? "border-gray-200 hover:border-[#EDCC32] hover:bg-[#FFF6CC]"
+                              ? "border-[#DD9627]/30 hover:border-[#DD9627] hover:bg-[#FFF6CC] text-[#3B2B13]"
                               : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                         }`}
                       >
@@ -329,7 +341,7 @@ export default function ProductPage() {
             ))}
 
             <div className="space-y-2 sm:space-y-3">
-              <label className="text-xs sm:text-sm font-semibold text-gray-800 uppercase tracking-wide">
+              <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                 Quantity:
               </label>
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -394,7 +406,7 @@ export default function ProductPage() {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
                 size="lg"
-                className="flex-1 bg-[#DD9627] hover:bg-[#B47B2B] text-white py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                 onClick={handleAddToCart}
                 disabled={!inStock}
               >
@@ -413,7 +425,7 @@ export default function ProductPage() {
 
             {product.description && (
               <div className="pt-4 border-t border-gray-200">
-                <h3 className="font-semibold text-gray-800 mb-3 text-sm sm:text-base">About this product</h3>
+                <h3 className="font-serif font-semibold text-[#3B2B13] mb-3 text-sm sm:text-base">About this product</h3>
                 <div className="prose prose-sm max-w-none">
                   <div
                     className="text-gray-600 leading-relaxed text-sm sm:text-base"
@@ -431,195 +443,183 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg">
-          <div className="border-b">
-            <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
-              {["description", "instructions", "details"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`px-2 sm:px-4 py-3 sm:py-4 font-medium capitalize transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === tab
-                      ? "border-b-2 sm:border-b-3 border-[#DD9627] text-[#DD9627]"
-                      : "text-gray-600 hover:text-[#B47B2B]"
-                  }`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab === "instructions" ? "How to Use" : tab}
-                </button>
-              ))}
+    <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0">
+  {/* --- Tabs --- */}
+  <div className="border-b border-[#FED649]/30">
+    <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
+      {["description", "instructions", "details"].map((tab) => (
+        <button
+          key={tab}
+          className={`px-2 sm:px-4 py-3 sm:py-4 font-medium capitalize transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
+            activeTab === tab
+              ? "border-b-2 sm:border-b-3 border-[#DD9627] text-[#DD9627]"
+              : "text-[#6B4A0F] hover:text-[#B47B2B]"
+          }`}
+          onClick={() => setActiveTab(tab)}
+        >
+          {tab === "instructions" ? "How to Use" : tab}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {/* --- Tab Content --- */}
+  <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
+    {activeTab === "description" && (
+      <div className="prose prose-sm sm:prose-lg max-w-none">
+        {product.description ? (
+          <div
+            className="text-[#4B3A1F] leading-relaxed space-y-4 text-sm sm:text-base"
+            dangerouslySetInnerHTML={{
+              __html: product.description
+                .replace(/<p><strong>/g, '<h3 class="text-lg sm:text-xl font-semibold text-[#B47B2B] mb-3">')
+                .replace(/<\/strong><\/p>/g, "</h3>")
+                .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
+                .replace(/<\/strong>/g, "</span>")
+                .replace(/<p>/g, '<p class="mb-4">'),
+            }}
+          />
+        ) : (
+          <p className="text-[#6B4A0F]/80 text-sm sm:text-base">No description available.</p>
+        )}
+      </div>
+    )}
+
+    {/* --- How to Use --- */}
+    {activeTab === "instructions" && (
+      <div className="space-y-6 sm:space-y-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-[#FFF6CC] rounded-lg">
+              <Info className="h-5 w-5 sm:h-6 sm:w-6 text-[#DD9627]" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#3B2B13] leading-tight">
+                How to Use
+              </h2>
+              <p className="text-sm sm:text-base text-[#6B4A0F]/80 mt-1">
+                Follow these simple steps for the best experience
+              </p>
             </div>
           </div>
+        </div>
 
-          <CardContent className="p-4 sm:p-6 lg:p-8">
-            {activeTab === "description" && (
-              <div className="prose prose-sm sm:prose-lg max-w-none">
-                {product.description ? (
-                  <div
-                    className="text-gray-700 leading-relaxed space-y-4 text-sm sm:text-base"
-                    dangerouslySetInnerHTML={{
-                      __html: product.description
-                        .replace(/<p><strong>/g, '<h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-3">')
-                        .replace(/<\/strong><\/p>/g, "</h3>")
-                        .replace(/<strong>/g, '<span class="font-semibold text-gray-800">')
-                        .replace(/<\/strong>/g, "</span>")
-                        .replace(/<p>/g, '<p class="mb-4">'),
-                    }}
-                  />
-                ) : (
-                  <p className="text-muted-foreground text-sm sm:text-base">No description available.</p>
-                )}
+        {product.additionalInfoSections?.map((section: any, index: number) => (
+          <div
+            key={index}
+            className="bg-[#FFFDF3] rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-[#FED649]/40 shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
+            <div className="flex items-start gap-4 mb-4 sm:mb-6">
+              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#DD9627] text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
+                {index + 1}
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-serif font-bold text-[#3B2B13] mb-3 sm:mb-4 leading-tight">
+                  {section.title.replace(/\*/g, "")}
+                </h3>
+                <div
+                  className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#4B3A1F] leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: section.description
+                      .replace(/<p>/g, '<p class="mb-4 text-[#4B3A1F]">')
+                      .replace(/<ul>/g, '<ul class="space-y-2 ml-4 list-disc list-inside">')
+                      .replace(/<ol>/g, '<ol class="space-y-2 ml-4 list-decimal list-inside">')
+                      .replace(/<li>/g, '<li class="text-[#4B3A1F] pl-2">')
+                      .replace(/<strong>/g, '<strong class="font-semibold text-[#DD9627]">')
+                      .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
+                  }}
+                />
+              </div>
+            </div>
+
+            {index < product.additionalInfoSections?.length - 1 && (
+              <div className="flex justify-center mt-6 sm:mt-8">
+                <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#FED649] to-transparent"></div>
               </div>
             )}
+          </div>
+        ))}
 
-            {activeTab === "instructions" && (
-              <div className="space-y-6 sm:space-y-8">
-                <div className="mb-6 sm:mb-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-[#FFF6CC] rounded-lg">
-                      <Info className="h-5 w-5 sm:h-6 sm:w-6 text-[#DD9627]" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
-                        How to Use
-                      </h2>
-                      <p className="text-sm sm:text-base text-gray-600 mt-1">
-                        Follow these simple steps for the best experience
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {product.additionalInfoSections?.map((section: any, index: number) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-r from-[#FFF6CC]/50 to-[#FFF6CC]/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-[#FED649]/20 shadow-sm hover:shadow-md transition-shadow duration-200"
-                  >
-                    <div className="flex items-start gap-4 mb-4 sm:mb-6">
-                      <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#DD9627] text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-                          {section.title.replace(/\*/g, "")}
-                        </h3>
-                        <div
-                          className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-700 leading-relaxed"
-                          style={{
-                            fontSize: "clamp(14px, 2.5vw, 16px)",
-                            lineHeight: "1.7",
-                          }}
-                          dangerouslySetInnerHTML={{
-                            __html: section.description
-                              .replace(
-                                /<p>/g,
-                                '<p class="mb-4 text-gray-700" style="font-size: clamp(14px, 2.5vw, 16px); line-height: 1.7;">',
-                              )
-                              .replace(/<ul>/g, '<ul class="space-y-2 ml-4 list-disc list-inside">')
-                              .replace(/<ol>/g, '<ol class="space-y-2 ml-4 list-decimal list-inside">')
-                              .replace(
-                                /<li>/g,
-                                '<li class="text-gray-700 pl-2" style="font-size: clamp(14px, 2.5vw, 16px); line-height: 1.7;">',
-                              )
-                              .replace(/<strong>/g, '<strong class="font-semibold text-gray-900">')
-                              .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {index < product.additionalInfoSections?.length - 1 && (
-                      <div className="flex justify-center mt-6 sm:mt-8">
-                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#FED649] to-transparent"></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {product.additionalInfoSections?.length > 0 && (
-                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-[#FFF6CC] border border-[#EDCC32]/50 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-6 h-6 bg-[#EDCC32] text-black rounded-full flex items-center justify-center text-xs font-bold">
-                        💡
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-[#B47B2B] mb-2 text-sm sm:text-base">Pro Tip</h4>
-                        <p className="text-[#B47B2B] text-sm sm:text-base leading-relaxed">
-                          For the best results, follow the instructions in order and take your time with each step. If
-                          you have any questions, feel free to contact our support team.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {(!product.additionalInfoSections || product.additionalInfoSections.length === 0) && (
-                  <div className="text-center py-12 sm:py-16">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Info className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Instructions Coming Soon</h3>
-                    <p className="text-gray-600 text-sm sm:text-base max-w-md mx-auto leading-relaxed">
-                      Detailed usage instructions for this product will be available shortly. Check back soon or contact
-                      us for immediate assistance.
-                    </p>
-                  </div>
-                )}
+        {product.additionalInfoSections?.length > 0 && (
+          <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-[#FFF6CC] border border-[#FED649]/40 rounded-xl">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-6 h-6 bg-[#DD9627] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                💡
               </div>
-            )}
-
-            {activeTab === "details" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                <div className="space-y-4">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Product Details</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-gray-100 text-sm sm:text-base">
-                      <span className="text-gray-600">Product Type</span>
-                      <span className="font-medium capitalize">{product.productType}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100 text-sm sm:text-base">
-                      <span className="text-gray-600">Availability</span>
-                      <Badge variant={product.stock?.inStock ? "default" : "destructive"}>
-                        {product.stock?.inStock ? "In Stock" : "Out of Stock"}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Variants</h3>
-                  <div className="space-y-3">
-                    {product.variants
-                      ?.filter((variant: any) => variant.variant.visible) // ✅ only visible variants
-                      .map((variant: any, index: number) => (
-                        <div key={index} className="p-3 sm:p-4 border border-[#FED649]/40 rounded-lg">
-                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                            <span className="font-medium text-sm sm:text-base">
-                              {Object.entries(variant.choices)
-                                .map(([key, value]) => `${value}`)
-                                .join(", ")}
-                            </span>
-                            <span className="text-[#B47B2B] font-semibold text-sm sm:text-base">
-                              {variant.variant.priceData.formatted.price}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+              <div>
+                <h4 className="font-semibold text-[#B47B2B] mb-2 text-sm sm:text-base">Pro Tip</h4>
+                <p className="text-[#4B3A1F] text-sm sm:text-base leading-relaxed">
+                  For the best results, follow the instructions in order and take your time with each step.
+                </p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* --- Details --- */}
+    {activeTab === "details" && (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <div className="space-y-4">
+          <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">Product Details</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between py-2 border-b border-[#F0E6C0] text-sm sm:text-base">
+              <span className="text-[#6B4A0F]/80">Product Type</span>
+              <span className="font-medium text-[#3B2B13] capitalize">{product.productType}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-[#F0E6C0] text-sm sm:text-base">
+              <span className="text-[#6B4A0F]/80">Availability</span>
+              <Badge
+                variant={product.stock?.inStock ? "default" : "destructive"}
+                className={`text-xs font-medium ${
+                  product.stock?.inStock
+                    ? "bg-[#FFF6CC] text-[#3B2B13] border border-[#DD9627]"
+                    : "bg-gray-900 text-white"
+                }`}
+              >
+                {product.stock?.inStock ? "In Stock" : "Out of Stock"}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">Variants</h3>
+          <div className="space-y-3">
+            {product.variants
+              ?.filter((variant: any) => variant.variant.visible)
+              .map((variant: any, index: number) => (
+                <div key={index} className="p-3 sm:p-4 border border-[#FED649]/40 rounded-lg bg-[#FFFDF3]">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <span className="font-medium text-sm sm:text-base text-[#3B2B13]">
+                      {Object.entries(variant.choices)
+                        .map(([key, value]) => `${value}`)
+                        .join(", ")}
+                    </span>
+                    <span className="text-[#DD9627] font-semibold text-sm sm:text-base">
+                      {variant.variant.priceData.formatted.price}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    )}
+  </CardContent>
+</Card>
+
       </div>
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <h2 className="font-serif text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+            <h2 className="font-serif text-lg sm:text-xl lg:text-2xl font-bold text-[#4B2E05]">
               Related {inferCategory(product) === "Masala" ? "Masalas" : "Chutneys"}
             </h2>
-            <Link href="/shop" className="text-sm text-primary hover:underline">
+            <Link href="/shop" className="text-sm text-[#DD9627] hover:text-[#B47B2B] hover:underline">
               View all
             </Link>
           </div>
@@ -629,7 +629,7 @@ export default function ProductPage() {
               const rpId = rp._id || rp.id || ""
               return (
                 <Link key={rpId} href={`/product?id=${rp.slug || rpId}`}>
-                  <Card className="group cursor-pointer overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white rounded-xl">
+                  <Card className="group cursor-pointer overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white rounded-xl border border-[#DD9627]/20">
                     <CardContent className="p-0">
                       <div className="relative overflow-hidden">
                         <img
@@ -644,7 +644,7 @@ export default function ProductPage() {
                         )}
                       </div>
                       <div className="p-3 sm:p-4">
-                        <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 group-hover:text-[#DD9627] transition-colors">
+                        <h3 className="font-serif font-semibold text-sm sm:text-base text-[#3B2B13] line-clamp-2 group-hover:text-[#DD9627] transition-colors">
                           {rp.name}
                         </h3>
                         <div className="mt-2 flex items-center justify-between">

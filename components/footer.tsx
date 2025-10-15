@@ -1,101 +1,95 @@
-import Link from "next/link"
-import { Instagram, Twitter, Youtube, Linkedin } from "lucide-react"
+import Link from "next/link";
+import Image from "next/image";
+import { Instagram, Twitter, Youtube, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border">
+    <footer className="bg-black/90 backdrop-blur-md border-t border-[#FED649]/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
-              <span className="font-serif text-2xl font-bold text-primary">Flavourz</span>
-              <span className="font-sans text-sm text-muted-foreground">of India</span>
-            </Link>
-            <p className="text-muted-foreground mb-6 max-w-md">
+          <Link href="/" className="flex items-center space-x-4 mb-4 group">
+  <div className="relative w-16 h-16"> {/* Increased from w-10 h-10 */}
+    <Image
+      src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
+      alt="KOKOFRESH Logo"
+      fill
+      className="object-contain transition-transform group-hover:scale-105"
+      priority
+    />
+  </div>
+  <span className="font-serif text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+    KOKO FRESH
+  </span>
+</Link>
+
+            <p className="text-white/70 mb-6 max-w-md">
               Premium Indian spices for the modern kitchen. Every spice tells a story, every blend creates memories.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link href="https://x.com/KOKOFresh_IN" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-muted-foreground hover:text-primary transition-colors">
-                <Youtube className="h-5 w-5" />
-              </Link>
-              <Link href="https://www.linkedin.com/company/kokofresh" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-muted-foreground hover:text-primary transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </Link>
+              {[
+                { icon: <Instagram className="h-5 w-5" />, href: "https://www.instagram.com/koko_fresh_india?igsh=dHltYm0waWVtZTdu", label: "Instagram" },
+                { icon: <Twitter className="h-5 w-5" />, href: "https://x.com/KOKOFresh_IN", label: "X (Twitter)" },
+                { icon: <Youtube className="h-5 w-5" />, href: "https://youtube.com/@kokofresh_in?si=LxQ0HnklH4rC0Ojc", label: "YouTube" },
+                { icon: <Linkedin className="h-5 w-5" />, href: "https://www.linkedin.com/company/kokofresh", label: "LinkedIn" }
+              ].map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.label}
+                  className="transition-colors"
+                >
+                  <span className="text-white/70 hover:bg-clip-text ">
+                    {item.icon}
+                  </span>
+                </Link>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-serif text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/shop" className="text-muted-foreground hover:text-primary transition-colors">
-                  Shop All
-                </Link>
-              </li>
-              <li>
-                <Link href="/recipes" className="text-muted-foreground hover:text-primary transition-colors">
-                  Recipes
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  Contact
-                </Link>
-              </li>
+              {["Shop All", "Recipes", "Our Story", "Contact"].map((item, idx) => (
+                <li key={idx}>
+                  <Link
+                    href={`/${item.toLowerCase().replace(/ /g, "")}`}
+                    className="text-white/70 hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-[#DD9627] hover:via-[#FED649] hover:to-[#B47B2B] transition-colors"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h3 className="font-serif text-lg font-semibold mb-4">Support</h3>
+            <h3 className="font-serif text-lg font-semibold mb-4 text-white">Support</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/shipping" className="text-muted-foreground hover:text-primary transition-colors">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="/returns" className="text-muted-foreground hover:text-primary transition-colors">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-muted-foreground hover:text-primary transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
+              {["Shipping Info", "Returns", "FAQ", "Privacy Policy"].map((item, idx) => (
+                <li key={idx}>
+                  <Link
+                    href={`/${item.toLowerCase().replace(/ /g, "")}`}
+                    className="text-white/70 hover:bg-clip-text hover:text-transparent hover:bg-gradient-to-r hover:from-[#DD9627] hover:via-[#FED649] hover:to-[#B47B2B] transition-colors"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">© 2024 Flavourz. All rights reserved.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <span className="text-muted-foreground text-sm">English</span>
-            <span className="text-muted-foreground text-sm">தமிழ்</span>
-            <span className="text-muted-foreground text-sm">ಕನ್ನಡ</span>
-            <span className="text-muted-foreground text-sm">हिन्दी</span>
-          </div>
+        <div className="border-t border-[#FED649]/40 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-white/70 text-sm">© 2024 KOKO FRESH. All rights reserved.</p>
+          
         </div>
       </div>
     </footer>
-  )
+  );
 }

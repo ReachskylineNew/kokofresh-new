@@ -16,7 +16,7 @@ const ManufacturingProcess = () => {
     {
       id: "1",
       image:
-        "https://static.wixstatic.com/media/e7c120_d89fe093aebc4e71966f824a8ee1813e~mv2.webp/v1/fill/w_728,h_728,al_c,q_85,enc_avif,quality_auto/farm.webp",
+        "https://static.wixstatic.com/media/e7c120_f4a3e440e6504802b85f77ba5a5bfc68~mv2.png",
       title: "Farm Sourcing",
       description:
         "Our process begins right at the source — partnering with trusted local farmers who cultivate pure, chemical-free ingredients. Every batch is hand-selected to ensure natural aroma, color, and nutritional integrity.",
@@ -24,7 +24,7 @@ const ManufacturingProcess = () => {
     {
       id: "2",
       image:
-        "https://static.wixstatic.com/media/e7c120_802cb99a5d6b44d69357f5f330fdbbe5~mv2.webp/v1/fill/w_728,h_728,al_c,q_85,enc_avif,quality_auto/cleaned.webp",
+        "https://static.wixstatic.com/media/e7c120_b1bc091766124270a2556f898f5f1bfb~mv2.png",
       title: "Cleaning & Sorting",
       description:
         "Each ingredient goes through gentle, multi-stage cleaning — removing dust, stones, and impurities without affecting the grain’s natural essence. Only the freshest, most authentic ingredients move forward.",
@@ -32,7 +32,7 @@ const ManufacturingProcess = () => {
     {
       id: "3",
       image:
-        "https://static.wixstatic.com/media/e7c120_862735f07aa24f1a92e47587676b3b4c~mv2.webp/v1/fill/w_728,h_728,al_c,q_85,enc_avif,quality_auto/e7c120_862735f07aa24f1a92e47587676b3b4c~mv2.webp",
+        "https://static.wixstatic.com/media/e7c120_8fc83002372a43a0b871cf8bfe8514e9~mv2.png",
       title: "Sun Drying",
       description:
         "We follow traditional sun-drying methods — a slow, natural process that locks in authentic flavor and extends shelf life without artificial preservatives. This step brings out the true aroma of every spice and pulse.",
@@ -40,11 +40,27 @@ const ManufacturingProcess = () => {
     {
       id: "4",
       image:
-        "https://static.wixstatic.com/media/e7c120_e9964f47c1c449be840e2da53e1eadfb~mv2.webp/v1/fill/w_728,h_728,al_c,q_85,enc_avif,quality_auto/e7c120_e9964f47c1c449be840e2da53e1eadfb~mv2.webp",
+        "https://static.wixstatic.com/media/e7c120_2daf4b9002c14738a9cac7fe9ec83822~mv2.png",
       title: "Grinding & Blending",
       description:
         "Using cold-grind technology, ingredients are finely milled to preserve essential oils and nutrients. Expertly balanced blends are then crafted in small batches — bringing you the authentic taste of home, every time.",
     },
+    {
+      id: "5",
+      image:
+        "https://static.wixstatic.com/media/e7c120_6dc8018e989d407d8b2f0fa9bb725ee0~mv2.png",
+      title: "Packing",
+      description:
+        "Freshly ground and blended spices are packed immediately in food-grade, air-tight materials to lock in freshness and aroma. Every pack of KoKoFresh carries the purity of tradition — sealed with care, ready for your kitchen.",
+    },
+    {
+  id: "6",
+  image:
+    "https://static.wixstatic.com/media/e7c120_2491606bea8e4827b96951d47cf3cd3b~mv2.png", // (you can replace with your delivery/parcel image)
+  title: "Delivery with Care",
+  description:
+    "Once sealed, every KokoFresh pack begins its journey from our facility to your doorstep with the same love and attention that went into making it. We partner with trusted delivery services to ensure your spices arrive fresh, intact, and right on time — ready to flavor your next meal.",
+}
   ]
 
   // Detect if device is mobile/tablet
@@ -153,7 +169,8 @@ const ManufacturingProcess = () => {
   return (
     <div
       ref={containerRef}
-      className="relative lg:pt-28 flex flex-col lg:flex-row lg:min-h-[250vh] p-6 sm:p-8 lg:p-20 bg-gradient-to-b from-[#FFF8E1] to-[#FDF5E3] text-[#4B3A1F]"
+      className="relative lg:pt-28 flex flex-col lg:flex-row lg:min-h-[250vh] p-6 sm:p-8 lg:p-20 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#4B3A1F]"
+
     >
       {/* Process Heading */}
       <motion.div
@@ -166,10 +183,13 @@ const ManufacturingProcess = () => {
             : "absolute top-10 left-1/2 -translate-x-1/2 transform text-center z-10"
         }
       >
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#DD9627] mb-2">Our Process</h1>
-        <p className="text-lg sm:text-xl text-[#B47B2B] font-medium">
-          The <span className="text-[#DD9627] font-semibold">KoKoFresh</span> Way — from Farm to Pack
-        </p>
+       <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#3B2B13] mb-2">
+  Our Process
+</h1>
+<p className="text-lg sm:text-xl text-[#4B3A1F] font-medium">
+  The <span className="text-[#3B2B13] font-semibold">KoKoFresh</span> Way — from Farm to Pack
+</p>
+
       </motion.div>
 
       {/* Mobile Stepper */}
@@ -220,7 +240,7 @@ const ManufacturingProcess = () => {
       )}
 
       {/* Right Scroll Section */}
-      <div
+   <div
         className={`${
           isMobile ? "w-full snap-y snap-proximity" : "lg:w-5/12 w-full lg:ml-20"
         } flex flex-col ${isMobile ? "gap-10" : "gap-20 sm:gap-28"}`}
@@ -230,26 +250,24 @@ const ManufacturingProcess = () => {
             key={item.id}
             data-id={item.id}
             ref={(el) => (sectionRefs.current[item.id] = el)}
-            className={`flex flex-col justify-center border-b border-[#FED649]/30 pb-10 ${
+            className={`flex flex-col justify-center border-b border-[#3B2B13]/30 pb-10 ${
               isMobile
-                ? "min-h-[60vh] snap-start rounded-2xl border border-[#FED649]/20 bg-white/80 shadow-sm p-4"
+                ? "min-h-[60vh] snap-start rounded-2xl border border-[#3B2B13]/20 bg-white/80 shadow-md p-4"
                 : "min-h-[80vh]"
             }`}
-            style={isMobile ? { scrollMarginTop: headerOffset + stepperHeight + 16 } : undefined}
           >
             {isMobile && (
               <motion.div
-                initial={{ opacity: 0, y: reduceMotion ? 0 : 40 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.5 }}
+                transition={{ duration: 0.5 }}
                 viewport={{ once: true, amount: 0.4 }}
                 className="flex justify-center mb-4"
               >
                 <img
                   src={item.image}
                   alt={item.title}
-                  loading={item.id === "1" ? "eager" : "lazy"}
-                  className="w-full rounded-xl shadow-lg border border-[#FED649]/30 object-cover"
+                  className="w-full rounded-xl shadow-lg border border-[#3B2B13]/30 object-cover"
                 />
               </motion.div>
             )}
@@ -260,21 +278,23 @@ const ManufacturingProcess = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 className={`${
                   activeStage === item.id
-                    ? "bg-[#DD9627] text-white shadow-lg"
-                    : "bg-[#FED649]/40 text-[#B47B2B]"
-                } font-bold rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm sm:text-base shadow`}
+                    ? "bg-[#3B2B13] text-[#FED649]"
+                    : "bg-[#FED649]/60 text-[#3B2B13]"
+                } font-bold rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm sm:text-base shadow-md`}
               >
                 {item.id}
               </motion.div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#DD9627]">{item.title}</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-[#3B2B13]">
+                {item.title}
+              </h2>
             </div>
 
             <motion.p
-              initial={{ opacity: 0, y: reduceMotion ? 0 : 20 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.6 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true, amount: 0.4 }}
-              className="text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl text-[#4B3A1F] border-l-4 pl-5 py-2.5 border-[#EDCC32]/60 text-justify"
+              className="text-base sm:text-lg lg:text-xl leading-relaxed max-w-xl text-[#4B3A1F] border-l-4 pl-5 py-2 border-[#3B2B13]/40 text-justify"
             >
               {item.description}
             </motion.p>
@@ -286,3 +306,5 @@ const ManufacturingProcess = () => {
 }
 
 export default ManufacturingProcess
+
+

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import Cookies from "js-cookie";
+import { getWixClient } from "../app/utillity/wixclient";
 
 const BASE_URL = "https://www.wixapis.com/ecom/v1";
 const APP_ID = "1380b703-ce81-ff05-f115-39571d94df35";
@@ -267,62 +268,55 @@ const add = async (
   };
 
 const checkout = async () => {
-  const activeAuth = await ensureAuth();
-
-  if (!cart?.lineItems?.length) {
-    console.error("Cannot checkout, cart is empty");
-    return;
-  }
-
   try {
-    // 1. Estimate totals (important for shipping/tax)
-    const estimateRes = await fetch(`${BASE_URL}/carts/current/estimate-totals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${activeAuth.access_token}`,
-      },
-      body: JSON.stringify({
-        calculateTax: false,
-        calculateShipping: true,
-      }),
+    const activeAuth = await ensureAuth();
+
+    if (!cart?.lineItems?.length) {
+      console.error("Cannot checkout, cart is empty");
+      return;
+    }
+
+    const wixClient = getWixClient();
+
+    // 🧠 Sync SDK tokens with current visitor
+    wixClient.auth.setTokens({
+      accessToken: { value: activeAuth.access_token },
+      refreshToken: { value: activeAuth.refresh_token },
     });
 
-    if (!estimateRes.ok) {
-      const errorText = await estimateRes.text();
-      throw new Error(`Estimate totals failed: ${errorText}`);
+    // 🛒 Fetch current cart
+    const currentCart = await wixClient.currentCart.getCurrentCart();
+    console.log("🛍️ Current cart:", currentCart);
+
+    // ✅ Fixed check
+    if (!currentCart?._id) {
+      throw new Error("No current cart found after syncing tokens");
     }
 
-    // 2. Create checkout session
-    const checkoutRes = await fetch(`${BASE_URL}/carts/current/create-checkout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${activeAuth.access_token}`,
-      },
-      body: JSON.stringify({ channelType: "WEB" }),
+    // 🧾 Create checkout
+    const { checkoutId } = await wixClient.currentCart.createCheckoutFromCurrentCart({
+      channelType: "WEB",
     });
 
-    if (!checkoutRes.ok) {
-      const errorText = await checkoutRes.text();
-      throw new Error(`Create checkout failed: ${errorText}`);
+    console.log("✅ Checkout created:", checkoutId);
+
+    // 🌐 Get checkout URL and redirect
+    const { checkoutUrl } = await wixClient.checkout.getCheckoutUrl(checkoutId);
+
+    if (!checkoutUrl) {
+      throw new Error("No checkout URL returned from Wix");
     }
 
-    const checkoutData = await checkoutRes.json();
+    console.log("🔁 Redirecting to checkout:", checkoutUrl);
+    window.location.href = checkoutUrl;
 
-    // 3. Redirect
-    if (checkoutData.checkoutUrl) {
-      window.location.href = checkoutData.checkoutUrl;
-    } else if (checkoutData.checkoutId) {
-      // fallback: build URL manually
-      window.location.href = `https://www.kokofresh.in/checkout?checkoutId=${checkoutData.checkoutId}`;
-    } else {
-      throw new Error("No checkout URL returned");
-    }
   } catch (err) {
     console.error("Checkout error:", err);
   }
 };
+
+
+
 
 
   // Reload cart function
