@@ -5,7 +5,8 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: {
-    unoptimized: true, // disable image optimization
+    domains: ['static.wixstatic.com'], // Allow external images from Wix
+    // unoptimized: true, // Removed to enable image optimization
   },
 
   // ✅ Disable rewrites & middleware warnings in dev

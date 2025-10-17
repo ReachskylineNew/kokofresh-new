@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 const ManufacturingProcess = () => {
   const [activeStage, setActiveStage] = useState("1")
@@ -227,15 +228,21 @@ const ManufacturingProcess = () => {
       {/* Left Image (Desktop) */}
       {!isMobile && (
         <div className="sticky top-24 lg:w-1/2 h-[calc(100vh-6rem)] flex justify-center items-center mb-8 lg:mb-0">
-          <motion.img
+            <motion.div
             key={activeImage}
-            src={activeImage}
-            alt="Active Stage"
             initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={imgTransition}
-            className="w-100 h-100 rounded-2xl shadow-2xl border-4 border-[#FED649]/50 object-cover"
-          />
+            className="w-100 h-100 rounded-2xl shadow-2xl border-4 border-[#FED649]/50 overflow-hidden"
+          >
+            <Image
+              src={activeImage || "/placeholder.svg"}
+              alt="Active Stage"
+              width={500}
+              height={500}
+              className="w-full h-full object-cover"
+            />
+          </motion.div>
         </div>
       )}
 
@@ -264,9 +271,11 @@ const ManufacturingProcess = () => {
                 viewport={{ once: true, amount: 0.4 }}
                 className="flex justify-center mb-4"
               >
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
+                  width={400}
+                  height={300}
                   className="w-full rounded-xl shadow-lg border border-[#3B2B13]/30 object-cover"
                 />
               </motion.div>

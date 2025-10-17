@@ -251,7 +251,6 @@ export default function HomePage() {
             alt="Mobile background"
             fill
             priority
-            unoptimized
             className="object-cover object-center"
           />
         </div>
@@ -263,7 +262,6 @@ export default function HomePage() {
             alt="Desktop background"
             fill
             priority
-            unoptimized
             className="object-cover object-center"
           />
         </div>
@@ -565,8 +563,8 @@ export default function HomePage() {
                     <Image
   src={getProductImage(product) || "/placeholder.svg"}
   alt={product.name || "Product Image"}
-  width={500} // you can adjust this
-  height={500} // must be provided for layout calculation
+  width={500}
+  height={500}
   className="object-contain w-full aspect-square bg-white group-hover:scale-105 transition-all duration-500"
   priority={false}
   loading="lazy"
