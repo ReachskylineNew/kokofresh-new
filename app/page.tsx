@@ -272,11 +272,7 @@ export default function HomePage() {
       {/* Content Area */}
       <div className="relative z-10 w-full lg:w-1/2 px-6 sm:px-10 py-16 lg:pl-24 text-center lg:text-left">
         {/* Tagline */}
-        <div className="inline-flex items-center gap-2 bg-[#FFF4C4]/80 border border-[#DD9627]/30 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
-          <span className="text-sm sm:text-base font-semibold text-[#B47B2B] tracking-wide uppercase">
-            India’s Freshest Spice Revolution 🌿
-          </span>
-        </div>
+        
 
         {/* Heading */}
         <h1 className="font-serif font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] mb-6 text-white">
@@ -292,34 +288,19 @@ export default function HomePage() {
         </p>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-          <Button
-            size="lg"
-            className="bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
-          >
-            Shop Now
-          </Button>
+<div className="flex flex-col sm:flex-row justify-center sm:justify-start gap-4 w-full">
+  <Link href="/shop" className="w-[80%] mx-auto sm:mx-0">
+    <Button
+      size="lg"
+      className="w-full bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
+    >
+      Shop Now
+    </Button>
+  </Link>
+</div>
 
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-2 border-[#FED649] bg-white/90 text-black hover:bg-[#FED649] hover:text-black font-semibold text-lg px-8 py-4 rounded-full transition-all duration-300"
-          >
-            Explore Collections
-          </Button>
-        </div>
 
-        {/* Social Proof */}
-        <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-12 text-[#EAD79B]/90 text-sm sm:text-base">
-          <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-[#FED649]" />
-            <span>4.9★ from 10K+ reviews</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-[#FED649]" />
-            <span>100% Authentic</span>
-          </div>
-        </div>
+     
       </div>
     </section>
 
@@ -406,7 +387,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 text-sm md:text-base font-medium">
             <Sparkles className="h-4 w-4 text-[#FED649]" />
-            <span>NEW DROP: Limited Edition Diwali Collection - Only 500 boxes left!</span>
+            <span>Flavourz of India</span>
             <Sparkles className="h-4 w-4 text-[#FED649]" />
           </div>
         </div>
@@ -906,7 +887,7 @@ export default function HomePage() {
       </Button>
 
       {/* Gradient Outline Button */}
-      <Button
+      {/* <Button
         size="lg"
         variant="outline"
         className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black 
@@ -915,7 +896,7 @@ export default function HomePage() {
       >
         <Sparkles className="mr-2 h-5 w-5" />
         Get Recipe Inspo
-      </Button>
+      </Button> */}
     </div>
 
     {/* Note */}
