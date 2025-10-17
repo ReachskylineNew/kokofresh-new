@@ -123,13 +123,10 @@ export default function ContactPage() {
       <Navigation />
 
       {/* Hero Section */}
-<section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-black">
+<section className="relative pt-2 pb-2 flex items-center justify-center overflow-hidden bg-black">
   <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
     {/* Tagline Pill */}
-    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
-      <MessageCircle className="h-4 w-4 text-white" />
-      <span className="text-sm font-medium text-white/80">We’re Here to Help</span>
-    </div>
+   
 
     {/* Main Heading - matches KOKOFRESH font & gradient */}
     <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide mb-6 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">
@@ -150,7 +147,7 @@ export default function ContactPage() {
 
 
       {/* Contact Methods */}
-<section className="py-20 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#3B2B13]">
+<section className="p-4 bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#3B2B13]">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     {/* Section Heading */}
     <div className="text-center mb-16">
@@ -194,7 +191,7 @@ export default function ContactPage() {
   ].map((method, index) => (
     <Card
       key={index}
-      className="group hover:shadow-xl transition-all duration-300 border-2 border-[#C79A25]/40 bg-white/90 backdrop-blur-md text-[#3B2B13]"
+      className="group hover:shadow-xl transition-all duration-300  border-2 border-[#C79A25]/40 bg-white/90 backdrop-blur-md text-[#3B2B13]"
     >
       <CardContent className="p-8 text-center">
         <div className="mb-6 flex justify-center">{method.icon}</div>
