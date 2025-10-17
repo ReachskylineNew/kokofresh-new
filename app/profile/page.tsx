@@ -297,36 +297,43 @@ const handleSave = async () => {
         <div className="px-4 pt-4 pb-6 lg:px-8 xl:px-12 2xl:px-16">
           <div className="max-w-7xl mx-auto">
             <Card className="border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardContent className="p-6 lg:p-8 xl:p-10">
-                <div className="flex flex-col sm:flex-row lg:flex-row items-center sm:items-start lg:items-center gap-4 lg:gap-8">
-                  <div className="relative flex-shrink-0">
-                    {profile?.profile?.photo?.url ? (
-                      <img
-                        src={`/api/proxy-image?url=${encodeURIComponent(profile.profile.photo.url)}`}
-                        alt={profile?.profile?.nickname || "Profile"}
-                        className="w-20 h-20 sm:w-16 sm:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 rounded-2xl border-4 border-background shadow-lg object-cover"
-                      />
-                    ) : (
-                      <div className="w-20 h-20 sm:w-16 sm:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-muted rounded-2xl flex items-center justify-center border-4 border-background shadow-lg">
-                        <User className="h-8 w-8 sm:h-6 sm:w-6 lg:h-10 lg:w-10 xl:h-12 xl:w-12 text-muted-foreground" />
-                      </div>
-                    )}
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 lg:w-8 lg:h-8 bg-green-500 rounded-full border-3 border-background"></div>
-                  </div>
+            <CardContent className="p-6 lg:p-8 xl:p-10">
+  <div className="flex flex-col sm:flex-row lg:flex-row items-center sm:items-start lg:items-center gap-4 lg:gap-8">
+    <div className="relative flex-shrink-0">
+      {profile?.profile?.photo?.url ? (
+        <img
+          src={profile.profile.photo.url}
+          alt={profile?.profile?.nickname || "Profile"}
+          loading="lazy"
+          decoding="async"
+          className="w-20 h-20 sm:w-16 sm:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 rounded-2xl border-4 border-background shadow-lg object-cover"
+          onError={(e) => {
+            // Fallback image on error
+            (e.target as HTMLImageElement).src = "/fallback-avatar.png";
+          }}
+        />
+      ) : (
+        <div className="w-20 h-20 sm:w-16 sm:h-16 lg:w-24 lg:h-24 xl:w-28 xl:h-28 bg-muted rounded-2xl flex items-center justify-center border-4 border-background shadow-lg">
+          <User className="h-8 w-8 sm:h-6 sm:w-6 lg:h-10 lg:w-10 xl:h-12 xl:w-12 text-muted-foreground" />
+        </div>
+      )}
+      <div className="absolute -bottom-1 -right-1 w-6 h-6 lg:w-8 lg:h-8 bg-green-500 rounded-full border-3 border-background"></div>
+    </div>
 
-                  <div className="flex-1 text-center sm:text-left lg:text-left space-y-2 lg:space-y-3">
-                    <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-3xl font-bold text-foreground tracking-tight">
-                      {profile?.profile?.nickname || "Your Account"}
-                    </h1>
-                    <p className="text-muted-foreground text-base sm:text-lg lg:text-lg xl:text-lg font-medium">
-                      Welcome back! Manage your account and orders
-                    </p>
-                    <Badge className="bg-green-500 hover:bg-green-600 text-white border-0 px-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-sm font-semibold">
-                      ✓ Verified Customer
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
+    <div className="flex-1 text-center sm:text-left lg:text-left space-y-2 lg:space-y-3">
+      <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-3xl font-bold text-foreground tracking-tight">
+        {profile?.profile?.nickname || "Your Account"}
+      </h1>
+      <p className="text-muted-foreground text-base sm:text-lg lg:text-lg xl:text-lg font-medium">
+        Welcome back! Manage your account and orders
+      </p>
+      <Badge className="bg-green-500 hover:bg-green-600 text-white border-0 px-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-sm font-semibold">
+        ✓ Verified Customer
+      </Badge>
+    </div>
+  </div>
+</CardContent>
+
             </Card>
           </div>
         </div>

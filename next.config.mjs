@@ -1,22 +1,26 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/product/:slug",
-        destination: "/product/slug-redirect",
-      },
-    ]
-  }
-}
+const isDev = process.env.NODE_ENV === "development";
 
-export default nextConfig
+const nextConfig = {
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
+  images: {
+    unoptimized: true, // disable image optimization
+  },
+
+  // ✅ Disable rewrites & middleware warnings in dev
+  ...(isDev
+    ? {}
+    : {
+        async rewrites() {
+          return [
+            {
+              source: "/product/:slug",
+              destination: "/product/slug-redirect",
+            },
+          ];
+        },
+      }),
+};
+
+export default nextConfig;

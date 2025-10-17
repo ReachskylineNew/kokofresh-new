@@ -11,12 +11,12 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
           <Link href="/" className="flex items-center space-x-4 mb-4 group">
   <div className="relative w-16 h-16"> {/* Increased from w-10 h-10 */}
-    <Image
+    <img
       src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
       alt="KOKOFRESH Logo"
-      fill
+   
       className="object-contain transition-transform group-hover:scale-105"
-      priority
+     
     />
   </div>
   <span className="font-serif text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">

@@ -1,15 +1,21 @@
-# Update Shop Page Styling to Match Homepage
+# Homepage Performance Optimization TODO
 
-## Tasks
-- [x] Update overall container background to bg-primary/5 (#FFF9E8)
-- [x] Change main text color to text-[#4B2E05] or text-[#3B2B13]
-- [x] Update headings to use font-serif
-- [x] Update body text to use font-sans (already is)
-- [x] Update hero section background and text colors
-- [x] Update breadcrumb styling
-- [x] Update filter cards and buttons
-- [x] Update product cards: backgrounds, borders, badges
-- [x] Update buttons to use homepage gradients and colors
-- [x] Update footer section if needed
-- [x] Test responsive design consistency
-- [x] Update product page styling to match
+## Completed Tasks
+- [ ] Analyze codebase and create optimization plan
+
+## Pending Tasks
+- [ ] Update next.config.mjs for static export with required optimizations
+- [ ] Optimize fonts - Replace Google Fonts with next/font and system fonts
+- [ ] Convert homepage to server component where possible to enable static generation
+- [ ] Optimize images - Convert to Next.js Image component with WebP/AVIF, lazy loading, priority for hero
+- [ ] Dynamically import heavy components (framer-motion animations, ProcessSection)
+- [ ] Remove console logs and unused imports
+- [ ] Add prefetch={false} to below-fold links
+- [ ] Optimize CSS purging in Tailwind config
+- [ ] Move analytics to client-only loading
+- [ ] Remove unused dependencies if possible
+
+## Followup Steps
+- [ ] Run `npx next build` to check bundle sizes
+- [ ] Test Lighthouse scores
+- [ ] Verify static export works

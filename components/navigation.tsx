@@ -46,13 +46,13 @@ export function Navigation() {
             aria-label="KOKO FRESH home"
           >
             <div className="relative w-12 h-12 md:w-24 md:h-24">
-              <Image
+              <img
                 src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
                 alt="KOKOFRESH Logo"
-                fill
                 sizes="(max-width: 768px) 48px, 96px"
                 className="object-contain transition-transform group-hover:scale-105"
-                priority
+              
+                
               />
             </div>
             <span className="block font-serif text-lg md:text-3xl lg:text-4xl leading-none font-semibold tracking-tight bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">

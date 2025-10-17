@@ -16,7 +16,7 @@ const ManufacturingProcess = () => {
     {
       id: "1",
       image:
-        "https://static.wixstatic.com/media/e7c120_f4a3e440e6504802b85f77ba5a5bfc68~mv2.png",
+        "https://static.wixstatic.com/media/e7c120_8ca87a51476b428493de54935c975cb9~mv2.webp",
       title: "Farm Sourcing",
       description:
         "Our process begins right at the source — partnering with trusted local farmers who cultivate pure, chemical-free ingredients. Every batch is hand-selected to ensure natural aroma, color, and nutritional integrity.",
@@ -24,7 +24,7 @@ const ManufacturingProcess = () => {
     {
       id: "2",
       image:
-        "https://static.wixstatic.com/media/e7c120_b1bc091766124270a2556f898f5f1bfb~mv2.png",
+        "https://static.wixstatic.com/media/e7c120_6a96aaaeddf34b3e9aa6e013c8403966~mv2.webp",
       title: "Cleaning & Sorting",
       description:
         "Each ingredient goes through gentle, multi-stage cleaning — removing dust, stones, and impurities without affecting the grain’s natural essence. Only the freshest, most authentic ingredients move forward.",
@@ -32,7 +32,7 @@ const ManufacturingProcess = () => {
     {
       id: "3",
       image:
-        "https://static.wixstatic.com/media/e7c120_8fc83002372a43a0b871cf8bfe8514e9~mv2.png",
+        "https://static.wixstatic.com/media/e7c120_f1d24fe0c4c94f0985096cc14778c870~mv2.webp",
       title: "Sun Drying",
       description:
         "We follow traditional sun-drying methods — a slow, natural process that locks in authentic flavor and extends shelf life without artificial preservatives. This step brings out the true aroma of every spice and pulse.",
@@ -40,7 +40,7 @@ const ManufacturingProcess = () => {
     {
       id: "4",
       image:
-        "https://static.wixstatic.com/media/e7c120_2daf4b9002c14738a9cac7fe9ec83822~mv2.png",
+        "https://static.wixstatic.com/media/e7c120_c12434af189544f684ed4584500b2934~mv2.webp",
       title: "Grinding & Blending",
       description:
         "Using cold-grind technology, ingredients are finely milled to preserve essential oils and nutrients. Expertly balanced blends are then crafted in small batches — bringing you the authentic taste of home, every time.",
@@ -48,7 +48,7 @@ const ManufacturingProcess = () => {
     {
       id: "5",
       image:
-        "https://static.wixstatic.com/media/e7c120_6dc8018e989d407d8b2f0fa9bb725ee0~mv2.png",
+        "https://static.wixstatic.com/media/e7c120_00283047c35e42a5aa38d7d6573141f3~mv2.webp",
       title: "Packing",
       description:
         "Freshly ground and blended spices are packed immediately in food-grade, air-tight materials to lock in freshness and aroma. Every pack of KoKoFresh carries the purity of tradition — sealed with care, ready for your kitchen.",
@@ -56,7 +56,7 @@ const ManufacturingProcess = () => {
     {
   id: "6",
   image:
-    "https://static.wixstatic.com/media/e7c120_2491606bea8e4827b96951d47cf3cd3b~mv2.png", // (you can replace with your delivery/parcel image)
+    "https://static.wixstatic.com/media/e7c120_ebe2fbe9e9ad449d8de7dff8bbdd3228~mv2.webp", // (you can replace with your delivery/parcel image)
   title: "Delivery with Care",
   description:
     "Once sealed, every KokoFresh pack begins its journey from our facility to your doorstep with the same love and attention that went into making it. We partner with trusted delivery services to ensure your spices arrive fresh, intact, and right on time — ready to flavor your next meal.",

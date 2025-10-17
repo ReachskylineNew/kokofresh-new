@@ -292,7 +292,7 @@ export default function ShopPage() {
   }
 
   return (
-<div className="min-h-screen bg-primary/5 text-[#3B2B13] font-sans">
+<div className="min-h-screen bg-white text-[#3B2B13] font-sans">
 
       <Navigation />
 

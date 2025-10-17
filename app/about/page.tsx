@@ -131,7 +131,7 @@ export default function AboutPage() {
       {/* LEFT: Image */}
       <div className="relative order-2 lg:order-1">
         <img
-          src="https://static.wixstatic.com/media/e7c120_d89fe093aebc4e71966f824a8ee1813e~mv2.webp"
+          src="https://static.wixstatic.com/media/e7c120_01f9ee4a85624c248fd3434112bcb78e~mv2.jpeg"
           alt="Farm-sourced ingredients"
           className="rounded-2xl shadow-2xl"
         />

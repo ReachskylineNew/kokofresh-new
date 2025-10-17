@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 import ManufacturingProcess from "../components/ProcessSection"
 import {
   ArrowRight,
@@ -240,69 +241,90 @@ export default function HomePage() {
 
       {/* Hero Section - Gen Z Vibes */}
 
-<section
-  className="relative flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left"
-  style={{
-    backgroundImage:
-      "url('https://static.wixstatic.com/media/e7c120_c0db5d71e38f4ebe9772c45d48e45939~mv2.jpeg')",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}
->
-  {/* Content Area (50%) */}
-  <div className="relative z-10 w-full lg:w-1/2 px-6 sm:px-10 py-16 lg:pl-24 text-center lg:text-left">
-    {/* Tagline */}
-    <div className="inline-flex items-center gap-2 bg-[#FFF4C4]/80 border border-[#DD9627]/30 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
-      <span className="text-sm sm:text-base font-semibold text-[#B47B2B] tracking-wide uppercase">
-        India’s Freshest Spice Revolution 🌿
-      </span>
-    </div>
+<section className="relative flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
+      {/* ✅ Responsive background image */}
+      <div className="absolute inset-0 z-0">
+        {/* Mobile Background */}
+        <div className="lg:hidden">
+          <Image
+            src="https://static.wixstatic.com/media/e7c120_973501e00fa543d8a5adae020261e0fe~mv2.png"
+            alt="Mobile background"
+            fill
+            priority
+            unoptimized
+            className="object-cover object-center"
+          />
+        </div>
 
-    {/* Heading */}
-    <h1 className="font-serif font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] mb-6 text-white">
-      Authentic <br /> &amp; Handcrafted <br />
-      <span className="text-[#FED649]">Spice Masala.</span>
-    </h1>
+        {/* Desktop Background */}
+        <div className="hidden lg:block">
+          <Image
+            src="https://static.wixstatic.com/media/e7c120_c0db5d71e38f4ebe9772c45d48e45939~mv2.jpeg"
+            alt="Desktop background"
+            fill
+            priority
+            unoptimized
+            className="object-cover object-center"
+          />
+        </div>
 
-    {/* Description */}
-    <p className="text-base sm:text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-md mx-auto lg:mx-0">
-      At Kokofresh, we redefine freshness. Our spices are sourced from trusted farms, slow-roasted in small batches, and sealed to perfection — ensuring every pinch delivers the purest taste of India.
-    </p>
-
-    {/* Buttons */}
-    <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-      <Button
-        size="lg"
-        className="bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
-      >
-        Shop Now
-      </Button>
-      <Button
-        size="lg"
-        variant="outline"
-        className="border-2 border-[#FED649] text-[#FED649] hover:bg-[#FED649] hover:text-black font-semibold text-lg px-8 py-4 rounded-full transition-all duration-300"
-      >
-        Explore Collections
-      </Button>
-    </div>
-
-    {/* Social Proof */}
-    <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-12 text-[#EAD79B]/90 text-sm sm:text-base">
-      <div className="flex items-center gap-2">
-        <Star className="h-5 w-5 text-[#FED649]" />
-        <span>4.9★ from 10K+ reviews</span>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
       </div>
-      <div className="flex items-center gap-2">
-        <Shield className="h-5 w-5 text-[#FED649]" />
-        <span>100% Authentic</span>
+
+      {/* Content Area */}
+      <div className="relative z-10 w-full lg:w-1/2 px-6 sm:px-10 py-16 lg:pl-24 text-center lg:text-left">
+        {/* Tagline */}
+        <div className="inline-flex items-center gap-2 bg-[#FFF4C4]/80 border border-[#DD9627]/30 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
+          <span className="text-sm sm:text-base font-semibold text-[#B47B2B] tracking-wide uppercase">
+            India’s Freshest Spice Revolution 🌿
+          </span>
+        </div>
+
+        {/* Heading */}
+        <h1 className="font-serif font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] mb-6 text-white">
+          Authentic <br /> &amp; Handcrafted <br />
+          <span className="text-[#FED649]">Spice Masala.</span>
+        </h1>
+
+        {/* Description */}
+        <p className="text-base sm:text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-md mx-auto lg:mx-0">
+          At Kokofresh, we redefine freshness. Our spices are sourced from
+          trusted farms, slow-roasted in small batches, and sealed to
+          perfection — ensuring every pinch delivers the purest taste of India.
+        </p>
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+          <Button
+            size="lg"
+            className="bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
+          >
+            Shop Now
+          </Button>
+
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-2 border-[#FED649] bg-white/90 text-black hover:bg-[#FED649] hover:text-black font-semibold text-lg px-8 py-4 rounded-full transition-all duration-300"
+          >
+            Explore Collections
+          </Button>
+        </div>
+
+        {/* Social Proof */}
+        <div className="flex flex-wrap justify-center lg:justify-start gap-6 mt-12 text-[#EAD79B]/90 text-sm sm:text-base">
+          <div className="flex items-center gap-2">
+            <Star className="h-5 w-5 text-[#FED649]" />
+            <span>4.9★ from 10K+ reviews</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-[#FED649]" />
+            <span>100% Authentic</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-
-
-</section>
-
+    </section>
 
 
       {/* <section
@@ -540,11 +562,15 @@ export default function HomePage() {
               <Card className="group cursor-pointer overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-sm bg-white rounded-xl hover:-translate-y-1">
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden">
-                    <img
-                      src={getProductImage(product) || "/placeholder.svg"}
-                      alt={product.name}
-                      className="object-contain w-full aspect-square bg-white group-hover:scale-105 transition-all duration-500"
-                    />
+                    <Image
+  src={getProductImage(product) || "/placeholder.svg"}
+  alt={product.name || "Product Image"}
+  width={500} // you can adjust this
+  height={500} // must be provided for layout calculation
+  className="object-contain w-full aspect-square bg-white group-hover:scale-105 transition-all duration-500"
+  priority={false}
+  loading="lazy"
+/>
 
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
                       {product.bestseller && (

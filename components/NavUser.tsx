@@ -44,13 +44,19 @@ export default function NavUser() {
         className={`flex items-center gap-2 ${linkClasses}`}
       >
         {profile?.profile?.photo?.url ? (
-          <img
-            src={`/api/proxy-image?url=${encodeURIComponent(
-              profile.profile.photo.url
-            )}`}
-            alt={profile?.profile?.nickname || "Profile"}
-            className="w-8 h-8 rounded-full border-2 border-[#FED649] shadow-sm"
-          />
+
+         <img
+  src={profile.profile.photo.url}
+  alt={profile?.profile?.nickname || "Profile"}
+  loading="lazy"
+  decoding="async"
+  onError={(e) => {
+    // fallback if Wix image fails to load
+    (e.target as HTMLImageElement).src = "/fallback-avatar.png";
+  }}
+  className="w-8 h-8 rounded-full border-2 border-[#FED649] shadow-sm"
+/>
+
         ) : (
           <div className="w-8 h-8 flex items-center justify-center rounded-full bg-[#FED649]/30 text-[#DD9627] font-bold border border-[#FED649]/50 shadow-sm">
             {getInitials(profile?.profile?.nickname || "U")}
