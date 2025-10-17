@@ -106,7 +106,7 @@ export default function AboutPage() {
       {/* RIGHT: Image */}
       <div className="relative">
         <img
-          src="https://static.wixstatic.com/media/e7c120_ce0ff968287e4081b9ab31d83201aa9d~mv2.png"
+          src="https://static.wixstatic.com/media/e7c120_9ece78021480435893a5baa6132046bf~mv2.jpeg"
           alt="Women crafting traditional recipes"
           className="rounded-2xl shadow-2xl"
         />
