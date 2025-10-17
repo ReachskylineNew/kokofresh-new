@@ -247,7 +247,7 @@ export default function HomePage() {
         {/* Mobile Background */}
         <div className="lg:hidden">
           <Image
-            src="https://static.wixstatic.com/media/e7c120_973501e00fa543d8a5adae020261e0fe~mv2.png"
+            src="https://static.wixstatic.com/media/e7c120_6f9f985aded44415bdb78ecaf7628a19~mv2.webp"
             alt="Mobile background"
             fill
             priority
@@ -258,7 +258,7 @@ export default function HomePage() {
         {/* Desktop Background */}
         <div className="hidden lg:block">
           <Image
-            src="https://static.wixstatic.com/media/e7c120_c0db5d71e38f4ebe9772c45d48e45939~mv2.jpeg"
+            src="https://static.wixstatic.com/media/e7c120_0a6c2f1ec5134b9cb262528922b7b2d5~mv2.webp"
             alt="Desktop background"
             fill
             priority
@@ -266,8 +266,7 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
+      
       </div>
 
       {/* Content Area */}
