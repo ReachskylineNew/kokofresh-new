@@ -21,6 +21,7 @@ import {
   Clock,
   ChefHat,
   Info,
+  Lightbulb,
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -217,9 +218,6 @@ export default function ProductPage() {
                   product.media?.mainMedia?.image?.url ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
@@ -261,18 +259,22 @@ export default function ProductPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-[#FED649] text-[#FED649]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
                   </div>
-                  <span className="text-xs sm:text-sm text-[#3B2B13]/70">(4.9)</span>
+                  <span className="text-xs sm:text-sm font-semibold text-black/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
+                    (4.9)
+                  </span>
                 </div>
+
                 <Button
                   size="sm"
                   variant="outline"
-                  className="rounded-full border-2 border-[#3B2B13] bg-white/80 text-[#3B2B13] hover:bg-white"
+                  className="rounded-full border-2 border-[#3B2B13] bg-white/80 text-[#3B2B13] 
+             font-medium cursor-pointer transition-none"
                 >
                   <Share2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                   Share
@@ -425,33 +427,13 @@ export default function ProductPage() {
                 <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
               </Button>
             </div>
-
-            {product.description && (
-              <div className="pt-4 border-t border-[#3B2B13]/20">
-                <h3 className="font-serif font-semibold text-[#3B2B13] mb-3 text-sm sm:text-base">
-                  About this product
-                </h3>
-                <div className="prose prose-sm max-w-none">
-                  <div
-                    className="text-[#3B2B13]/80 leading-relaxed text-sm sm:text-base"
-                    dangerouslySetInnerHTML={{
-                      __html: product.description
-                        .replace(/<p><strong>/g, '<p class="font-semibold text-[#3B2B13]">')
-                        .replace(/<strong>/g, '<span class="font-semibold text-[#3B2B13]">')
-                        .replace(/<\/strong>/g, "</span>")
-                        .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
-                    }}
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
         <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95">
           <div className="border-b border-[#FED649]/40">
             <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
-              {["instructions", "details"].map((tab) => (
+              {["description", "instructions", "details"].map((tab) => (
                 <button
                   key={tab}
                   className={`px-2 sm:px-4 py-3 sm:py-4 font-medium capitalize transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
@@ -461,7 +443,7 @@ export default function ProductPage() {
                   }`}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab === "instructions" ? "How to Use" : tab}
+                  {tab === "instructions" ? "How to Use" : tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </button>
               ))}
             </div>
@@ -469,22 +451,27 @@ export default function ProductPage() {
 
           <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
             {activeTab === "description" && (
-              <div className="prose prose-sm sm:prose-lg max-w-none">
-                {product.description ? (
-                  <div
-                    className="text-[#3B2B13] leading-relaxed space-y-4 text-sm sm:text-base"
-                    dangerouslySetInnerHTML={{
-                      __html: product.description
-                        .replace(/<p><strong>/g, '<h3 class="text-lg sm:text-xl font-semibold text-[#B47B2B] mb-3">')
-                        .replace(/<\/strong><\/p>/g, "</h3>")
-                        .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
-                        .replace(/<\/strong>/g, "</span>")
-                        .replace(/<p>/g, '<p class="mb-4">'),
-                    }}
-                  />
-                ) : (
-                  <p className="text-[#3B2B13]/70 text-sm sm:text-base">No description available.</p>
-                )}
+              <div className="space-y-6 sm:space-y-8">
+                <div
+                  className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: product.description
+                      .replace(
+                        /<p><strong>/g,
+                        '<h3 class="text-lg sm:text-xl font-serif font-bold text-[#B47B2B] mb-4 mt-6 first:mt-0">',
+                      )
+                      .replace(/<\/strong><\/p>/g, "</h3>")
+                      .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
+                      .replace(/<\/strong>/g, "</span>")
+                      .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
+                      .replace(/<\/em>/g, "</em>")
+                      .replace(/<p>/g, '<p class="mb-4 text-base sm:text-lg leading-relaxed">')
+                      .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
+                      .replace(/<li>/g, '<li class="text-base sm:text-lg text-[#3B2B13]">')
+                      .replace(/<\/li>/g, "</li>")
+                      .replace(/<\/ul>/g, "</ul>"),
+                  }}
+                />
               </div>
             )}
 
@@ -506,52 +493,54 @@ export default function ProductPage() {
                   </div>
                 </div>
 
-                {product.additionalInfoSections?.map((section: any, index: number) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-[#FED649]/40 shadow-sm hover:shadow-md transition-shadow duration-200"
-                  >
-                    <div className="flex items-start gap-4 mb-4 sm:mb-6">
-                      <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-[#DD9627] text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-base">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg sm:text-xl lg:text-2xl font-serif font-bold text-[#3B2B13] mb-3 sm:mb-4 leading-tight">
-                          {section.title.replace(/\*/g, "")}
-                        </h3>
+                {product.additionalInfoSections && product.additionalInfoSections.length > 0 ? (
+                  <div className="space-y-6 sm:space-y-8">
+                    {product.additionalInfoSections.map((section: any, index: number) => (
+                      <div
+                        key={index}
+                        className="bg-gradient-to-br from-white to-[#FED649]/5 rounded-xl sm:rounded-2xl p-6 sm:p-8 border-2 border-[#FED649]/40 shadow-sm hover:shadow-md transition-shadow duration-200"
+                      >
+                        {/* <div className="flex items-start gap-4 mb-4 sm:mb-6">
+                          <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-md">
+                            {index + 1}
+                          </div>
+                        </div> */}
+
                         <div
-                          className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-[#3B2B13] leading-relaxed"
+                          className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed ml-0 sm:ml-14"
                           dangerouslySetInnerHTML={{
                             __html: section.description
-                              .replace(/<p>/g, '<p class="mb-4 text-[#3B2B13]">')
-                              .replace(/<ul>/g, '<ul class="space-y-2 ml-4 list-disc list-inside">')
-                              .replace(/<ol>/g, '<ol class="space-y-2 ml-4 list-decimal list-inside">')
-                              .replace(/<li>/g, '<li class="text-[#3B2B13] pl-2">')
+                              .replace(/<p>/g, '<p class="mb-4 text-[#3B2B13] text-base sm:text-lg">')
+                              .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
+                              .replace(/<ol>/g, '<ol class="space-y-3 ml-6 list-decimal list-outside mb-4">')
+                              .replace(/<li>/g, '<li class="text-[#3B2B13] text-base sm:text-lg">')
+                              .replace(/<\/li>/g, "</li>")
                               .replace(/<strong>/g, '<strong class="font-semibold text-[#DD9627]">')
-                              .replace(/<em>/g, '<em class="italic text-[#B47B2B]">'),
+                              .replace(/<\/strong>/g, "</strong>")
+                              .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
+                              .replace(/<\/em>/g, "</em>"),
                           }}
                         />
                       </div>
-                    </div>
-
-                    {index < product.additionalInfoSections?.length - 1 && (
-                      <div className="flex justify-center mt-6 sm:mt-8">
-                        <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#FED649] to-transparent"></div>
-                      </div>
-                    )}
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="p-6 sm:p-8 bg-[#FED649]/10 border-2 border-[#FED649]/40 rounded-xl text-center">
+                    <p className="text-[#3B2B13]/70 text-base sm:text-lg">No preparation instructions available.</p>
+                  </div>
+                )}
 
-                {product.additionalInfoSections?.length > 0 && (
-                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-[#FED649]/20 border border-[#FED649]/40 rounded-xl">
+                {product.additionalInfoSections && product.additionalInfoSections.length > 0 && (
+                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-gradient-to-r from-[#FED649]/20 to-[#DD9627]/10 border-2 border-[#FED649]/40 rounded-xl">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-6 h-6 bg-[#DD9627] text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        💡
+                        <Lightbulb className="h-4 w-4" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-[#B47B2B] mb-2 text-sm sm:text-base">Pro Tip</h4>
                         <p className="text-[#3B2B13] text-sm sm:text-base leading-relaxed">
                           For the best results, follow the instructions in order and take your time with each step.
+                          Store in an airtight container away from moisture.
                         </p>
                       </div>
                     </div>

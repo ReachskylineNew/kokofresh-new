@@ -35,10 +35,7 @@ export default function AboutPage() {
 <section className="relative flex flex-col items-center justify-start bg-black pt-8 pb-20 overflow-hidden">
   <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
     {/* Tagline Pill */}
-    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
-      <Heart className="h-4 w-4 text-[#FED649]" />
-      <span className="text-sm font-medium text-white/80">Our Story Since 2020</span>
-    </div>
+    
 
     {/* Main Heading */}
     <h1 className="font-serif text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">

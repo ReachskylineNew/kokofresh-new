@@ -185,7 +185,7 @@ export default function ContactPage() {
       icon: <Phone className="h-12 w-12 text-[#4B3A1F]" />,
       title: "Call Us",
       description: "Sometimes you just need to talk it out. We get it.",
-      action: "+91 9626899770",
+      action: "+91 7892776610",
       highlight: "Most Personal",
     },
   ].map((method, index) => (
@@ -383,60 +383,51 @@ export default function ContactPage() {
     </div>
 
     {/* FAQ Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {[
         {
-          icon: <Package className="h-8 w-8 text-[#FED649]" />,
-          question: "How fresh are your spices really?",
+          question: "What does ‘KOKO Fresh’ mean for your masalas?",
           answer:
-            "Ground within 7 days of shipping. We literally have a 'grind date' on every package. No cap.",
+            "Freshness is our promise. We grind spices in small batches and label each pack with the Date of Blending so you always enjoy pure, aromatic flavor.",
         },
         {
-          icon: <Clock className="h-8 w-8 text-[#FED649]" />,
-          question: "How fast do you ship?",
+          question: "How fast is delivery across India?",
           answer:
-            "2–3 days across India. Free shipping on orders above ₹499. We're faster than your food delivery app.",
+            "We deliver anywhere in India within 2–4 business days. Orders above ₹250 get free shipping, so your favorite spices reach you faster.",
         },
         {
-          icon: <Heart className="h-8 w-8 text-[#FED649]" />,
-          question: "Are your spices organic?",
+          question: "Are your spices organic and where are they sourced from?",
           answer:
-            "Most of them, yes! We source from certified organic farms. Check individual product pages for details.",
+            "Our spices come from trusted partner farms that follow clean and sustainable farming. We believe in honest, farm-to-packet freshness.",
         },
         {
-          icon: <Users className="h-8 w-8 text-[#FED649]" />,
-          question: "Do you have bulk pricing?",
+          question: "Do you supply for restaurants or bulk orders?",
           answer:
-            "Perfect for restaurants, hostels, or if you're just really into spices. DM us for custom quotes.",
+            "Yes! We love partnering with chefs, cafes, and caterers. Just write to us at help@kokofresh.in for bulk orders or quotes.",
         },
         {
-          icon: <Zap className="h-8 w-8 text-[#FED649]" />,
-          question: "Can I return products?",
+          question: "Are your masalas free from artificial colours and preservatives?",
           answer:
-            "If you're not 100% happy, we'll make it right. 30-day return policy, no questions asked.",
+            "Absolutely. Our promise is 100% pure, natural spices. We never add artificial colours, preservatives, or fillers. What you get is just the authentic, unadulterated flavour of premium quality ingredients.",
         },
         {
-          icon: <Headphones className="h-8 w-8 text-[#FED649]" />,
-          question: "Do you provide recipe support?",
+          question: "How should I store my spices to maintain their freshness?",
           answer:
-            "Yes! Our team includes actual chefs. Hit us up for cooking tips, recipe modifications, or flavor pairing advice.",
+            "For the best aroma and potency, store your KOKO Fresh masalas in a cool, dark, and dry place away from direct sunlight. Our resealable packs are designed to lock in freshness, but an airtight container is always ideal.",
         },
       ].map((faq, index) => (
         <Card
           key={index}
-          className="bg-[#0D0D0D] border border-[#DD9627]/30 hover:border-[#FED649]/60 transition-all duration-300"
+          className="bg-[#0D0D0D] border border-[#DD9627]/30 hover:border-[#FED649]/60 rounded-2xl transition-all duration-300"
         >
           <CardContent className="p-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1">{faq.icon}</div>
-              <div>
-                <h3 className="font-serif text-xl font-semibold mb-2 text-[#FED649] tracking-wide">
-                  {faq.question}
-                </h3>
-                <p className="text-[#E6E6E6]/90 leading-relaxed font-light tracking-wide">
-                  {faq.answer}
-                </p>
-              </div>
+            <div>
+              <h3 className="font-serif text-xl font-semibold mb-3 text-[#FED649] tracking-wide">
+                {faq.question}
+              </h3>
+              <p className="text-[#E6E6E6]/90 leading-relaxed font-light tracking-wide">
+                {faq.answer}
+              </p>
             </div>
           </CardContent>
         </Card>
