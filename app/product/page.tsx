@@ -262,28 +262,15 @@ export default function ProductPage() {
 
           <div className="space-y-1 sm:space-y-4">
             <div className="space-y-1 sm:space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-semibold text-black/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
-                    (4.9)
-                  </span>
-                </div>
-              </div>
+            
+             <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight mb-4 sm:mb-0">
+  {product.name}
+</h1>
 
-              <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
-                {product.name}
-              </h1>
             </div>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-1.5 sm:p-6">
+              <CardContent className="p-3 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
                   <div>
                     <div className="flex items-baseline gap-2 mb-1 sm:mb-2">
@@ -309,7 +296,7 @@ export default function ProductPage() {
             </Card>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-1.5 sm:p-6 space-y-1 sm:space-y-4">
+              <CardContent className="p-3 sm:p-6 space-y-1 sm:space-y-4">
                 {/* Product Options */}
                 {product.productOptions?.map((opt: any) => (
                   <div key={opt.name} className="space-y-0.5 sm:space-y-2">
@@ -379,14 +366,14 @@ export default function ProductPage() {
                     <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
-
+{/* 
                   <Button
                     size="lg"
                     variant="outline"
                     className="sm:w-auto w-full p-0.5 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
                   >
                     <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
