@@ -263,7 +263,7 @@ export default function ProductPage() {
           <div className="space-y-1 sm:space-y-4">
             <div className="space-y-1 sm:space-y-3">
             
-             <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight mb-1 sm:mb-0">
+             <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight mb-3 sm:mb-0">
   {product.name}
 </h1>
 
