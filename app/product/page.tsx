@@ -11,7 +11,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import {
   Star,
   Heart,
-  Share2,
   ShoppingBag,
   Plus,
   Minus,
@@ -222,10 +221,12 @@ export default function ProductPage() {
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
+                  "/placeholder.svg" ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
-                className="w-full h-52 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
+                className="w-full h-36 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
                 <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
@@ -234,7 +235,7 @@ export default function ProductPage() {
               )}
             </div>
 
-            <div className="flex gap-2 sm:gap-3 justify-center overflow-x-auto pb-2">
+            <div className="flex gap-1 sm:gap-3 justify-center overflow-x-auto pb-2">
               {(product.media?.items?.length
                 ? product.media.items.map((m: any) => m.image?.url)
                 : [product.media?.mainMedia?.image?.url]
@@ -251,41 +252,29 @@ export default function ProductPage() {
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${product.name} view ${index + 1}`}
-                    className="w-14 h-14 sm:w-20 sm:h-20 object-cover"
+                    className="w-12 h-12 sm:w-20 sm:h-20 object-cover"
                   />
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-2 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-4">
             <div className="space-y-1 sm:space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-             
+              
 
-                {/* <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-full border-2 border-[#3B2B13] bg-white/80 text-[#3B2B13] 
-             font-medium cursor-pointer transition-none p-1.5 sm:p-2"
-                >
-                  <Share2 className="h-2.5 w-2.5 sm:h-4 sm:w-4 sm:mr-2" />
-                  <span className="hidden sm:inline text-xs sm:text-sm">Share</span>
-                </Button> */}
-              </div>
-
-              <h1 className="text-xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
+              <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
                 {product.name}
               </h1>
             </div>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-2 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+              <CardContent className="p-1.5 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
                   <div>
                     <div className="flex items-baseline gap-2 mb-1 sm:mb-2">
                       {displayPriceFormatted && (
-                        <span className="font-bold text-xl sm:text-3xl text-[#DD9627] leading-tight">
+                        <span className="font-bold text-lg sm:text-3xl text-[#DD9627] leading-tight">
                           {displayPriceFormatted}
                         </span>
                       )}
@@ -306,14 +295,14 @@ export default function ProductPage() {
             </Card>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-2 sm:p-6 space-y-1.5 sm:space-y-4">
+              <CardContent className="p-1.5 sm:p-6 space-y-1 sm:space-y-4">
                 {/* Product Options */}
                 {product.productOptions?.map((opt: any) => (
-                  <div key={opt.name} className="space-y-1 sm:space-y-2">
+                  <div key={opt.name} className="space-y-0.5 sm:space-y-2">
                     <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                       {opt.name}:
                     </label>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                       {opt.choices
                         .filter((choice: any) => choice.visible)
                         .map((choice: any) => (
@@ -326,7 +315,7 @@ export default function ProductPage() {
                               }))
                             }
                             disabled={!choice.inStock}
-                            className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-sm ${
+                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-sm ${
                               selectedOptions[opt.name] === choice.value
                                 ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
                                 : choice.inStock
@@ -342,23 +331,23 @@ export default function ProductPage() {
                 ))}
 
                 {/* Quantity Selector */}
-                <div className="space-y-1 sm:space-y-2">
+                <div className="space-y-0.5 sm:space-y-2">
                   <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                     Quantity:
                   </label>
                   <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-1 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
                       <Minus className="h-3 w-3 sm:h-5 sm:w-5" />
                     </button>
-                    <span className="px-3 sm:px-6 py-1 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-lg min-w-[45px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
+                    <span className="px-2 sm:px-6 py-0.5 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-xs sm:text-lg min-w-[40px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-1 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
                       <Plus className="h-3 w-3 sm:h-5 sm:w-5" />
                     </button>
@@ -366,10 +355,10 @@ export default function ProductPage() {
                 </div>
 
                 {/* Add to Cart Button */}
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-1 sm:pt-2">
+                <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-3 pt-0.5 sm:pt-2">
                   <Button
                     size="lg"
-                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-1.5 sm:py-3 text-sm sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-1 sm:py-3 text-xs sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                     onClick={handleAddToCart}
                     disabled={!inStock}
                   >
@@ -377,13 +366,18 @@ export default function ProductPage() {
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
 
-                 
+                  {/* <Button
+                    size="lg"
+                    variant="outline"
+                    className="sm:w-auto w-full p-0.5 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
+                  >
+                    <Heart className="h-3 w-3 sm:h-5 sm:w-5 text-red-500" />
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Benefits Card */}
-            <Card className="border border-[#3B2B13]/20 bg-white/80">
+            <Card className="border border-[#3B2B13]/20 bg-white/80 hidden sm:block">
               <CardContent className="p-2 sm:p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
