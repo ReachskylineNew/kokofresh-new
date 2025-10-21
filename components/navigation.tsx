@@ -40,25 +40,33 @@ export function Navigation() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-6 h-16 md:h-24">
-          <Link
-            href="/"
-            className="flex items-center gap-2 md:gap-3 flex-shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 rounded-md"
-            aria-label="KOKO FRESH home"
-          >
-            <div className="relative w-12 h-12 md:w-24 md:h-24">
-              <img
-                src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
-                alt="KOKOFRESH Logo"
-                sizes="(max-width: 768px) 48px, 96px"
-                className="object-contain transition-transform group-hover:scale-105"
-              
-                
-              />
-            </div>
-            <span className="block font-serif text-lg md:text-3xl lg:text-4xl leading-none font-semibold tracking-tight bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
-              KOKO FRESH
-            </span>
-          </Link>
+<Link
+  href="/"
+  className="flex items-center gap-2 sm:gap-3 flex-shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 rounded-md"
+  aria-label="KOKO FRESH home"
+>
+  {/* Logo */}
+  <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 flex-shrink-0">
+    <img
+      src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
+      alt="KOKOFRESH Logo"
+      className="object-contain transition-transform group-hover:scale-105"
+    />
+  </div>
+
+  {/* Brand Name + Tagline */}
+  <div className="flex flex-col leading-tight text-left">
+    <span className="font-serif text-xl sm:text-2xl md:text-4xl font-bold whitespace-nowrap bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+      KOKO FRESH
+    </span>
+    <span className="font-dancing text-[10px] sm:text-xs md:text-sm italic text-[#FED649]/90 mt-0.5 tracking-wide">
+      Flavourz of India
+    </span>
+  </div>
+</Link>
+
+
+
 
 <div className="hidden md:flex items-center justify-center gap-1.5 lg:gap-3">
   {["Home", "Shop", "About", "Contact"].map((item) => (

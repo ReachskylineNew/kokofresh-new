@@ -16,9 +16,17 @@ export function Footer() {
                   className="object-contain transition-transform group-hover:scale-105"
                 />
               </div>
-              <span className="font-serif text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
-                KOKO FRESH
-              </span>
+<div className="flex flex-col">
+  <span className="font-serif text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+    KOKO FRESH
+  </span>
+  <span className="font-dancing text-base italic text-[#FED649]/90 mt-1">
+    Flavourz of India
+  </span>
+</div>
+
+
+
             </Link>
 
             <p className="text-white/70 mb-6 max-w-md">
@@ -110,7 +118,7 @@ export function Footer() {
 
         <div className="border-t border-[#FED649]/40 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-white/70 text-sm">
-            © 2024 KOKO FRESH. All rights reserved.
+            © 2025 KOKO FRESH. All rights reserved.
           </p>
         </div>
       </div>
