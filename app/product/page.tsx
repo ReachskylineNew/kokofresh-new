@@ -221,10 +221,11 @@ export default function ProductPage() {
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
-                className="w-full h-40 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
+                className="w-full h-52 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
                 <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
@@ -260,28 +261,17 @@ export default function ProductPage() {
           <div className="space-y-2 sm:space-y-4">
             <div className="space-y-1 sm:space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-semibold text-black/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
-                    (4.9)
-                  </span>
-                </div>
+             
 
-                <Button
+                {/* <Button
                   size="sm"
                   variant="outline"
                   className="rounded-full border-2 border-[#3B2B13] bg-white/80 text-[#3B2B13] 
-             font-medium cursor-pointer transition-none"
+             font-medium cursor-pointer transition-none p-1.5 sm:p-2"
                 >
-                  <Share2 className="h-2.5 w-2.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="text-xs sm:text-sm">Share</span>
-                </Button>
+                  <Share2 className="h-2.5 w-2.5 sm:h-4 sm:w-4 sm:mr-2" />
+                  <span className="hidden sm:inline text-xs sm:text-sm">Share</span>
+                </Button> */}
               </div>
 
               <h1 className="text-xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
@@ -387,13 +377,7 @@ export default function ProductPage() {
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
 
-                  {/* <Button
-                    size="lg"
-                    variant="outline"
-                    className="sm:w-auto w-full p-1 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
-                  >
-                    <Heart className="h-3 w-3 sm:h-5 sm:w-5 text-red-500" />
-                  </Button> */}
+                 
                 </div>
               </CardContent>
             </Card>
