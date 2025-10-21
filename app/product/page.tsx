@@ -223,10 +223,11 @@ export default function ProductPage() {
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
-                className="w-full h-36 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
+                className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
                 <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
@@ -261,7 +262,20 @@ export default function ProductPage() {
 
           <div className="space-y-1 sm:space-y-4">
             <div className="space-y-1 sm:space-y-3">
-              
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                    <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-semibold text-black/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
+                    (4.9)
+                  </span>
+                </div>
+              </div>
 
               <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
                 {product.name}
@@ -299,7 +313,7 @@ export default function ProductPage() {
                 {/* Product Options */}
                 {product.productOptions?.map((opt: any) => (
                   <div key={opt.name} className="space-y-0.5 sm:space-y-2">
-                    <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                    <label className="text-sm sm:text-base font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                       {opt.name}:
                     </label>
                     <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -315,7 +329,7 @@ export default function ProductPage() {
                               }))
                             }
                             disabled={!choice.inStock}
-                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-sm ${
+                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-sm sm:text-base ${
                               selectedOptions[opt.name] === choice.value
                                 ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
                                 : choice.inStock
@@ -332,7 +346,7 @@ export default function ProductPage() {
 
                 {/* Quantity Selector */}
                 <div className="space-y-0.5 sm:space-y-2">
-                  <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                  <label className="text-sm sm:text-base font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                     Quantity:
                   </label>
                   <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
@@ -340,16 +354,16 @@ export default function ProductPage() {
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
-                      <Minus className="h-3 w-3 sm:h-5 sm:w-5" />
+                      <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
-                    <span className="px-2 sm:px-6 py-0.5 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-xs sm:text-lg min-w-[40px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
+                    <span className="px-2 sm:px-6 py-0.5 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-2xl min-w-[40px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
                       className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
-                      <Plus className="h-3 w-3 sm:h-5 sm:w-5" />
+                      <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   </div>
                 </div>
@@ -358,21 +372,21 @@ export default function ProductPage() {
                 <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-3 pt-0.5 sm:pt-2">
                   <Button
                     size="lg"
-                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-1 sm:py-3 text-xs sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-2 sm:py-3 text-sm sm:text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                     onClick={handleAddToCart}
                     disabled={!inStock}
                   >
-                    <ShoppingBag className="h-3 w-3 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                    <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
 
-                  {/* <Button
+                  <Button
                     size="lg"
                     variant="outline"
                     className="sm:w-auto w-full p-0.5 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
                   >
-                    <Heart className="h-3 w-3 sm:h-5 sm:w-5 text-red-500" />
-                  </Button> */}
+                    <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -414,7 +428,7 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95">
+        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95 mt-12 sm:mt-0">
           <div className="border-b border-[#FED649]/40">
             <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
               {["description", "instructions", "details"].map((tab) => (
