@@ -1,33 +1,56 @@
-# Homepage Speed Optimization Plan
+# Performance Refactoring Plan for HomePage
 
-## Information Gathered
-- Homepage (app/page.tsx) has multiple images: hero backgrounds, product images, and ProcessSection images.
-- next.config.mjs has `unoptimized: true`, disabling Next.js image optimization.
-- Images are from external domains (static.wixstatic.com), not whitelisted.
-- ProcessSection.tsx uses regular `<img>` tags instead of Next.js `<Image>`.
-- Proxy-image API exists for caching external images.
-- Goal: Achieve Lighthouse scores of 80+ mobile, 90+ desktop.
+## ✅ Completed Tasks
+- [x] Analyze current HomePage component and identify performance issues
+- [x] Review API routes for ISR compatibility
+- [x] Examine components to be lazy-loaded
 
-## Plan
-1. **Enable Next.js Image Optimization**
-   - Update `next.config.mjs` to remove `unoptimized: true` and add `images.domains` for external sources.
-2. **Optimize Hero Images in app/page.tsx**
-   - Change `unoptimized` to `false` for hero background images.
-   - Ensure proper sizing and loading attributes.
-3. **Optimize Product Images in app/page.tsx**
-   - Already using Next.js Image with lazy loading; ensure `unoptimized` is false.
-4. **Optimize ProcessSection Images**
-   - Replace `<img>` with Next.js `<Image>` in `components/ProcessSection.tsx`.
-   - Add proper width/height for optimization.
-5. **Use Proxy-Image for External Images (Optional)**
-   - Update image sources to use `/api/proxy-image?url=...` for better caching and performance.
+## 🔄 In Progress Tasks
+- [ ] Create new server component page.tsx with getStaticProps equivalent (ISR)
+- [ ] Create new client HomePage component that receives props
+- [ ] Optimize fonts in layout.tsx using next/font/google
+- [ ] Add lazy loading for ManufacturingProcess and Footer components
+- [ ] Optimize all Image components with sizes, quality, and loading attributes
+- [ ] Reduce bundle size with selective lucide-react imports
+- [ ] Ensure SSG with revalidate works correctly
+- [ ] Test mobile performance improvements (target LCP < 2.5s)
 
-## Dependent Files to Edit
-- `next.config.mjs`
-- `app/page.tsx`
-- `components/ProcessSection.tsx`
+## 📋 Detailed Steps
 
-## Followup Steps
-- Test Lighthouse scores after changes.
-- Run build and check for errors.
-- If needed, implement proxy-image usage for all external images.
+### 1. Server-Side Data Fetching with ISR
+- Convert app/page.tsx to server component
+- Implement getStaticProps equivalent with revalidate: 60
+- Preload only first 6 products
+- Remove client-side fetching for products and reels
+
+### 2. Font Optimization
+- Replace Google Fonts links in layout.tsx with next/font/google
+- Use Inter for body text with display: 'swap'
+- Use Playfair_Display for headings with display: 'swap'
+
+### 3. Component Lazy Loading
+- Import ManufacturingProcess with next/dynamic and ssr: false
+- Import Footer with next/dynamic and ssr: false
+
+### 4. Image Optimization
+- Hero section: Conditional loading based on viewport (mobile vs desktop)
+- Add sizes and quality={70} to hero images
+- Add sizes and quality={75} to all other images
+- Set loading="lazy" for non-hero images
+- Ensure proper width/height or aspect ratio
+
+### 5. Bundle Size Reduction
+- Import only required lucide-react icons individually
+- Remove unused icon imports
+
+### 6. Client Component Refactoring
+- Create new HomePage client component
+- Receive products and reels as props
+- Maintain all existing styling and functionality
+- Ensure cart hook still works
+
+### 7. Testing and Validation
+- Verify SSG generation
+- Test mobile performance metrics
+- Ensure design remains identical
+- Check hydration compatibility

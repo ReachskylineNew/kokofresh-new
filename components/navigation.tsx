@@ -153,7 +153,7 @@ export function Navigation() {
           >
             <div className="max-w-7xl mx-auto px-4 py-4">
               <div className="flex flex-col">
-                {["Shop", "Recipes", "About", "Contact"].map((item) => (
+                {["Shop", "About", "Contact"].map((item) => (
                   <Link
                     key={item}
                     href={`/${item.toLowerCase()}`}

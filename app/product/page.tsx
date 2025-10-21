@@ -210,7 +210,7 @@ export default function ProductPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12 lg:mb-16">
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-2 sm:space-y-6">
             <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl">
               <img
                 src={
@@ -218,10 +218,13 @@ export default function ProductPage() {
                   product.media?.mainMedia?.image?.url ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
+                  "/placeholder.svg" ||
+                  "/placeholder.svg" ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
-                className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
+                className="w-full h-40 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
                 <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
@@ -247,16 +250,16 @@ export default function ProductPage() {
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${product.name} view ${index + 1}`}
-                    className="w-16 h-16 sm:w-20 sm:h-20 object-cover"
+                    className="w-14 h-14 sm:w-20 sm:h-20 object-cover"
                   />
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-4 sm:space-y-6">
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="space-y-2 sm:space-y-4">
+            <div className="space-y-1 sm:space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-black/90 text-black/90 drop-shadow-[0_1px_2px_rgba(255,255,255,0.3)]" />
@@ -276,23 +279,23 @@ export default function ProductPage() {
                   className="rounded-full border-2 border-[#3B2B13] bg-white/80 text-[#3B2B13] 
              font-medium cursor-pointer transition-none"
                 >
-                  <Share2 className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                  Share
+                  <Share2 className="h-2.5 w-2.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="text-xs sm:text-sm">Share</span>
                 </Button>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
                 {product.name}
               </h1>
             </div>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <CardContent className="p-2 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                   <div>
-                    <div className="flex items-baseline gap-2 mb-2">
+                    <div className="flex items-baseline gap-2 mb-1 sm:mb-2">
                       {displayPriceFormatted && (
-                        <span className="font-bold text-2xl sm:text-3xl text-[#DD9627] leading-tight">
+                        <span className="font-bold text-xl sm:text-3xl text-[#DD9627] leading-tight">
                           {displayPriceFormatted}
                         </span>
                       )}
@@ -312,121 +315,124 @@ export default function ProductPage() {
               </CardContent>
             </Card>
 
-            {product.productOptions?.map((opt: any) => (
-              <div key={opt.name} className="space-y-2 sm:space-y-3">
-                <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
-                  {opt.name}:
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {opt.choices
-                    .filter((choice: any) => choice.visible)
-                    .map((choice: any) => (
-                      <button
-                        key={choice.value}
-                        onClick={() =>
-                          setSelectedOptions((prev) => ({
-                            ...prev,
-                            [opt.name]: choice.value,
-                          }))
-                        }
-                        disabled={!choice.inStock}
-                        className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
-                          selectedOptions[opt.name] === choice.value
-                            ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
-                            : choice.inStock
-                              ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
-                              : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-                        }`}
-                      >
-                        {choice.value}
-                      </button>
-                    ))}
-                </div>
-              </div>
-            ))}
+            <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
+              <CardContent className="p-2 sm:p-6 space-y-1.5 sm:space-y-4">
+                {/* Product Options */}
+                {product.productOptions?.map((opt: any) => (
+                  <div key={opt.name} className="space-y-1 sm:space-y-2">
+                    <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                      {opt.name}:
+                    </label>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                      {opt.choices
+                        .filter((choice: any) => choice.visible)
+                        .map((choice: any) => (
+                          <button
+                            key={choice.value}
+                            onClick={() =>
+                              setSelectedOptions((prev) => ({
+                                ...prev,
+                                [opt.name]: choice.value,
+                              }))
+                            }
+                            disabled={!choice.inStock}
+                            className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-sm ${
+                              selectedOptions[opt.name] === choice.value
+                                ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
+                                : choice.inStock
+                                  ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
+                                  : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            }`}
+                          >
+                            {choice.value}
+                          </button>
+                        ))}
+                    </div>
+                  </div>
+                ))}
 
-            <div className="space-y-2 sm:space-y-3">
-              <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
-                Quantity:
-              </label>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 sm:p-4 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
-                  >
-                    <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </button>
-                  <span className="px-6 sm:px-8 py-3 sm:py-4 border-x-2 border-[#3B2B13]/20 font-bold text-base sm:text-lg min-w-[60px] sm:min-w-[80px] text-center bg-white text-[#3B2B13]">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 sm:p-4 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
-                  >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </button>
+                {/* Quantity Selector */}
+                <div className="space-y-1 sm:space-y-2">
+                  <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                    Quantity:
+                  </label>
+                  <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="p-1 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                    >
+                      <Minus className="h-3 w-3 sm:h-5 sm:w-5" />
+                    </button>
+                    <span className="px-3 sm:px-6 py-1 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-lg min-w-[45px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="p-1 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                    >
+                      <Plus className="h-3 w-3 sm:h-5 sm:w-5" />
+                    </button>
+                  </div>
                 </div>
-                <span className="text-xs sm:text-sm text-[#3B2B13]/70">
-                  Total: {displayPriceFormatted ? `₹${(Number.parseFloat(displayPrice) * quantity).toFixed(2)}` : "N/A"}
-                </span>
-              </div>
-            </div>
 
+                {/* Add to Cart Button */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-1 sm:pt-2">
+                  <Button
+                    size="lg"
+                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-1.5 sm:py-3 text-sm sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    onClick={handleAddToCart}
+                    disabled={!inStock}
+                  >
+                    <ShoppingBag className="h-3 w-3 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                    {inStock ? "Add to Cart" : "Out of Stock"}
+                  </Button>
+
+                  {/* <Button
+                    size="lg"
+                    variant="outline"
+                    className="sm:w-auto w-full p-1 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
+                  >
+                    <Heart className="h-3 w-3 sm:h-5 sm:w-5 text-red-500" />
+                  </Button> */}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Benefits Card */}
             <Card className="border border-[#3B2B13]/20 bg-white/80">
-              <CardContent className="p-3 sm:p-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <CardContent className="p-2 sm:p-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-[#B47B2B]">Free Delivery</div>
+                      <div className="font-medium text-[#B47B2B] text-xs sm:text-sm">Free Delivery</div>
                       <div className="text-xs text-[#3B2B13]/70">On orders above ₹500</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#B47B2B] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-[#B47B2B]">Secure Payment</div>
+                      <div className="font-medium text-[#B47B2B] text-xs sm:text-sm">Secure Payment</div>
                       <div className="text-xs text-[#3B2B13]/70">100% Safe & Secure</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-[#B47B2B]">Made to Order</div>
+                      <div className="font-medium text-[#B47B2B] text-xs sm:text-sm">Made to Order</div>
                       <div className="text-xs text-[#3B2B13]/70">Fresh preparation</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm">
                     <ChefHat className="h-4 w-4 sm:h-5 sm:w-5 text-[#DD9627] flex-shrink-0" />
                     <div>
-                      <div className="font-medium text-[#B47B2B]">Authentic Recipe</div>
+                      <div className="font-medium text-[#B47B2B] text-xs sm:text-sm">Authentic Recipe</div>
                       <div className="text-xs text-[#3B2B13]/70">Traditional taste</div>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <Button
-                size="lg"
-                className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                onClick={handleAddToCart}
-                disabled={!inStock}
-              >
-                <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                {inStock ? "Add to Cart" : "Out of Stock"}
-              </Button>
-
-              <Button
-                size="lg"
-                variant="outline"
-                className="sm:w-auto w-full p-3 sm:p-4 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
-              >
-                <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-              </Button>
-            </div>
           </div>
         </div>
 
