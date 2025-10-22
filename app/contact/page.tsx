@@ -123,7 +123,8 @@ export default function ContactPage() {
       <Navigation />
 
       {/* Hero Section */}
-<section className="relative pt-2 pb-2 flex items-center justify-center overflow-hidden bg-black">
+<section className="relative pt-2 pb-2 flex items-center justify-center overflow-hidden bg-black mt-16 md:mt-24">
+
   <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
     {/* Tagline Pill */}
    

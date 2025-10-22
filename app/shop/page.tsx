@@ -289,7 +289,8 @@ export default function ShopPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-start bg-black pt-5 pb-10">
+<section className="relative flex flex-col items-center justify-start bg-black pt-5 pb-10 mt-16 md:mt-24">
+
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
          
           <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent leading-tight">

@@ -242,7 +242,8 @@ export default function HomePage() {
 
       {/* Hero Section - Gen Z Vibes */}
 
-<section className="relative flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
+<section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
+
       {/* ✅ Responsive background image */}
       <div className="absolute inset-0 z-0">
         {/* Mobile Background */}

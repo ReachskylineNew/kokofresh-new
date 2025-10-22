@@ -197,9 +197,10 @@ export default function ProductPage() {
         )}
       </Head>
 
-      <Navigation />
+     <Navigation />
 
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 mt-16 md:mt-24">
+
         <div className="flex items-center gap-2 text-sm text-[#3B2B13]/70 mb-4 sm:mb-6 lg:mb-8">
           <Link href="/shop" className="hover:text-[#3B2B13] transition-colors flex items-center gap-1 font-medium">
             <ArrowLeft className="h-4 w-4" />

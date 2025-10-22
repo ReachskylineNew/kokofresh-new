@@ -32,7 +32,8 @@ export default function AboutPage() {
 
 
 {/* Hero Section */}
-<section className="relative flex flex-col items-center justify-start bg-black pt-8 pb-20 overflow-hidden">
+<section className="relative flex flex-col items-center justify-start bg-black pt-8 pb-20 overflow-hidden mt-16 md:mt-24">
+
   <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
     {/* Tagline Pill */}
     
