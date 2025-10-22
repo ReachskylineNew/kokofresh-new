@@ -20,6 +20,7 @@ import {
   Leaf
 } from "lucide-react"
 
+
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-white">

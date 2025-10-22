@@ -69,11 +69,15 @@ export function Navigation() {
           >
             {/* Logo */}
             <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 flex-shrink-0">
-              <img
-                src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
-                alt="KOKOFRESH Logo"
-                className="object-contain transition-transform group-hover:scale-105"
-              />
+              <Image
+  src="https://static.wixstatic.com/media/e7c120_139bc773242b4cb29524927dde26ad3d~mv2.webp"
+  alt="KOKOFRESH Logo"
+  width={200} // adjust based on your layout
+  height={200}
+  className="object-contain transition-transform group-hover:scale-105"
+  priority // optional — ensures instant load for logos
+  quality={100} // keep logo crisp
+/>
             </div>
 
             {/* Brand Name + Tagline */}
