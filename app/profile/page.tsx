@@ -290,11 +290,11 @@ const handleSave = async () => {
   }
 
   return (
-<div className="min-h-screen flex flex-col bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#4B3A1F]">
+<div className="min-h-screen flex flex-col bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#4B3A1F] mt-16 md:mt-24">
 
       <Navigation />
 
-      <main className="flex-1 pb-6">
+      <main className="flex-1 pb-6 after-nav">
         <div className="px-4 pt-4 pb-6 lg:px-8 xl:px-12 2xl:px-16">
           <div className="max-w-7xl mx-auto">
 

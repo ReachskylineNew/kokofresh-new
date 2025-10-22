@@ -129,3 +129,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .after-nav {
+    @apply mt-16 md:mt-24;
+  }
+}
+

@@ -1,9 +1,9 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { Navigation } from "../../components/navigation"
-import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
+import { Footer } from "@/components/footer"
 import { Separator } from "@/components/ui/separator"
 import {
   Plus,
@@ -14,6 +14,8 @@ import {
   Truck,
   ArrowLeft,
   ShoppingCart,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { useCart } from "../../hooks/use-cart"
 import { useWishlist } from "../../context/wishlist-context"
@@ -21,10 +23,13 @@ import { useUser } from "../../context/user-context"
 import Link from "next/link"
 import { toast } from "sonner"
 
+const ITEMS_PER_PAGE = 5
+
 export default function CartPage() {
   const { cart, updateQuantity, remove, checkout, loading } = useCart()
   const { addToWishlist } = useWishlist()
   const { contact } = useUser()
+  const [currentPage, setCurrentPage] = useState(1)
 
   const handleSaveForLater = async (item: any) => {
     if (!contact) {
@@ -58,6 +63,15 @@ export default function CartPage() {
 
   const total = subtotal
 
+  const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const paginatedItems = items.slice(startIndex, endIndex)
+
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [items.length])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -70,7 +84,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-gray-900 mt-16 md:mt-24">
       <Navigation />
 
       {/* Header bar */}
@@ -78,10 +92,7 @@ export default function CartPage() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm text-gray-700">
             <ArrowLeft className="h-4 w-4" />
-            <Link
-              href="/shop"
-              className="hover:text-[#DD9627] transition-colors"
-            >
+            <Link href="/shop" className="hover:text-[#DD9627] transition-colors">
               Continue Shopping
             </Link>
           </div>
@@ -93,9 +104,7 @@ export default function CartPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-[#B47B2B] mb-4">
-          Shopping Cart
-        </h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#B47B2B] mb-4">Shopping Cart</h1>
 
         {items.length === 0 ? (
           <div className="text-center py-16">
@@ -104,9 +113,7 @@ export default function CartPage() {
                 <ShoppingCart className="w-10 h-10 text-[#B47B2B]" />
               </div>
               <h2 className="text-lg font-semibold mb-2">Your cart is empty</h2>
-              <p className="text-gray-500 mb-6">
-                Add items to get started with your flavor journey!
-              </p>
+              <p className="text-gray-500 mb-6">Add items to get started with your flavor journey!</p>
               <Link href="/shop">
                 <Button className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold px-8 py-4 hover:brightness-90 transition-all duration-300">
                   Continue Shopping
@@ -118,7 +125,7 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Cart items */}
             <div className="lg:col-span-3 space-y-4">
-              {items.map((item: any) => (
+              {paginatedItems.map((item: any) => (
                 <div
                   key={item.id}
                   className="p-4 sm:p-6 bg-[#FED649]/50 text-black rounded-xl shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
@@ -127,7 +134,7 @@ export default function CartPage() {
                     <div className="w-20 h-20 sm:w-28 sm:h-28 bg-white border border-[#DD9627]/30 rounded-lg overflow-hidden flex-shrink-0">
                       {item.image?.url ? (
                         <img
-                          src={item.image.url}
+                          src={item.image.url || "/placeholder.svg"}
                           alt={item.productName?.original || "Product"}
                           className="w-full h-full object-cover"
                         />
@@ -142,40 +149,25 @@ export default function CartPage() {
                       </h3>
                       {item.descriptionLines?.length > 0 && (
                         <p className="text-xs sm:text-sm text-gray-700 mb-1 line-clamp-2">
-                          {item.descriptionLines
-                            .map((d: any) => d.plainText?.original)
-                            .join(", ")}
+                          {item.descriptionLines.map((d: any) => d.plainText?.original).join(", ")}
                         </p>
                       )}
                       <p className="text-xs sm:text-sm text-green-700 font-medium">
-                        In Stock{" "}
-                        <span className="text-gray-700 hidden sm:inline">
-                          • FREE Shipping
-                        </span>
+                        In Stock <span className="text-gray-700 hidden sm:inline">• FREE Shipping</span>
                       </p>
 
                       {/* Quantity and actions */}
                       <div className="flex items-center gap-3 mt-2 flex-wrap">
                         <div className="flex items-center border border-black/20 rounded-md bg-white">
                           <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.id,
-                                Math.max(1, (item.quantity || 1) - 1)
-                              )
-                            }
+                            onClick={() => updateQuantity(item.id, Math.max(1, (item.quantity || 1) - 1))}
                             className="p-2 hover:bg-[#FED649]/70 transition"
                           >
                             <Minus className="h-3 w-3" />
                           </button>
                           <select
                             value={item.quantity}
-                            onChange={(e) =>
-                              updateQuantity(
-                                item.id,
-                                Number.parseInt(e.target.value)
-                              )
-                            }
+                            onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value))}
                             className="px-2 py-1 border-x border-black/10 bg-transparent text-sm focus:outline-none"
                           >
                             {[...Array(10)].map((_, i) => (
@@ -185,9 +177,7 @@ export default function CartPage() {
                             ))}
                           </select>
                           <button
-                            onClick={() =>
-                              updateQuantity(item.id, (item.quantity || 1) + 1)
-                            }
+                            onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)}
                             className="p-2 hover:bg-[#FED649]/70 transition"
                           >
                             <Plus className="h-3 w-3" />
@@ -215,26 +205,55 @@ export default function CartPage() {
 
                   <div className="text-right sm:text-left sm:w-28">
                     <p className="text-base sm:text-lg font-bold text-black">
-                      {item.price?.formattedAmount ||
-                        `₹${Number.parseFloat(
-                          item.price?.amount || "0"
-                        ).toFixed(2)}`}
+                      {item.price?.formattedAmount || `₹${Number.parseFloat(item.price?.amount || "0").toFixed(2)}`}
                     </p>
                     <p className="text-xs sm:text-sm text-gray-700">
-                      ₹
-                      {(
-                        Number.parseFloat(item.price?.amount || "0") *
-                        item.quantity
-                      ).toFixed(2)}{" "}
-                      total
+                      ₹{(Number.parseFloat(item.price?.amount || "0") * item.quantity).toFixed(2)} total
                     </p>
                   </div>
                 </div>
               ))}
+
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#DD9627]/30 text-gray-700 hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="hidden sm:inline">Previous</span>
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 rounded-lg font-medium transition-colors ${
+                          currentPage === page
+                            ? "bg-[#DD9627] text-white"
+                            : "border border-[#DD9627]/30 text-gray-700 hover:bg-[#FFF8E1]"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#DD9627]/30 text-gray-700 hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Summary */}
-            <div className="lg:col-span-1 h-fit">
+            <div className="lg:col-span-1 lg:sticky lg:top-6 h-fit">
               <div className="bg-white border border-[#DD9627]/20 rounded-xl p-4 sm:p-6 shadow-sm">
                 <h3 className="text-lg font-semibold mb-3">Order Summary</h3>
                 <div className="flex justify-between text-sm mb-2">
@@ -275,26 +294,8 @@ export default function CartPage() {
           </div>
         )}
       </div>
-
-      {/* Sticky bottom checkout on mobile */}
-      {items.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#DD9627]/20 p-3 sm:hidden shadow-lg">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-600">Subtotal</p>
-              <p className="font-bold text-lg">₹{subtotal.toFixed(2)}</p>
-            </div>
-            <Button
-              className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold text-base px-6 py-2 hover:brightness-90"
-              onClick={checkout}
-            >
-              Checkout
-            </Button>
-          </div>
-        </div>
-      )}
-
-      <Footer />
+        <Footer />
     </div>
   )
 }
+
