@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Instagram, Youtube, Linkedin } from "lucide-react";
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -10,11 +11,15 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-4 mb-4 group">
               <div className="relative w-16 h-16">
-                <img
-                  src="https://static.wixstatic.com/media/e7c120_b2c1d7f7d15e4627a23db611e7dc4f12~mv2.png"
-                  alt="KOKOFRESH Logo"
-                  className="object-contain transition-transform group-hover:scale-105"
-                />
+               <Image
+  src="https://static.wixstatic.com/media/e7c120_139bc773242b4cb29524927dde26ad3d~mv2.webp"
+  alt="KOKOFRESH Logo"
+  width={200} // adjust based on your layout
+  height={200}
+  className="object-contain transition-transform group-hover:scale-105"
+  priority // optional — ensures instant load for logos
+  quality={100} // keep logo crisp
+/>
               </div>
 <div className="flex flex-col">
   <span className="font-serif text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
