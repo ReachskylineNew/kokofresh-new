@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
 import ManufacturingProcess from "../components/ProcessSection"
 import {
@@ -137,11 +138,15 @@ export default function HomePage() {
     loadReels()
   }, [])
 
+  // ✅ Defer product loading after hero renders (small delay for better LCP)
   useEffect(() => {
     const loadProducts = async () => {
       try {
         setIsLoading(true)
-        const res = await fetch("/api/products", { cache: "no-store" })
+        // ✅ Add ISR caching and pagination for performance
+        const res = await fetch("/api/products?limit=6&page=1", {
+          next: { revalidate: 3600 }
+        })
         if (!res.ok) throw new Error("Failed to load products")
         const data = await res.json()
         const productsData = data.products || []
@@ -170,11 +175,20 @@ export default function HomePage() {
         setIsLoading(false)
       }
     }
-    loadProducts()
+
+    // ✅ Small delay to prioritize hero rendering
+    const timer = setTimeout(loadProducts, 100)
+    return () => clearTimeout(timer)
   }, [])
 
   const getProductImage = (product: Product): string => {
-    return product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
+    // ✅ Optimize image URLs for smaller CDN versions to reduce payload
+    const baseUrl = product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
+    if (baseUrl.includes('wixstatic.com') && !baseUrl.includes('w_')) {
+      // Add Wix CDN optimization params for smaller images
+      return `${baseUrl}?w_400,h_400,q_80`
+    }
+    return baseUrl
   }
 
   const getCurrentPrice = (product: Product): number => {
@@ -252,7 +266,7 @@ export default function HomePage() {
 
       {/* Hero Section - Gen Z Vibes */}
 
-  <section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
+ <section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
       {/* ✅ Responsive background - Only one loads */}
       <div className="absolute inset-0 z-0">
         {isDesktop ? (
@@ -510,13 +524,19 @@ export default function HomePage() {
       </div>
     )}
 
+    {/* ✅ Skeleton loader for smooth loading experience */}
     {/* Product Grid */}
     {isLoading ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
           <Card key={i} className="overflow-hidden bg-white border border-[#F0E6C0]">
             <CardContent className="p-0">
-              <div className="h-64 bg-[#FFF6CC] animate-pulse" />
+              <Skeleton className="w-full aspect-square bg-[#FFF6CC]" />
+              <div className="p-3 sm:p-4 lg:p-6">
+                <Skeleton className="h-4 w-3/4 mb-2 bg-[#FFF6CC]" />
+                <Skeleton className="h-4 w-1/2 mb-3 bg-[#FFF6CC]" />
+                <Skeleton className="h-8 w-full bg-[#FED649]/20" />
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -544,6 +564,8 @@ export default function HomePage() {
   className="object-contain w-full aspect-square bg-white group-hover:scale-105 transition-all duration-500"
   priority={false}
   loading="lazy"
+  placeholder="blur"
+  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+IRjWjBqO6O2mhP//Z"
 />
 
                     <div className="absolute top-2 left-2 flex flex-col gap-1">

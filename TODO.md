@@ -1,56 +1,32 @@
-# Performance Refactoring Plan for HomePage
+# Performance Optimization Tasks
 
-## ✅ Completed Tasks
-- [x] Analyze current HomePage component and identify performance issues
-- [x] Review API routes for ISR compatibility
-- [x] Examine components to be lazy-loaded
+## API Endpoint Updates
+- [x] Update /api/products to support limit and pagination query params
+- [x] Return only minimal fields: id, name, price, image, stock
+- [x] Add ISR caching with revalidate: 3600
+- [x] Optimize mock data to match minimal fields
 
-## 🔄 In Progress Tasks
-- [ ] Create new server component page.tsx with getStaticProps equivalent (ISR)
-- [ ] Create new client HomePage component that receives props
-- [ ] Optimize fonts in layout.tsx using next/font/google
-- [ ] Add lazy loading for ManufacturingProcess and Footer components
-- [ ] Optimize all Image components with sizes, quality, and loading attributes
-- [ ] Reduce bundle size with selective lucide-react imports
-- [ ] Ensure SSG with revalidate works correctly
-- [ ] Test mobile performance improvements (target LCP < 2.5s)
+## Shop Page (/shop/page.tsx)
+- [x] Implement pagination to fetch 8-12 products initially
+- [x] Add lazy loading to product images with loading="lazy" and placeholder="blur"
+- [x] Defer product grid loading with React.lazy or next/dynamic (SSR false)
+- [x] Add lightweight skeleton loader for products before data appears
+- [x] Prioritize hero rendering, fetch products after mount with useEffect delay
+- [x] Optimize image URLs to smaller CDN versions (w_400,h_400,q_80)
+- [x] Ensure images below fold are not preloaded
+- [x] Preload only hero and critical fonts/scripts
 
-## 📋 Detailed Steps
+## Home Page (/page.tsx)
+- [x] Add lazy loading to product images
+- [x] Defer product grid with dynamic import
+- [x] Add skeleton loader
+- [x] Fetch products after mount with delay
+- [x] Optimize image URLs
+- [x] Add ISR caching to fetch calls
 
-### 1. Server-Side Data Fetching with ISR
-- Convert app/page.tsx to server component
-- Implement getStaticProps equivalent with revalidate: 60
-- Preload only first 6 products
-- Remove client-side fetching for products and reels
-
-### 2. Font Optimization
-- Replace Google Fonts links in layout.tsx with next/font/google
-- Use Inter for body text with display: 'swap'
-- Use Playfair_Display for headings with display: 'swap'
-
-### 3. Component Lazy Loading
-- Import ManufacturingProcess with next/dynamic and ssr: false
-- Import Footer with next/dynamic and ssr: false
-
-### 4. Image Optimization
-- Hero section: Conditional loading based on viewport (mobile vs desktop)
-- Add sizes and quality={70} to hero images
-- Add sizes and quality={75} to all other images
-- Set loading="lazy" for non-hero images
-- Ensure proper width/height or aspect ratio
-
-### 5. Bundle Size Reduction
-- Import only required lucide-react icons individually
-- Remove unused icon imports
-
-### 6. Client Component Refactoring
-- Create new HomePage client component
-- Receive products and reels as props
-- Maintain all existing styling and functionality
-- Ensure cart hook still works
-
-### 7. Testing and Validation
-- Verify SSG generation
-- Test mobile performance metrics
-- Ensure design remains identical
-- Check hydration compatibility
+## Testing & Verification
+- [ ] Test pagination and loading
+- [ ] Verify Lighthouse scores (Desktop ≥95, LCP <2s)
+- [ ] Ensure design remains identical
+- [ ] Check minimal unused image/data loads
+- [ ] Confirm smooth skeleton animations

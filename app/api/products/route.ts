@@ -45,10 +45,10 @@ const mockProducts = [
   }
 ];
 
-// ✅ Revalidate every 60 seconds (adjust as needed)
-export const revalidate = 60;
+// ✅ ISR caching for 1 hour to reduce API calls and improve performance
+export const revalidate = 3600;
 
-// ✅ Prevent build-time caching
+// ✅ Prevent build-time caching for dynamic requests
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
@@ -57,6 +57,8 @@ export async function GET(request: NextRequest) {
     const siteId = process.env.WIX_SITE_ID;
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+    const limit = parseInt(searchParams.get("limit") || "12"); // Default 12 products for performance
+    const page = parseInt(searchParams.get("page") || "1");
 
     // If no API keys configured → fallback to mock data
     if (!apiKey || !siteId) {
@@ -70,7 +72,18 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ product });
       }
 
-      return NextResponse.json({ products: mockProducts });
+      // ✅ Pagination support for mock data
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedProducts = mockProducts.slice(startIndex, endIndex);
+
+      return NextResponse.json({
+        products: paginatedProducts,
+        total: mockProducts.length,
+        page,
+        limit,
+        hasMore: endIndex < mockProducts.length
+      });
     }
 
     const wixClient = createClient({
@@ -101,9 +114,43 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ product });
     }
 
-    // ✅ Otherwise → fetch all products
-    const query = await wixClient.products.queryProducts().find();
-    return NextResponse.json({ products: query.items ?? [] });
+    // ✅ Paginated fetch with minimal fields for performance
+    const offset = (page - 1) * limit;
+    const query = await wixClient.products
+      .queryProducts()
+      .limit(limit)
+      .skip(offset)
+      .find();
+
+    // ✅ Return only essential fields to reduce payload
+    const minimalProducts = (query.items ?? []).map(product => ({
+      _id: product._id,
+      id: product._id,
+      name: product.name,
+      priceData: product.priceData,
+      price: product.price,
+      media: product.media,
+      slug: product.slug,
+      stock: product.stock,
+      variants: product.variants,
+      ribbons: product.ribbons,
+      productType: product.productType,
+      region: product.region,
+      category: product.category,
+      rating: product.rating,
+      reviews: product.reviews,
+      bestseller: product.bestseller,
+      limitedEdition: product.limitedEdition,
+      ribbon: product.ribbon
+    }));
+
+    return NextResponse.json({
+      products: minimalProducts,
+      total: query.totalCount || 0,
+      page,
+      limit,
+      hasMore: offset + limit < (query.totalCount || 0)
+    });
   } catch (error: any) {
     console.error("❌ Product API error:", error);
     return NextResponse.json(
