@@ -896,9 +896,9 @@ export default function HomePage() {
     </div>
 
     {/* Note */}
-    <p className="text-sm mt-8 text-muted-foreground">
+    {/* <p className="text-sm mt-8 text-muted-foreground">
       ✨ Use code <span className="font-semibold text-[#DD9627]">GENZ20</span> for 20% off your first order ✨
-    </p>
+    </p> */}
   </div>
 </section>
 

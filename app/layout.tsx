@@ -10,6 +10,7 @@ import { CartProvider } from "@/context/cart-context"
 import { UserProvider } from "@/context/user-context"
 import { WishlistProvider } from "@/context/wishlist-context"
 import "./globals.css"
+import { CustomToaster } from "@/components/CustomToaster"
 
 
 
@@ -35,10 +36,12 @@ export const metadata: Metadata = {
 
 
 export default function RootLayout({
+
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+   const isMobile = typeof window !== "undefined" && window.innerWidth < 640
   return (
     <html lang="en">
       <head>
@@ -68,7 +71,7 @@ export default function RootLayout({
         </UserProvider>
         </Suspense>
         <Analytics />
-         <Toaster richColors position="top-center" />
+<CustomToaster/>
  <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-EPBVY275H2"
           strategy="afterInteractive"
