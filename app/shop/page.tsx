@@ -1,13 +1,11 @@
 "use client"
 
-import { useEffect, useState, Suspense } from "react"
-import dynamic from "next/dynamic"
+import { useEffect, useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Star, ShoppingCart, Heart, Grid3X3, Sparkles, List, Search, SlidersHorizontal, X } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
@@ -110,15 +108,11 @@ export default function ShopPage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
 
-  // ✅ Defer product loading after hero renders (small delay for better LCP)
   useEffect(() => {
     const load = async () => {
       try {
         setIsLoading(true)
-        // ✅ Add ISR caching and pagination for performance
-        const res = await fetch("/api/products?limit=12&page=1", {
-          next: { revalidate: 3600 }
-        })
+        const res = await fetch("/api/products", { cache: "no-store" })
         if (!res.ok) throw new Error("Failed to load products")
         const data = await res.json()
         const productsData = (data.products || []).map((p: Product) => {
@@ -151,10 +145,7 @@ export default function ShopPage() {
         setIsLoading(false)
       }
     }
-
-    // ✅ Small delay to prioritize hero rendering
-    const timer = setTimeout(load, 100)
-    return () => clearTimeout(timer)
+    load()
   }, [])
 
   const getCurrentPrice = (product: Product): number => {
@@ -183,13 +174,7 @@ export default function ShopPage() {
   }
 
   const getProductImage = (product: Product): string => {
-    // ✅ Optimize image URLs for smaller CDN versions to reduce payload
-    const baseUrl = product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
-    if (baseUrl.includes('wixstatic.com') && !baseUrl.includes('w_')) {
-      // Add Wix CDN optimization params for smaller images
-      return `${baseUrl}?w_400,h_400,q_80`
-    }
-    return baseUrl
+    return product.media?.mainMedia?.image?.url || product.media?.items?.[0]?.image?.url || "/placeholder.svg"
   }
 
   const getProductPrice = (product: Product): number => {
@@ -558,34 +543,15 @@ export default function ShopPage() {
         </Card>
       )}
 
-      {/* ✅ Skeleton loader for smooth loading experience */}
-      {isLoading ? (
-        <div className={`grid gap-2 sm:gap-3 lg:gap-4 ${
-          viewMode === "grid"
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            : "grid-cols-1"
-        }`}>
-          {[...Array(12)].map((_, i) => (
-            <Card key={i} className="overflow-hidden bg-white border border-[#DD9627]/20">
-              <CardContent className="p-0">
-                <Skeleton className="w-full aspect-square bg-[#FFF6CC]" />
-                <div className="p-3 sm:p-4">
-                  <Skeleton className="h-4 w-3/4 mb-2 bg-[#FFF6CC]" />
-                  <Skeleton className="h-4 w-1/2 mb-3 bg-[#FFF6CC]" />
-                  <Skeleton className="h-8 w-full bg-[#FED649]/20" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className={`grid gap-2 sm:gap-3 lg:gap-4 ${
-          viewMode === "grid"
-            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            : "grid-cols-1"
-        }`}>
+      <div
+  className={`grid gap-2 sm:gap-3 lg:gap-4 ${
+    viewMode === "grid"
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      : "grid-cols-1"
+  }`}
+>
 
-          {filteredProducts.map((product) => {
+        {filteredProducts.map((product) => {
           const currentPrice = getCurrentPrice(product)
           const productId = product._id || product.id || ""
           const selectedVariantId = selectedVariants[productId]
@@ -612,7 +578,6 @@ export default function ShopPage() {
                           <img
                             src={getCurrentImage(product) || "/placeholder.svg"}
                             alt={product.name}
-                            loading="lazy"
                             className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                           />
                         </div>
@@ -764,14 +729,13 @@ export default function ShopPage() {
                     // Grid View - Minimal card design with reduced padding
                     <>
                       <div className="relative overflow-hidden">
-                      <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-lg">
-                        <img
-                          src={getCurrentImage(product) || "/placeholder.svg"}
-                          alt={product.name}
-                          loading="lazy"
-                          className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
+                        <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-lg">
+                          <img
+                            src={getCurrentImage(product) || "/placeholder.svg"}
+                            alt={product.name}
+                            className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
 
                         <div className="absolute top-1 left-1 flex flex-col gap-0.5">
                           {product.bestseller && (
@@ -913,9 +877,8 @@ export default function ShopPage() {
               </Card>
             </Link>
           )
-          })}
-        </div>
-      )}
+        })}
+      </div>
 
       {filteredProducts.length === 0 && !isLoading && (
         <Card className="text-center py-12 lg:py-16 border-dashed border-2 border-[#DD9627]/20 bg-[#FFF9E8]">
