@@ -115,6 +115,14 @@ export default function HomePage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
 
   const [reels, setReels] = useState<Reel[]>([])
+ const [isDesktop, setIsDesktop] = useState(false)
+
+  useEffect(() => {
+    const checkScreen = () => setIsDesktop(window.innerWidth >= 1024)
+    checkScreen()
+    window.addEventListener("resize", checkScreen)
+    return () => window.removeEventListener("resize", checkScreen)
+  }, [])
 
   useEffect(() => {
     const loadReels = async () => {
@@ -244,67 +252,51 @@ export default function HomePage() {
 
       {/* Hero Section - Gen Z Vibes */}
 
-<section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
-
-      {/* ✅ Responsive background image */}
+  <section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
+      {/* ✅ Responsive background - Only one loads */}
       <div className="absolute inset-0 z-0">
-        {/* Mobile Background */}
-        <div className="lg:hidden">
-          <Image
-            src="https://static.wixstatic.com/media/e7c120_6f9f985aded44415bdb78ecaf7628a19~mv2.webp"
-            alt="Mobile background"
-            fill
-            priority
-            className="object-cover object-center"
-          />
-        </div>
-
-        {/* Desktop Background */}
-        <div className="hidden lg:block">
+        {isDesktop ? (
           <Image
             src="https://static.wixstatic.com/media/e7c120_0a6c2f1ec5134b9cb262528922b7b2d5~mv2.webp"
             alt="Desktop background"
             fill
             priority
+            sizes="100vw"
             className="object-cover object-center"
           />
-        </div>
-
-      
+        ) : (
+          <Image
+            src="https://static.wixstatic.com/media/e7c120_6f9f985aded44415bdb78ecaf7628a19~mv2.webp"
+            alt="Mobile background"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        )}
       </div>
 
-      {/* Content Area */}
+      {/* Content */}
       <div className="relative z-10 w-full lg:w-1/2 px-6 sm:px-10 py-16 lg:pl-24 text-center lg:text-left">
-        {/* Tagline */}
-        
-
-        {/* Heading */}
         <h1 className="font-serif font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.15] mb-6 text-white">
-          Authentic <br /> &amp; Handcrafted <br />
+          Authentic <br /> & Handcrafted <br />
           <span className="text-[#FED649]">Spice Masala.</span>
         </h1>
-
-        {/* Description */}
         <p className="text-base sm:text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-md mx-auto lg:mx-0">
-          At Kokofresh, we redefine freshness. Our spices are sourced from
-          trusted farms, slow-roasted in small batches, and sealed to
-          perfection — ensuring every pinch delivers the purest taste of India.
+          At Kokofresh, we redefine freshness. Our spices are sourced from trusted farms,
+          slow-roasted in small batches, and sealed to perfection — ensuring every pinch
+          delivers the purest taste of India.
         </p>
-
-        {/* Buttons */}
-<div className="flex flex-col sm:flex-row justify-center sm:justify-start gap-4 w-full">
-  <Link href="/shop" className="w-[80%] mx-auto sm:mx-0">
-    <Button
-      size="lg"
-      className="w-full bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
-    >
-      Shop Now
-    </Button>
-  </Link>
-</div>
-
-
-     
+        <div className="flex flex-col sm:flex-row justify-center sm:justify-start gap-4 w-full">
+          <Link href="/shop" className="w-[80%] mx-auto sm:mx-0">
+            <Button
+              size="lg"
+              className="w-full bg-[#FED649] hover:bg-[#DD9627] text-black font-bold text-lg px-8 py-4 rounded-full transition-all duration-300"
+            >
+              Shop Now
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
 
