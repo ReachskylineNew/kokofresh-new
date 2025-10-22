@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ShoppingCart, Menu, X, Heart } from "lucide-react"
@@ -11,32 +11,15 @@ import NavUser from "./NavUser"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showNav, setShowNav] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
 
   const { cart } = useCart()
   const { wishlist } = useWishlist()
 
-  const totalQuantity = cart?.lineItems?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0
+  const totalQuantity =
+    cart?.lineItems?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0
   const wishlistCount = wishlist?.length || 0
 
-  // Scroll animation logic
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY
-      if (currentScroll < lastScrollY || currentScroll < 50) {
-        setShowNav(true) // show when scrolling up or near top
-      } else {
-        setShowNav(false) // hide when scrolling down
-      }
-      setLastScrollY(currentScroll)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
-
-  // Handle menu open state to prevent background scroll
+  // Prevent background scroll when mobile menu open
   useEffect(() => {
     if (isMenuOpen) {
       const original = document.body.style.overflow
@@ -54,33 +37,30 @@ export function Navigation() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 border-b border-[#FED649]/30 shadow-sm
-        transition-transform duration-500 ease-in-out 
-        ${showNav ? "translate-y-0 bg-black/90 backdrop-blur-md" : "-translate-y-full bg-black/90 backdrop-blur-md"}`}
+      className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-[#FED649]/30 shadow-sm"
       role="navigation"
       aria-label="Main"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-6 h-16 md:h-24">
+          {/* Logo and Branding */}
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-3 flex-shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 rounded-md"
             aria-label="KOKO FRESH home"
           >
-            {/* Logo */}
             <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 flex-shrink-0">
               <Image
-  src="https://static.wixstatic.com/media/e7c120_139bc773242b4cb29524927dde26ad3d~mv2.webp"
-  alt="KOKOFRESH Logo"
-  width={200} // adjust based on your layout
-  height={200}
-  className="object-contain transition-transform group-hover:scale-105"
-  priority // optional — ensures instant load for logos
-  quality={100} // keep logo crisp
-/>
+                src="https://static.wixstatic.com/media/e7c120_139bc773242b4cb29524927dde26ad3d~mv2.webp"
+                alt="KOKOFRESH Logo"
+                width={200}
+                height={200}
+                className="object-contain"
+                priority
+                quality={100}
+              />
             </div>
 
-            {/* Brand Name + Tagline */}
             <div className="flex flex-col leading-tight text-left">
               <span className="font-serif text-xl sm:text-2xl md:text-4xl font-bold whitespace-nowrap bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
                 KOKO FRESH
@@ -157,7 +137,7 @@ export function Navigation() {
               aria-expanded={isMenuOpen}
               aria-controls="mobile-nav"
             >
-              {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>

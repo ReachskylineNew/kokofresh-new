@@ -90,7 +90,7 @@ export function Footer() {
           <div>
             <h3 className="font-serif text-lg font-semibold mb-4 text-white">Quick Links</h3>
             <ul className="space-y-2">
-              {["Shop All", "Our Story", "Contact"].map((item, idx) => (
+              {["Shop", "About", "Contact"].map((item, idx) => (
                 <li key={idx}>
                   <Link
                     href={`/${item.toLowerCase().replace(/ /g, "")}`}
@@ -107,7 +107,7 @@ export function Footer() {
           <div>
             <h3 className="font-serif text-lg font-semibold mb-4 text-white">Support</h3>
             <ul className="space-y-2">
-              {["Shipping Info", "Returns", "FAQ", "Privacy Policy"].map((item, idx) => (
+              {["Shipping", "Privacy Policy","Refund"].map((item, idx) => (
                 <li key={idx}>
                   <Link
                     href={`/${item.toLowerCase().replace(/ /g, "")}`}
