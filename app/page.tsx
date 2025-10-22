@@ -13,9 +13,11 @@ import {
   Play,
   Heart,
   Zap,
+  Package,
   Sparkles,
   TrendingUp,
   Clock,
+  HandHeart,
   Shield,
   Flame,
   Hammer,
@@ -451,13 +453,13 @@ export default function HomePage() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {[
         {
-          icon: <Hammer className="h-16 sm:h-20 lg:h-24 w-auto text-[#DD9627] group-hover:text-[#B47B2B] transition-colors" />,
+      icon: <HandHeart className="h-16 sm:h-20 lg:h-24 w-auto text-[#DD9627] group-hover:text-[#B47B2B] transition-colors" />,
           title: "Handcrafted Heritage",
           description:
             "Rooted in India’s spice traditions, every blend is carefully handcrafted to preserve authentic regional flavors passed through generations.",
           stat: "Traditional Process",
         },
-        {
+         {
           icon: <Leaf className="h-16 sm:h-20 lg:h-24 w-auto text-[#DD9627] group-hover:text-[#B47B2B] transition-colors" />,
           title: "100% Natural Ingredients",
           description:
@@ -465,12 +467,12 @@ export default function HomePage() {
           stat: "Pure & Clean",
         },
         {
-          icon: <Flame className="h-16 sm:h-20 lg:h-24 w-auto text-[#DD9627] group-hover:text-[#B47B2B] transition-colors" />,
-          title: "Artisanal Crafted",
-          description:
-            "Small-batch roasted, slow-ground, and sealed to lock in aroma — ensuring every pinch bursts with freshness.",
-          stat: "Freshly Made",
-        },
+      icon: <Package className="h-16 sm:h-20 lg:h-24 w-auto text-[#DD9627] group-hover:text-[#B47B2B] transition-colors" />,
+      title: "Sealed for Purity",
+      description:
+        "Air-tight, eco-conscious packaging ensures each spice stays as fresh and fragrant as the day it was ground.",
+      stat: "Stay Fresh",
+    }
       ].map((usp, index) => (
         <Card
           key={index}

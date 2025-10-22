@@ -12,7 +12,10 @@ import {
   Flame,
   Award,
   Target,
+  ShieldCheck,
   Zap,
+  Lightbulb,
+  HeartHandshake,
   Instagram,
   Leaf
 } from "lucide-react"
@@ -205,28 +208,28 @@ export default function AboutPage() {
     {/* Values Grid */}
  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
   {[
-    {
-      icon: <Target className="h-12 w-12 text-[#FED649]" />,
-      title: "Authenticity First",
-      description:
-        "No shortcuts, no compromises. Every spice is made with care and taste straight from Indian kitchens.",
-      stat: "100% Authentic",
-    },
-    {
-      icon: <Zap className="h-12 w-12 text-[#FED649]" />,
-      title: "Innovation Always",
-      description:
-        "We honor tradition while reimagining freshness — small-batch roasted, naturally preserved, perfectly packed.",
-      stat: "Always Fresh",
-    },
-    {
-      icon: <Users className="h-12 w-12 text-[#FED649]" />,
-      title: "Community Driven",
-      description:
-        "Our customers inspire our blends. Every product carries the stories and flavors you help create.",
-      stat: "For the People",
-    },
-  ].map((value, index) => (
+        {
+          icon: <ShieldCheck className="h-12 w-12 text-[#FED649]" />,
+          title: "Authenticity First",
+          description:
+            "No shortcuts, no compromises. Every spice is crafted with care, echoing the flavors of true Indian kitchens.",
+          stat: "100% Authentic",
+        },
+        {
+          icon: <Lightbulb className="h-14 w-14 text-[#FED649] group-hover:scale-110 transition-transform duration-300" />,
+          title: "Innovation Always",
+          description:
+            "We blend tradition with creativity — small-batch roasted, naturally preserved, and freshly packed for the modern table.",
+          stat: "Always Fresh",
+        },
+        {
+          icon: <HeartHandshake className="h-14 w-14 text-[#FED649] group-hover:scale-110 transition-transform duration-300" />,
+          title: "Community Driven",
+          description:
+            "Our blends are inspired by you — our food-loving community that celebrates taste, culture, and togetherness.",
+          stat: "For the People",
+        },
+      ].map((value, index) => (
     <Card
       key={index}
       className="bg-[#0D0D0D] border border-[#DD9627]/30 hover:border-[#FED649]/60 transition-all duration-300"
