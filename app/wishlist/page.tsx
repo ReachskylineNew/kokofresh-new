@@ -27,10 +27,10 @@ export default function WishlistPage() {
   // 🌀 Loading State
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#DD9627] mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your wishlist...</p>
+          <p className="text-[#6B4A0F]">Loading your wishlist...</p>
         </div>
       </div>
     )
@@ -39,241 +39,182 @@ export default function WishlistPage() {
   // 🔒 Not Logged In State
  if (!contact) {
   return (
-    <>
-      {/* Navigation stays fixed at top */}
+    <div className="min-h-screen bg-white text-[#3B2B13] mt-16 md:mt-24">
       <Navigation />
 
-      {/* Main Content - spaced below nav */}
-      <div className="min-h-screen bg-white text-gray-900 after-nav flex flex-col">
-        <div className="flex-grow">
-          <div className="max-w-7xl mx-auto px-3 md:px-4 py-20 text-center">
-            <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 bg-[#FED649]/40 rounded-full flex items-center justify-center">
-              <Heart className="w-8 h-8 md:w-12 md:h-12 text-[#DD9627]" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">
-              Please log in to view your wishlist
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Sign in to save items for later
-            </p>
-            <Link href="/profile">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold px-8 py-4 hover:brightness-90 transition-all duration-300"
-              >
-                Sign In
-              </Button>
-            </Link>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 bg-[#FFF8E1] rounded-full flex items-center justify-center border-2 border-[#DD9627]/20">
+          <Heart className="w-8 h-8 md:w-12 md:h-12 text-[#DD9627]" />
         </div>
-
-        {/* Footer stays at bottom, outside main scroll area */}
-        <Footer />
+        <h2 className="font-serif text-xl font-semibold mb-2 text-[#3B2B13]">
+          Please log in to view your wishlist
+        </h2>
+        <p className="text-[#6B4A0F] mb-6 font-medium">
+          Sign in to save items for later
+        </p>
+        <Link href="/profile">
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold px-8 py-4 hover:brightness-90 transition-all duration-300"
+          >
+            Sign In
+          </Button>
+        </Link>
       </div>
-    </>
+
+      <Footer />
+    </div>
   )
 }
 
 
   // 🧡 Logged In State
   return (
-  <div className="min-h-screen bg-white text-gray-900 mt-16 md:mt-24">
+    <div className="min-h-screen bg-white text-[#3B2B13] mt-16 md:mt-24">
       <Navigation />
 
-      <div className="min-h-screen bg-white text-gray-900 after-nav">
-        {/* Top Bar */}
-        <div className="bg-muted/30 border-b border-border">
-          <div className="max-w-7xl mx-auto px-3 md:px-4 py-2 md:py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <ArrowLeft className="h-4 w-4" />
-                <Link
-                  href="/shop"
-                  className="hover:text-[#DD9627] transition-colors"
-                >
-                  Continue shopping
-                </Link>
-              </div>
-              <div className="text-sm text-muted-foreground hidden md:block">
-                {wishlist.length} {wishlist.length === 1 ? "item" : "items"} in wishlist
-              </div>
-            </div>
+      <div className="bg-[#FFF8E1] border-b border-[#DD9627]/20">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-sm text-[#6B4A0F]">
+            <ArrowLeft className="h-4 w-4" />
+            <Link href="/shop" className="hover:text-[#DD9627] transition-colors font-medium">
+              Continue Shopping
+            </Link>
+          </div>
+          <div className="text-sm text-[#6B4A0F] hidden sm:block font-medium">
+            {wishlist.length} {wishlist.length === 1 ? "item" : "items"}
           </div>
         </div>
+      </div>
 
-        {/* Wishlist Section */}
-        <div className="max-w-7xl mx-auto px-3 md:px-4 py-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-semibold text-[#B47B2B] mb-1">
-              My Wishlist
-            </h1>
-            {wishlist.length > 0 && (
-              <p className="text-sm text-gray-600">
-                Items you've saved for later. Add them to your cart when you're ready to buy.
-              </p>
-            )}
-          </div>
+        {/* Content */}
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 lg:py-12">
+          <h1 className="font-serif font-bold text-3xl sm:text-4xl md:text-5xl text-[#3B2B13] mb-8">
+            My{" "}
+            <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+              Wishlist
+            </span>
+          </h1>
 
           {wishlist.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 mx-auto mb-6 bg-[#FED649]/40 rounded-full flex items-center justify-center">
-                  <Heart className="w-12 h-12 text-[#DD9627]" />
+            <div className="text-center py-16">
+              <div className="max-w-sm mx-auto">
+                <div className="w-20 h-20 mx-auto mb-5 bg-[#FFF8E1] rounded-full flex items-center justify-center border-2 border-[#DD9627]/20">
+                  <Heart className="w-10 h-10 text-[#DD9627]" />
                 </div>
-                <h2 className="text-xl font-semibold mb-2">Your wishlist is empty</h2>
-                <p className="text-gray-600 mb-6">
-                  Save items from your cart or shop to add them here.
-                </p>
+                <h2 className="font-serif text-xl sm:text-2xl font-semibold text-[#3B2B13] mb-2">Your wishlist is empty</h2>
+                <p className="text-[#6B4A0F] mb-6 font-medium">Save items from your cart or shop to add them here.</p>
                 <Link href="/shop">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold px-8 py-4 hover:brightness-90 transition-all duration-300"
-                  >
+                  <Button className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold px-8 py-4 hover:brightness-90 transition-all duration-300">
                     Start Shopping
                   </Button>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Wishlist Items */}
-              <div className="lg:col-span-3">
-                <div className="border border-border rounded-lg overflow-hidden">
-                  {wishlist.map((item: any, index: number) => (
-                    <div
-                      key={item._id}
-                      className="p-4 md:p-6 bg-[#FED649]/60 text-black"
-                    >
-                      <div className="flex gap-4">
-                        {/* Image */}
-                        <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-[#DD9627]/30">
-                          {item.image?.url ? (
-                            <img
-                              src={item.image.url || "/placeholder.svg"}
-                              alt={item.productName || "Product"}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                              <div className="w-6 h-6 bg-gray-400 rounded"></div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Details */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col md:flex-row md:justify-between gap-2">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-sm md:text-lg mb-1">
-                                {item.productName || "Product"}
-                              </h3>
-
-                              <div className="flex items-center gap-2 text-xs md:text-sm mb-2">
-                                <span className="text-green-700 font-medium">
-                                  Available
-                                </span>
-                                <span className="text-gray-700 hidden md:inline">
-                                  Saved on{" "}
-                                  {new Date(
-                                    item.addedDate
-                                  ).toLocaleDateString()}
-                                </span>
-                              </div>
-
-                              {/* Buttons */}
-                              <div className="flex items-center gap-3 mt-2">
-                                <button
-                                  onClick={() => removeFromWishlist(item._id)}
-                                  className="flex items-center gap-1 text-xs md:text-sm text-gray-800 hover:text-[#DD9627] transition-colors"
-                                >
-                                  <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
-                                  <span className="hover:underline">Remove</span>
-                                </button>
-
-                                <button
-                                  onClick={() => moveToCart(item)}
-                                  className="flex items-center gap-1 text-xs md:text-sm text-gray-800 hover:text-[#DD9627] transition-colors"
-                                >
-                                  <ShoppingCart className="h-3 w-3 md:h-4 md:w-4" />
-                                  <span className="hover:underline">
-                                    Move to Cart
-                                  </span>
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="text-right">
-                              <p className="text-base md:text-xl font-semibold text-black">
-                                {item.price?.formattedAmount ||
-                                  `₹${Number.parseFloat(
-                                    item.price?.amount || "0"
-                                  ).toFixed(2)}`}
-                              </p>
-                              <p className="text-xs md:text-sm text-gray-700">
-                                ₹
-                                {(
-                                  Number.parseFloat(item.price?.amount || "0") *
-                                  item.quantity
-                                ).toFixed(2)}{" "}
-                                total
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {index < wishlist.length - 1 && <Separator className="opacity-0" />}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sidebar Summary */}
-              <div className="lg:col-span-1">
-                <div className="bg-card border border-border rounded-lg p-4 lg:sticky lg:top-24">
-                  <div className="mb-4">
-                    <h3 className="text-lg font-semibold mb-2 text-[#B47B2B]">
-                      Wishlist Summary
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {wishlist.length} {wishlist.length === 1 ? "item" : "items"} saved
-                    </p>
-                    <p className="text-xl font-bold text-black">
-                      ₹{totalValue.toFixed(2)} total value
-                    </p>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold text-base py-3 hover:brightness-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mb-3"
-                    onClick={() => {
-                      wishlist.forEach((item) => moveToCart(item))
-                    }}
-                    disabled={wishlist.length === 0}
+              <div className="lg:col-span-3 space-y-4">
+                {wishlist.map((item: any) => (
+                  <div
+                    key={item._id}
+                    className="p-4 sm:p-6 bg-white border-2 border-[#DD9627]/20 hover:border-[#DD9627]/40 text-[#3B2B13] rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
                   >
-                    Move All to Cart
-                  </Button>
-
-                  <Separator className="my-4" />
-
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <div className="flex items-center gap-2">
-                      <Heart className="h-4 w-4 text-[#DD9627]" />
-                      <span>Saved items persist across devices</span>
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-20 h-20 sm:w-28 sm:h-28 bg-[#FFF8E1] border-2 border-[#DD9627]/30 rounded-lg overflow-hidden flex-shrink-0">
+                      {item.image?.url ? (
+                        <img
+                          src={item.image.url || "/placeholder.svg"}
+                          alt={item.productName?.original || "Product"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#FFF8E1] flex items-center justify-center" />
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <ShoppingCart className="h-4 w-4 text-[#B47B2B]" />
-                      <span>Move to cart when ready to buy</span>
+
+                    <div className="flex-1 min-w-0">
+                       <h3 className="font-semibold text-sm md:text-lg mb-1">
+                                {item.productName || "Product"}
+                              </h3>   
+                      <p className="text-xs sm:text-sm text-green-700 font-medium">
+                        In Stock <span className="text-[#6B4A0F] hidden sm:inline">• FREE Shipping</span>
+                      </p>
+
+                      {/* Buttons */}
+                      <div className="flex items-center gap-3 mt-3 flex-wrap">
+                        <button
+                          onClick={() => removeFromWishlist(item._id)}
+                          className="flex items-center gap-1 text-sm text-[#6B4A0F] hover:text-[#B47B2B] transition-colors font-medium"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Remove
+                        </button>
+
+                        <button
+                          onClick={() => moveToCart(item)}
+                          className="flex items-center gap-1 text-sm text-[#6B4A0F] hover:text-[#B47B2B] transition-colors font-medium"
+                        >
+                          <ShoppingCart className="h-4 w-4" />
+                          Move to Cart
+                        </button>
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="text-right sm:text-left sm:w-28">
+                    <p className="text-base sm:text-lg font-bold text-[#B47B2B]">
+                      {item.price?.formattedAmount || `₹${Number.parseFloat(item.price?.amount || "0").toFixed(2)}`}
+                    </p>
+                    <p className="text-xs sm:text-sm text-[#6B4A0F]">
+                      ₹{(Number.parseFloat(item.price?.amount || "0") * item.quantity).toFixed(2)} total
+                    </p>
+                  </div>
+                  </div>
+                ))}
+              </div>
+
+            <div className="lg:col-span-1 lg:sticky lg:top-6 h-fit">
+              <div className="bg-white border-2 border-[#DD9627]/20 hover:border-[#DD9627]/40 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#3B2B13] mb-4">Wishlist Summary</h3>
+                <div className="flex justify-between text-sm mb-3 text-[#6B4A0F]">
+                  <span className="font-medium">Items saved</span>
+                  <span className="font-semibold text-[#3B2B13]">{wishlist.length}</span>
+                </div>
+                <div className="flex justify-between text-sm mb-4 text-[#6B4A0F]">
+                  <span className="font-medium">Total value</span>
+                  <span className="font-semibold text-[#3B2B13]">₹{totalValue.toFixed(2)}</span>
+                </div>
+                <Separator className="my-4 bg-[#DD9627]/20" />
+                <Button
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-bold text-base py-3 hover:brightness-90 transition-all duration-300 shadow-md hover:shadow-lg"
+                  onClick={() => {
+                    wishlist.forEach((item) => moveToCart(item))
+                  }}
+                  disabled={wishlist.length === 0}
+                >
+                  Move All to Cart
+                </Button>
+
+                <div className="mt-6 space-y-3 text-xs text-[#6B4A0F]">
+                  <div className="flex items-center gap-2 font-medium">
+                    <Heart className="h-4 w-4 text-[#DD9627] flex-shrink-0" />
+                    <span>Saved items persist across devices</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-medium">
+                    <ShoppingCart className="h-4 w-4 text-[#B47B2B] flex-shrink-0" />
+                    <span>Move to cart when ready to buy</span>
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           )}
         </div>
 
         <Footer />
       </div>
-    </div>
+   
   )
-}
+} 

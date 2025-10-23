@@ -99,38 +99,81 @@ export default function ProductPage() {
     if (productId) load()
   }, [productId])
 
-   const getDescriptionPreview = (html: string): string => {
-    // Extract first 2 list items or paragraphs for mobile preview
-    const listItemMatch = html.match(/<li>.*?<\/li>/g)
-    if (listItemMatch && listItemMatch.length >= 2) {
-      return `<ul class="space-y-3 ml-6 list-disc list-outside mb-4">${listItemMatch.slice(0, 2).join("")}</ul>`
+const getDescriptionPreview = (html: string): string => {
+  // Match all paragraphs
+  const paragraphs = html.match(/<p>.*?<\/p>/g) || []
+
+  if (paragraphs.length > 0) {
+    // Find the heading paragraph (<p><strong>...</strong></p>)
+    const headingIndex = paragraphs.findIndex((p) => p.includes("<strong>"))
+
+    // If found, include that + the *next non-empty* paragraph (main description)
+    if (headingIndex !== -1) {
+      const cleanParas: string[] = []
+      cleanParas.push(paragraphs[headingIndex])
+
+      // Find the next valid paragraph (skip empty or &nbsp;)
+      for (let i = headingIndex + 1; i < paragraphs.length; i++) {
+        const content = paragraphs[i].replace(/<[^>]+>/g, "").replace(/&nbsp;/g, "").trim()
+        if (content.length > 0) {
+          cleanParas.push(paragraphs[i])
+          break
+        }
+      }
+
+      return cleanParas.join("")
     }
 
-    // Fallback: extract first paragraph
-    const paragraphMatch = html.match(/<p>.*?<\/p>/g)
-    if (paragraphMatch && paragraphMatch.length > 0) {
-      return paragraphMatch[0]
-    }
+    // If no heading found, fallback to first two non-empty paragraphs
+    const validParas = paragraphs.filter(
+      (p) => p.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, "").trim().length > 0
+    )
+    return validParas.slice(0, 2).join("")
+  }
 
-    return html
+  // Fallback for list content
+  const listItemMatch = html.match(/<li>.*?<\/li>/g)
+  if (listItemMatch && listItemMatch.length >= 2) {
+    return `<ul class="space-y-3 ml-6 list-disc list-outside mb-4">${listItemMatch
+      .slice(0, 2)
+      .join("")}</ul>`
   }
-    const formatDescription = (description: string) => {
-    return description
-      .replace(
-        /<p><strong>/g,
-        '<h3 class="text-lg sm:text-xl font-serif font-bold text-[#B47B2B] mb-4 mt-6 first:mt-0">',
-      )
-      .replace(/<\/strong><\/p>/g, "</h3>")
-      .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
-      .replace(/<\/strong>/g, "</span>")
-      .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
-      .replace(/<\/em>/g, "</em>")
-      .replace(/<p>/g, '<p class="mb-4 text-base sm:text-lg leading-relaxed">')
-      .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
-      .replace(/<li>/g, '<li class="text-base sm:text-lg text-[#3B2B13]">')
-      .replace(/<\/li>/g, "</li>")
-      .replace(/<\/ul>/g, "</ul>")
-  }
+
+  return html
+}
+
+
+
+const formatDescription = (description: string) => {
+  return description
+    // 🟡 Headings (like <p><strong>Title</strong></p>)
+    .replace(
+      /<p><strong>(.*?)<\/strong><\/p>/g,
+      '<h3 class="text-[1.05rem] sm:text-lg font-serif font-semibold text-[#B47B2B] mb-1 mt-3 first:mt-0 leading-snug">$1</h3>'
+    )
+
+    // 🟡 Inline bolds
+    .replace(/<strong>(.*?)<\/strong>/g, '<span class="font-semibold text-[#DD9627]">$1</span>')
+
+    // 🟡 Inline italics
+    .replace(/<em>(.*?)<\/em>/g, '<em class="italic text-[#B47B2B] font-medium">$1</em>')
+
+    // 🟡 Paragraphs — much tighter spacing
+    .replace(
+      /<p>(.*?)<\/p>/g,
+      '<p class="mb-2 sm:mb-3 text-[0.95rem] sm:text-[1.05rem] leading-[1.55] text-[#3B2B13]">$1</p>'
+    )
+
+    // 🟡 Lists — compact bullets
+    .replace(
+      /<ul>/g,
+      '<ul class="space-y-1.5 ml-5 list-disc list-outside mb-2 sm:mb-3 text-[#3B2B13]">'
+    )
+    .replace(/<li>(.*?)<\/li>/g, '<li class="text-[0.95rem] sm:text-[1.05rem]">$1</li>')
+    .replace(/<\/ul>/g, '</ul>')
+}
+
+
   useEffect(() => {
     const loadAll = async () => {
       if (!product) return
@@ -525,26 +568,27 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95 mt-6 sm:mt-0">
-          <div className="border-b border-[#FED649]/40">
-            <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
-              {["description", "instructions", "details"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`px-2 sm:px-4 py-3 sm:py-4 font-medium capitalize transition-all duration-200 whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === tab
-                      ? "border-b-2 sm:border-b-3 border-[#DD9627] text-[#DD9627]"
-                      : "text-[#3B2B13]/70 hover:text-[#B47B2B]"
-                  }`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab === "instructions" ? "How to Use" : tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
+      <Card className="mb-8 shadow-lg border-0 bg-white/95 rounded-2xl overflow-hidden">
+  <div className="flex justify-center border-b border-[#FED649]/30">
+    {["description", "instructions", "details"].map((tab) => (
+      <button
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`relative px-5 py-4 text-sm sm:text-base font-medium transition-colors duration-300 ${
+          activeTab === tab
+            ? "text-[#DD9627]"
+            : "text-[#3B2B13]/60 hover:text-[#B47B2B]"
+        }`}
+      >
+        {tab === "instructions" ? "How to Use" : tab.charAt(0).toUpperCase() + tab.slice(1)}
+        {activeTab === tab && (
+          <span className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] rounded-t-md" />
+        )}
+      </button>
+    ))}
+  </div>
 
-          <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
+      <CardContent className="p-6 sm:p-8">
             {activeTab === "description" && (
               <div className="space-y-6 sm:space-y-8">
                 <div className="block sm:hidden">
@@ -585,73 +629,76 @@ export default function ProductPage() {
               </div>
             )}
 
-            {activeTab === "instructions" && (
-              <div className="space-y-6 sm:space-y-8">
-                <div className="mb-6 sm:mb-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-[#FED649]/20 rounded-lg">
-                      <Info className="h-5 w-5 sm:h-6 sm:w-6 text-[#DD9627]" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#3B2B13] leading-tight">
-                        How to Use
-                      </h2>
-                      <p className="text-sm sm:text-base text-[#3B2B13]/70 mt-1">
-                        Follow these simple steps for the best experience
-                      </p>
-                    </div>
-                  </div>
-                </div>
+           {activeTab === "instructions" && (
+  <div className="space-y-10 sm:space-y-12">
+    {/* 🏷️ Header */}
+    <div className="flex items-center gap-4 mb-2 sm:mb-6">
+      <div className="p-3 bg-gradient-to-br from-[#FED649] to-[#DD9627] rounded-2xl shadow-lg">
+        <ChefHat className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+      </div>
+      <div>
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#3B2B13]">
+          How to Use
+        </h2>
+        <p className="text-sm sm:text-base text-[#3B2B13]/70 mt-1">
+          Follow these easy steps to enjoy the authentic KOKO Fresh flavour
+        </p>
+      </div>
+    </div>
 
-                {product.additionalInfoSections && product.additionalInfoSections.length > 0 ? (
-                  <div className="space-y-6 sm:space-y-8">
-                    {product.additionalInfoSections.map((section: any, index: number) => (
-                      <div
-                        key={index}
-                        className="bg-gradient-to-br from-white to-[#FED649]/5 rounded-xl sm:rounded-2xl p-6 sm:p-8 border-2 border-[#FED649]/40 shadow-sm hover:shadow-md transition-shadow duration-200"
-                      >
-                        <div
-                          className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed ml-0 sm:ml-14"
-                          dangerouslySetInnerHTML={{
-                            __html: section.description
-                              .replace(/<p>/g, '<p class="mb-4 text-[#3B2B13] text-base sm:text-lg">')
-                              .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
-                              .replace(/<ol>/g, '<ol class="space-y-3 ml-6 list-decimal list-outside mb-4">')
-                              .replace(/<li>/g, '<li class="text-[#3B2B13] text-base sm:text-lg">')
-                              .replace(/<\/li>/g, "</li>")
-                              .replace(/<strong>/g, '<strong class="font-semibold text-[#DD9627]">')
-                              .replace(/<\/strong>/g, "</strong>")
-                              .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
-                              .replace(/<\/em>/g, "</em>"),
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-6 sm:p-8 bg-[#FED649]/10 border-2 border-[#FED649]/40 rounded-xl text-center">
-                    <p className="text-[#3B2B13]/70 text-base sm:text-lg">No preparation instructions available.</p>
-                  </div>
-                )}
+    {/* 🪶 Instruction Steps */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+      {product.additionalInfoSections?.map((section, index) => {
+        const steps = section.description
+          .split(/<p>|<\/p>/)
+          .filter((s) => s.trim().length > 0 && !s.includes("<strong>"))
 
-                {product.additionalInfoSections && product.additionalInfoSections.length > 0 && (
-                  <div className="mt-8 sm:mt-10 p-4 sm:p-6 bg-gradient-to-r from-[#FED649]/20 to-[#DD9627]/10 border-2 border-[#FED649]/40 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-6 h-6 bg-[#DD9627] text-white rounded-full flex items-center justify-center text-xs font-bold">
-                        <Lightbulb className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-[#B47B2B] mb-2 text-sm sm:text-base">Pro Tip</h4>
-                        <p className="text-[#3B2B13] text-sm sm:text-base leading-relaxed">
-                          For the best results, follow the instructions in order and take your time with each step.
-                          Store in an airtight container away from moisture.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+        return steps.map((step, stepIndex) => (
+          <div
+            key={`${index}-${stepIndex}`}
+            className="relative bg-gradient-to-br from-white via-[#FFFBEA] to-[#FED649]/20 border border-[#FED649]/40 rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-[#FED649]/50 transition-all duration-300"
+          >
+            {/* 🔢 Step number */}
+            <div className="absolute -top-4 left-6 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md">
+              {stepIndex + 1}
+            </div>
+
+            {/* 📝 Step Content */}
+            <div
+              className="prose prose-sm sm:prose-base text-[#3B2B13] mt-6 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: step
+                  .replace(/<strong>/g, '<strong class="text-[#DD9627] font-semibold">')
+                  .replace(/<\/strong>/g, "</strong>")
+                  .replace(/&nbsp;/g, "")
+                  .replace(/Step\s*\d+:/gi, (match) => `<span class="font-bold text-[#B47B2B]">${match}</span>`),
+              }}
+            />
+          </div>
+        ))
+      })}
+    </div>
+
+    {/* 💡 Pro Tip Section */}
+    <div className="p-6 sm:p-8 bg-gradient-to-r from-[#FED649]/20 via-[#DD9627]/10 to-[#B47B2B]/10 border border-[#FED649]/40 rounded-2xl shadow-inner">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white rounded-full flex items-center justify-center shadow-md">
+          <Lightbulb className="h-5 w-5 sm:h-6 sm:w-6" />
+        </div>
+        <div>
+          <h4 className="font-serif font-semibold text-[#B47B2B] mb-2 text-lg">
+            Pro Tip
+          </h4>
+          <p className="text-[#3B2B13]/90 text-sm sm:text-base leading-relaxed">
+            Warm a spoon of ghee or sesame oil before mixing — this enhances the
+            aroma and brings out the rich, nutty flavour of Bengal Gram Chutney Powder.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
 
             {activeTab === "details" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
@@ -702,7 +749,9 @@ export default function ProductPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+
+</Card>
+
       </div>
 
       {/* Related Products */}

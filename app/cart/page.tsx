@@ -269,9 +269,9 @@ export default function CartPage() {
                   <span className="font-semibold text-green-700">Free</span>
                 </div>
                 <Separator className="my-4 bg-[#DD9627]/20" />
-                <div className="flex justify-between font-serif font-bold text-lg mb-6 text-[#3B2B13]">
+                <div className="flex justify-between  font-bold text-lg mb-6 text-[#3B2B13]">
                   <span>Total</span>
-                  <span className="bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] bg-clip-text text-transparent">
+                  <span className="text-[#6B4A0F]">
                     ₹{total.toFixed(2)}
                   </span>
                 </div>
