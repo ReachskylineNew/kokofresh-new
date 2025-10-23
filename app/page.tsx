@@ -254,27 +254,28 @@ export default function HomePage() {
 
  <section className="relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-between min-h-[90vh] overflow-hidden bg-black text-center lg:text-left">
       {/* ✅ Responsive background - Only one loads */}
-      <div className="absolute inset-0 z-0">
-        {isDesktop ? (
-          <Image
-            src="https://static.wixstatic.com/media/e7c120_0a6c2f1ec5134b9cb262528922b7b2d5~mv2.webp"
-            alt="Desktop background"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        ) : (
-          <Image
-            src="https://static.wixstatic.com/media/e7c120_6f9f985aded44415bdb78ecaf7628a19~mv2.webp"
-            alt="Mobile background"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        )}
-      </div>
+    <div className="absolute inset-0 z-0">
+  {/* Desktop BG */}
+  <Image
+    src="https://static.wixstatic.com/media/e7c120_0a6c2f1ec5134b9cb262528922b7b2d5~mv2.webp"
+    alt="Desktop background"
+    fill
+    priority
+    sizes="100vw"
+    className="object-cover object-center hidden sm:block"
+  />
+
+  {/* Mobile BG */}
+  <Image
+    src="https://static.wixstatic.com/media/e7c120_8e43e22e693f4e8db644c2f1a3f07fb6~mv2.webp"
+    alt="Mobile background"
+    fill
+    priority
+    sizes="100vw"
+    className="object-cover object-center block sm:hidden"
+  />
+</div>
+
 
       {/* Content */}
       <div className="relative z-10 w-full lg:w-1/2 px-6 sm:px-10 py-16 lg:pl-24 text-center lg:text-left">
