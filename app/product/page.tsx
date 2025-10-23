@@ -44,7 +44,6 @@ export default function ProductPage() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
   const [allProducts, setAllProducts] = useState<any[]>([])
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
-  const [expandedDescription, setExpandedDescription] = useState(false)
 
   useEffect(() => {
     if (!product?.media?.items?.length) return
@@ -210,40 +209,6 @@ export default function ProductPage() {
     )
   }
 
-  const getDescriptionPreview = (html: string): string => {
-    // Extract first 2 list items or paragraphs for mobile preview
-    const listItemMatch = html.match(/<li>.*?<\/li>/g)
-    if (listItemMatch && listItemMatch.length >= 2) {
-      return `<ul class="space-y-3 ml-6 list-disc list-outside mb-4">${listItemMatch.slice(0, 2).join("")}</ul>`
-    }
-
-    // Fallback: extract first paragraph
-    const paragraphMatch = html.match(/<p>.*?<\/p>/g)
-    if (paragraphMatch && paragraphMatch.length > 0) {
-      return paragraphMatch[0]
-    }
-
-    return html
-  }
-
-  const formatDescription = (description: string) => {
-    return description
-      .replace(
-        /<p><strong>/g,
-        '<h3 class="text-lg sm:text-xl font-serif font-bold text-[#B47B2B] mb-4 mt-6 first:mt-0">',
-      )
-      .replace(/<\/strong><\/p>/g, "</h3>")
-      .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
-      .replace(/<\/strong>/g, "</span>")
-      .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
-      .replace(/<\/em>/g, "</em>")
-      .replace(/<p>/g, '<p class="mb-4 text-base sm:text-lg leading-relaxed">')
-      .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
-      .replace(/<li>/g, '<li class="text-base sm:text-lg text-[#3B2B13]">')
-      .replace(/<\/li>/g, "</li>")
-      .replace(/<\/ul>/g, "</ul>")
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#DD9627] via-[#FED649] to-[#B47B2B] text-[#3B2B13] font-sans">
       {/* ✅ SEO Head Section */}
@@ -268,52 +233,60 @@ export default function ProductPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-4 lg:gap-12 mb-2 sm:mb-8 lg:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-12 mb-4 sm:mb-8 lg:mb-16">
           <div className="space-y-0">
-            <div className="relative overflow-hidden rounded-lg sm:rounded-2xl shadow-lg sm:shadow-2xl group">
-              <img
-                src={
-                  product.media?.items?.[selectedImage]?.image?.url ||
-                  product.media?.mainMedia?.image?.url ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg"
-                }
-                alt={product.name}
-                className="w-full h-auto aspect-video sm:aspect-square object-contain rounded-lg sm:rounded-xl"
-              />
-              {product.ribbon && (
-                <Badge className="absolute top-2 sm:top-6 left-2 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
-                  {product.ribbon}
-                </Badge>
-              )}
+<div className="relative overflow-hidden rounded-lg sm:rounded-2xl  group">
+  <img
+    src={
+      product.media?.items?.[selectedImage]?.image?.url ||
+      product.media?.mainMedia?.image?.url ||
+      "/placeholder.svg"
+    }
+    alt={product.name}
+    className="
+      w-[85%]
+      sm:w-full
+      mx-auto
+      h-auto
+      aspect-square
+      object-contain
+      rounded-lg sm:rounded-xl
+    "
+  />
 
-              {(product.media?.items?.length || 0) > 1 && (
-                <>
-                  <button
-                    onClick={handlePrevImage}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
-                  <button
-                    onClick={handleNextImage}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
+  {product.ribbon && (
+    <Badge className="absolute top-2 sm:top-6 left-2 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
+      {product.ribbon}
+    </Badge>
+  )}
 
-                  <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
-                    {selectedImage + 1} / {product.media?.items?.length || 1}
-                  </div>
-                </>
-              )}
-            </div>
+  {(product.media?.items?.length || 0) > 1 && (
+    <>
+      <button
+        onClick={handlePrevImage}
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
 
-            <div className="flex gap-0.5 sm:gap-2 justify-center overflow-x-auto pb-0.5 sm:pb-1 mt-0.5 sm:mt-2">
+      <button
+        onClick={handleNextImage}
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        aria-label="Next image"
+      >
+        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
+
+      <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
+        {selectedImage + 1} / {product.media?.items?.length || 1}
+      </div>
+    </>
+  )}
+</div>
+
+
+            <div className="flex gap-0.5 sm:gap-2 justify-center overflow-x-auto pb-0.5 sm:pb-1 mt-1 sm:mt-2">
               {(product.media?.items?.length
                 ? product.media.items.map((m: any) => m.image?.url)
                 : [product.media?.mainMedia?.image?.url]
@@ -330,27 +303,27 @@ export default function ProductPage() {
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${product.name} view ${index + 1}`}
-                    className="w-8 h-8 sm:w-20 sm:h-20 object-cover"
+                    className="w-10 h-10 sm:w-20 sm:h-20 object-cover"
                   />
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-0.5 sm:space-y-2">
-            <div className="space-y-0 sm:space-y-1">
-              <h1 className="text-sm sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
+          <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
                 {product.name}
               </h1>
             </div>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-1 sm:p-4">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5 sm:gap-4">
+              <CardContent className="p-2 sm:p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
                   <div>
-                    <div className="flex items-baseline gap-1 sm:gap-2 mb-0 sm:mb-2">
+                    <div className="flex items-baseline gap-2 mb-0.5 sm:mb-2">
                       {displayPriceFormatted && (
-                        <span className="font-bold text-base sm:text-3xl text-[#DD9627] leading-tight">
+                        <span className="font-bold text-xl sm:text-3xl text-[#DD9627] leading-tight">
                           {displayPriceFormatted}
                         </span>
                       )}
@@ -371,14 +344,14 @@ export default function ProductPage() {
             </Card>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-1 sm:p-4 space-y-0.5 sm:space-y-2">
+              <CardContent className="p-2 sm:p-4 space-y-1.5 sm:space-y-3">
                 {/* Product Options */}
                 {product.productOptions?.map((opt: any) => (
-                  <div key={opt.name} className="space-y-0 sm:space-y-1">
+                  <div key={opt.name} className="space-y-0.5 sm:space-y-1.5">
                     <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                       {opt.name}:
                     </label>
-                    <div className="flex flex-wrap gap-0.5 sm:gap-2">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                       {opt.choices
                         .filter((choice: any) => choice.visible)
                         .map((choice: any) => (
@@ -407,38 +380,38 @@ export default function ProductPage() {
                 ))}
 
                 {/* Quantity Selector */}
-                <div className="space-y-0 sm:space-y-1">
+                <div className="space-y-0.5 sm:space-y-1.5">
                   <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                     Quantity:
                   </label>
                   <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-0.5 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
-                      <Minus className="h-3 w-3 sm:h-5 sm:w-5" />
+                      <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
-                    <span className="px-1 sm:px-4 py-0.5 sm:py-2 border-x-2 border-[#3B2B13]/20 font-bold text-xs sm:text-xl min-w-[25px] sm:min-w-[60px] text-center bg-white text-[#3B2B13]">
+                    <span className="px-2 sm:px-4 py-0.5 sm:py-2 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-xl min-w-[35px] sm:min-w-[60px] text-center bg-white text-[#3B2B13]">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-0.5 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
-                      <Plus className="h-3 w-3 sm:h-5 sm:w-5" />
+                      <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   </div>
                 </div>
 
                 {/* Add to Cart Button */}
-                <div className="flex flex-col sm:flex-row gap-0.5 sm:gap-2 pt-0.5 sm:pt-1">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 pt-1 sm:pt-1.5">
                   <Button
                     size="lg"
-                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-1 sm:py-3 text-xs sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-2 sm:py-3 text-sm sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                     onClick={handleAddToCart}
                     disabled={!inStock}
                   >
-                    <ShoppingBag className="h-3 w-3 sm:h-5 sm:w-5 mr-0.5 sm:mr-2" />
+                    <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
                 </div>
@@ -504,41 +477,26 @@ export default function ProductPage() {
           <CardContent className="p-4 sm:p-6 lg:p-8 bg-white">
             {activeTab === "description" && (
               <div className="space-y-6 sm:space-y-8">
-                <div className="block sm:hidden">
-                  <div
-                    className="prose prose-sm max-w-none text-[#3B2B13] leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: formatDescription(
-                        expandedDescription ? product.description : getDescriptionPreview(product.description),
-                      ),
-                    }}
-                  />
-                  {!expandedDescription && (
-                    <button
-                      onClick={() => setExpandedDescription(true)}
-                      className="mt-4 px-4 py-2 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold rounded-lg transition-all duration-200"
-                    >
-                      Read More
-                    </button>
-                  )}
-                  {expandedDescription && (
-                    <button
-                      onClick={() => setExpandedDescription(false)}
-                      className="mt-4 px-4 py-2 bg-white border-2 border-[#3B2B13]/20 text-[#3B2B13] font-semibold rounded-lg hover:bg-[#FED649]/10 transition-all duration-200"
-                    >
-                      Read Less
-                    </button>
-                  )}
-                </div>
-
-                <div className="hidden sm:block">
-                  <div
-                    className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed"
-                    dangerouslySetInnerHTML={{
-                      __html: formatDescription(product.description),
-                    }}
-                  />
-                </div>
+                <div
+                  className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: product.description
+                      .replace(
+                        /<p><strong>/g,
+                        '<h3 class="text-lg sm:text-xl font-serif font-bold text-[#B47B2B] mb-4 mt-6 first:mt-0">',
+                      )
+                      .replace(/<\/strong><\/p>/g, "</h3>")
+                      .replace(/<strong>/g, '<span class="font-semibold text-[#DD9627]">')
+                      .replace(/<\/strong>/g, "</span>")
+                      .replace(/<em>/g, '<em class="italic text-[#B47B2B] font-medium">')
+                      .replace(/<\/em>/g, "</em>")
+                      .replace(/<p>/g, '<p class="mb-4 text-base sm:text-lg leading-relaxed">')
+                      .replace(/<ul>/g, '<ul class="space-y-3 ml-6 list-disc list-outside mb-4">')
+                      .replace(/<li>/g, '<li class="text-base sm:text-lg text-[#3B2B13]">')
+                      .replace(/<\/li>/g, "</li>")
+                      .replace(/<\/ul>/g, "</ul>"),
+                  }}
+                />
               </div>
             )}
 
