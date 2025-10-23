@@ -233,51 +233,58 @@ export default function ProductPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 lg:gap-12 mb-4 sm:mb-8 lg:mb-16">
-          <div className="space-y-1 sm:space-y-3">
-            <div className="relative overflow-hidden rounded-lg sm:rounded-2xl shadow-lg sm:shadow-2xl group">
-              <img
-                src={
-                  product.media?.items?.[selectedImage]?.image?.url ||
-                  product.media?.mainMedia?.image?.url ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg"
-                }
-                alt={product.name}
-                className="w-full h-56 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
-              />
-              {product.ribbon && (
-                <Badge className="absolute top-2 sm:top-6 left-2 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
-                  {product.ribbon}
-                </Badge>
-              )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-12 mb-4 sm:mb-8 lg:mb-16">
+          <div className="space-y-0">
+        <div className="relative overflow-hidden rounded-lg sm:rounded-2xl shadow-lg sm:shadow-2xl group">
+  <img
+    src={
+      product.media?.items?.[selectedImage]?.image?.url ||
+      product.media?.mainMedia?.image?.url ||
+      "/placeholder.svg"
+    }
+    alt={product.name}
+    className="
+      w-full
+      h-auto
+      aspect-square
+      object-contain
+      rounded-lg sm:rounded-xl
+    "
+  />
 
-              {(product.media?.items?.length || 0) > 1 && (
-                <>
-                  <button
-                    onClick={handlePrevImage}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
-                  <button
-                    onClick={handleNextImage}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </button>
+  {product.ribbon && (
+    <Badge className="absolute top-2 sm:top-6 left-2 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
+      {product.ribbon}
+    </Badge>
+  )}
 
-                  <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
-                    {selectedImage + 1} / {product.media?.items?.length || 1}
-                  </div>
-                </>
-              )}
-            </div>
+  {(product.media?.items?.length || 0) > 1 && (
+    <>
+      <button
+        onClick={handlePrevImage}
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        aria-label="Previous image"
+      >
+        <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
 
-            <div className="flex gap-1 sm:gap-2 justify-center overflow-x-auto pb-1">
+      <button
+        onClick={handleNextImage}
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+        aria-label="Next image"
+      >
+        <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
+
+      <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
+        {selectedImage + 1} / {product.media?.items?.length || 1}
+      </div>
+    </>
+  )}
+</div>
+
+
+            <div className="flex gap-0.5 sm:gap-2 justify-center overflow-x-auto pb-0.5 sm:pb-1 mt-1 sm:mt-2">
               {(product.media?.items?.length
                 ? product.media.items.map((m: any) => m.image?.url)
                 : [product.media?.mainMedia?.image?.url]
@@ -294,7 +301,7 @@ export default function ProductPage() {
                   <img
                     src={image || "/placeholder.svg"}
                     alt={`${product.name} view ${index + 1}`}
-                    className="w-12 h-12 sm:w-20 sm:h-20 object-cover"
+                    className="w-10 h-10 sm:w-20 sm:h-20 object-cover"
                   />
                 </button>
               ))}
