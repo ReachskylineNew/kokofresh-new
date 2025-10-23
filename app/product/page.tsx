@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import {
-  Star,
-  Heart,
   ShoppingBag,
   Plus,
   Minus,
@@ -21,6 +19,8 @@ import {
   ChefHat,
   Info,
   Lightbulb,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -37,12 +37,44 @@ export default function ProductPage() {
 
   const [product, setProduct] = useState<WixProduct | null>(null)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [isAutoplay, setIsAutoplay] = useState(true)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState("description")
   const [error, setError] = useState<string | null>(null)
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
   const [allProducts, setAllProducts] = useState<any[]>([])
   const [relatedProducts, setRelatedProducts] = useState<any[]>([])
+
+  useEffect(() => {
+    if (!product?.media?.items?.length) return
+
+    const interval = setInterval(() => {
+      setSelectedImage((prev) => (prev + 1) % (product.media.items.length || 1))
+    }, 4000) // Change image every 4 seconds
+
+    return () => clearInterval(interval)
+  }, [product])
+
+  const handleImageSelect = (index: number) => {
+    setSelectedImage(index)
+  }
+
+  const handlePrevImage = () => {
+    const totalImages = product?.media?.items?.length || 1
+    setSelectedImage((prev) => (prev - 1 + totalImages) % totalImages)
+  }
+
+  const handleNextImage = () => {
+    const totalImages = product?.media?.items?.length || 1
+    setSelectedImage((prev) => (prev + 1) % totalImages)
+  }
+
+  const inferCategory = (p: any): "Masala" | "Chutney" => {
+    const name = (p?.name || "").toLowerCase()
+    const type = (p?.productType || "").toLowerCase()
+    if (type.includes("chutney") || name.includes("chutney")) return "Chutney"
+    return "Masala"
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -66,13 +98,6 @@ export default function ProductPage() {
     }
     if (productId) load()
   }, [productId])
-
-  const inferCategory = (p: any): "Masala" | "Chutney" => {
-    const name = (p?.name || "").toLowerCase()
-    const type = (p?.productType || "").toLowerCase()
-    if (type.includes("chutney") || name.includes("chutney")) return "Chutney"
-    return "Masala"
-  }
 
   useEffect(() => {
     const loadAll = async () => {
@@ -197,11 +222,10 @@ export default function ProductPage() {
         )}
       </Head>
 
-     <Navigation />
+      <Navigation />
 
-<div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 mt-16 md:mt-24">
-
-        <div className="flex items-center gap-2 text-sm text-[#3B2B13]/70 mb-4 sm:mb-6 lg:mb-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4 lg:py-6 mt-16 md:mt-24">
+        <div className="flex items-center gap-2 text-sm text-[#3B2B13]/70 mb-2 sm:mb-4 lg:mb-6">
           <Link href="/shop" className="hover:text-[#3B2B13] transition-colors flex items-center gap-1 font-medium">
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Back to Shop</span>
@@ -209,42 +233,58 @@ export default function ProductPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12 lg:mb-16">
-          <div className="space-y-2 sm:space-y-6">
-            <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg sm:shadow-2xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 lg:gap-12 mb-4 sm:mb-8 lg:mb-16">
+          <div className="space-y-1 sm:space-y-3">
+            <div className="relative overflow-hidden rounded-lg sm:rounded-2xl shadow-lg sm:shadow-2xl group">
               <img
                 src={
                   product.media?.items?.[selectedImage]?.image?.url ||
                   product.media?.mainMedia?.image?.url ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
-                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
-                className="w-full h-48 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
+                className="w-full h-56 sm:h-80 md:h-96 lg:h-[500px] xl:h-[600px] object-contain rounded-lg sm:rounded-xl"
               />
               {product.ribbon && (
-                <Badge className="absolute top-3 sm:top-6 left-3 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
+                <Badge className="absolute top-2 sm:top-6 left-2 sm:left-6 bg-[#FED649] hover:bg-[#e6c33f] text-black text-xs sm:text-sm">
                   {product.ribbon}
                 </Badge>
               )}
+
+              {(product.media?.items?.length || 0) > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 sm:p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+
+                  <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 bg-black/50 text-white px-2 sm:px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
+                    {selectedImage + 1} / {product.media?.items?.length || 1}
+                  </div>
+                </>
+              )}
             </div>
 
-            <div className="flex gap-1 sm:gap-3 justify-center overflow-x-auto pb-2">
+            <div className="flex gap-1 sm:gap-2 justify-center overflow-x-auto pb-1">
               {(product.media?.items?.length
                 ? product.media.items.map((m: any) => m.image?.url)
                 : [product.media?.mainMedia?.image?.url]
               ).map((image: string, index: number) => (
                 <button
                   key={index}
-                  onClick={() => setSelectedImage(index)}
+                  onClick={() => handleImageSelect(index)}
                   className={`relative overflow-hidden rounded-md sm:rounded-lg transition-all duration-200 flex-shrink-0 ${
                     selectedImage === index
                       ? "ring-2 sm:ring-3 ring-[#3B2B13] shadow-lg scale-105"
@@ -261,22 +301,20 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <div className="space-y-1 sm:space-y-4">
-            <div className="space-y-1 sm:space-y-3">
-            
-             <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight mb-3 sm:mb-0">
-  {product.name}
-</h1>
-
+          <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
+                {product.name}
+              </h1>
             </div>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-3 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+              <CardContent className="p-2 sm:p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
                   <div>
-                    <div className="flex items-baseline gap-2 mb-1 sm:mb-2">
+                    <div className="flex items-baseline gap-2 mb-0.5 sm:mb-2">
                       {displayPriceFormatted && (
-                        <span className="font-bold text-lg sm:text-3xl text-[#DD9627] leading-tight">
+                        <span className="font-bold text-xl sm:text-3xl text-[#DD9627] leading-tight">
                           {displayPriceFormatted}
                         </span>
                       )}
@@ -297,11 +335,11 @@ export default function ProductPage() {
             </Card>
 
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
-              <CardContent className="p-3 sm:p-6 space-y-1 sm:space-y-4">
+              <CardContent className="p-2 sm:p-4 space-y-1.5 sm:space-y-3">
                 {/* Product Options */}
                 {product.productOptions?.map((opt: any) => (
-                  <div key={opt.name} className="space-y-0.5 sm:space-y-2">
-                    <label className="text-sm sm:text-base font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                  <div key={opt.name} className="space-y-0.5 sm:space-y-1.5">
+                    <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                       {opt.name}:
                     </label>
                     <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -317,7 +355,7 @@ export default function ProductPage() {
                               }))
                             }
                             disabled={!choice.inStock}
-                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-sm sm:text-base ${
+                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-base ${
                               selectedOptions[opt.name] === choice.value
                                 ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
                                 : choice.inStock
@@ -333,23 +371,23 @@ export default function ProductPage() {
                 ))}
 
                 {/* Quantity Selector */}
-                <div className="space-y-0.5 sm:space-y-2">
-                  <label className="text-sm sm:text-base font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+                <div className="space-y-0.5 sm:space-y-1.5">
+                  <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                     Quantity:
                   </label>
                   <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
                       <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
-                    <span className="px-2 sm:px-6 py-0.5 sm:py-3 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-2xl min-w-[40px] sm:min-w-[70px] text-center bg-white text-[#3B2B13]">
+                    <span className="px-2 sm:px-4 py-0.5 sm:py-2 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-xl min-w-[35px] sm:min-w-[60px] text-center bg-white text-[#3B2B13]">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="p-0.5 sm:p-3 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+                      className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
                     >
                       <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
@@ -357,24 +395,16 @@ export default function ProductPage() {
                 </div>
 
                 {/* Add to Cart Button */}
-                <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-3 pt-0.5 sm:pt-2">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 pt-1 sm:pt-1.5">
                   <Button
                     size="lg"
-                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-2 sm:py-3 text-sm sm:text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black py-2 sm:py-3 text-sm sm:text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                     onClick={handleAddToCart}
                     disabled={!inStock}
                   >
                     <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                     {inStock ? "Add to Cart" : "Out of Stock"}
                   </Button>
-{/* 
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="sm:w-auto w-full p-0.5 sm:p-3 rounded-xl border-2 border-[#3B2B13]/30 hover:bg-white/80 hover:border-[#3B2B13] bg-white/60 text-[#3B2B13]"
-                  >
-                    <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                  </Button> */}
                 </div>
               </CardContent>
             </Card>
@@ -416,7 +446,7 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95 mt-12 sm:mt-0">
+        <Card className="mb-8 sm:mb-12 lg:mb-16 shadow-lg border-0 bg-white/95 mt-6 sm:mt-0">
           <div className="border-b border-[#FED649]/40">
             <div className="flex gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-6 overflow-x-auto">
               {["description", "instructions", "details"].map((tab) => (
@@ -486,12 +516,6 @@ export default function ProductPage() {
                         key={index}
                         className="bg-gradient-to-br from-white to-[#FED649]/5 rounded-xl sm:rounded-2xl p-6 sm:p-8 border-2 border-[#FED649]/40 shadow-sm hover:shadow-md transition-shadow duration-200"
                       >
-                        {/* <div className="flex items-start gap-4 mb-4 sm:mb-6">
-                          <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-md">
-                            {index + 1}
-                          </div>
-                        </div> */}
-
                         <div
                           className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed ml-0 sm:ml-14"
                           dangerouslySetInnerHTML={{

@@ -4,14 +4,14 @@ import { useEffect, useState } from "react"
 import { Toaster } from "sonner"
 
 export function CustomToaster() {
-  const [position, setPosition] = useState<"bottom-center" | "top-right">("top-right")
+  const [position, setPosition] = useState<"bottom-center" | "bottom-right">("bottom-right")
 
   useEffect(() => {
     const updatePosition = () => {
       if (window.innerWidth < 640) {
         setPosition("bottom-center")
       } else {
-        setPosition("top-right")
+        setPosition("bottom-right")
       }
     }
 
