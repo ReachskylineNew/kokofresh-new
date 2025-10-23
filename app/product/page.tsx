@@ -629,7 +629,7 @@ const formatDescription = (description: string) => {
               </div>
             )}
 
-           {activeTab === "instructions" && (
+ {activeTab === "instructions" && (
   <div className="space-y-10 sm:space-y-12">
     {/* 🏷️ Header */}
     <div className="flex items-center gap-4 mb-2 sm:mb-6">
@@ -637,10 +637,10 @@ const formatDescription = (description: string) => {
         <ChefHat className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
       </div>
       <div>
-        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#3B2B13]">
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#DD9627]">
           How to Use
         </h2>
-        <p className="text-sm sm:text-base text-[#3B2B13]/70 mt-1">
+        <p className="text-sm sm:text-base text-[#B47B2B]/90 mt-1 font-medium">
           Follow these easy steps to enjoy the authentic KOKO Fresh flavour
         </p>
       </div>
@@ -656,10 +656,10 @@ const formatDescription = (description: string) => {
         return steps.map((step, stepIndex) => (
           <div
             key={`${index}-${stepIndex}`}
-            className="relative bg-gradient-to-br from-white via-[#FFFBEA] to-[#FED649]/20 border border-[#FED649]/40 rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-[#FED649]/50 transition-all duration-300"
+            className="relative bg-gradient-to-br from-[#FFF9E8] via-[#FFF3C1] to-[#FED649]/20 border border-[#FED649]/50 rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-lg hover:shadow-[#FED649]/30 transition-all duration-300"
           >
             {/* 🔢 Step number */}
-            <div className="absolute -top-4 left-6 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md">
+            <div className="absolute -top-4 left-6 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-extrabold text-lg shadow-md border border-[#B47B2B]/30">
               {stepIndex + 1}
             </div>
 
@@ -671,7 +671,11 @@ const formatDescription = (description: string) => {
                   .replace(/<strong>/g, '<strong class="text-[#DD9627] font-semibold">')
                   .replace(/<\/strong>/g, "</strong>")
                   .replace(/&nbsp;/g, "")
-                  .replace(/Step\s*\d+:/gi, (match) => `<span class="font-bold text-[#B47B2B]">${match}</span>`),
+                  .replace(
+                    /Step\s*\d+:/gi,
+                    (match) =>
+                      `<span class="font-bold text-[#B47B2B] tracking-wide">${match}</span>`
+                  ),
               }}
             />
           </div>
@@ -680,13 +684,13 @@ const formatDescription = (description: string) => {
     </div>
 
     {/* 💡 Pro Tip Section */}
-    <div className="p-6 sm:p-8 bg-gradient-to-r from-[#FED649]/20 via-[#DD9627]/10 to-[#B47B2B]/10 border border-[#FED649]/40 rounded-2xl shadow-inner">
+    <div className="p-6 sm:p-8 bg-gradient-to-r from-[#FED649]/25 via-[#DD9627]/15 to-[#B47B2B]/10 border border-[#FED649]/50 rounded-2xl shadow-inner">
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#DD9627] to-[#B47B2B] text-white rounded-full flex items-center justify-center shadow-md">
+        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black rounded-full flex items-center justify-center shadow-md border border-[#B47B2B]/30">
           <Lightbulb className="h-5 w-5 sm:h-6 sm:w-6" />
         </div>
         <div>
-          <h4 className="font-serif font-semibold text-[#B47B2B] mb-2 text-lg">
+          <h4 className="font-serif font-semibold text-[#DD9627] mb-2 text-lg">
             Pro Tip
           </h4>
           <p className="text-[#3B2B13]/90 text-sm sm:text-base leading-relaxed">
