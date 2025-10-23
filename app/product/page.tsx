@@ -417,7 +417,7 @@ const formatDescription = (description: string) => {
             {/* RIGHT COLUMN: Product Details */}
             <div className="flex flex-col  md:overflow-y-auto md:max-h-[calc(100vh-200px)]">
               {/* Mobile product info card */}
-              <div className="md:hidden space-y-1 p-3 bg-white rounded-lg border border-[#FED649]/30">
+              <div className="md:hidden space-y-1 p-3 bg-white  border border-[#FED649]/30">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
                     <h1 className="text-lg font-bold text-[#3B2B13] leading-tight">{product.name}</h1>
@@ -664,183 +664,193 @@ const formatDescription = (description: string) => {
           </div>
 {/* 🧾 Product Information Tabs */}
 <div className="w-full max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 md:mt-14 mb-8">
-  <Card
-    className={`
-      overflow-hidden
-      ${"md:border-2 md:border-[#3B2B13]/20 md:bg-[#FFF9E8]/90 md:shadow-lg md:rounded-2xl"} 
-      ${"bg-white border-0 rounded-none shadow-none md:shadow-lg md:rounded-2xl"}
-    `}
-  >
-    {/* Tabs Header */}
-    <div
-      className={`
-        flex justify-center border-b border-[#FED649]/30
-        ${"bg-white md:bg-gradient-to-r md:from-[#FFF9E8] md:to-[#FFF4C3]"}
-      `}
-    >
-      {["description", "instructions", "details"].map((tab) => (
-        <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={`relative flex-1 md:flex-none text-center px-4 sm:px-6 md:px-8 py-3 sm:py-4 text-sm sm:text-base font-medium transition-colors duration-300 ${
-            activeTab === tab
-              ? "text-[#DD9627]"
-              : "text-[#3B2B13]/60 hover:text-[#B47B2B]"
-          }`}
-        >
-          {tab === "instructions"
-            ? "How to Use"
-            : tab.charAt(0).toUpperCase() + tab.slice(1)}
-          {activeTab === tab && (
-            <span className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B]" />
-          )}
-        </button>
-      ))}
-    </div>
+  <Card className="mb-8 shadow-lg border-0 bg-white/95 rounded-none overflow-hidden">
+  <div className="flex justify-center border-b border-[#FED649]/30">
+    {["description", "instructions", "details"].map((tab) => (
+      <button
+        key={tab}
+        onClick={() => setActiveTab(tab)}
+        className={`relative px-5 py-4 text-sm sm:text-base font-medium transition-colors duration-300 ${
+          activeTab === tab
+            ? "text-[#DD9627]"
+            : "text-[#3B2B13]/60 hover:text-[#B47B2B]"
+        }`}
+      >
+        {tab === "instructions" ? "How to Use" : tab.charAt(0).toUpperCase() + tab.slice(1)}
+        {activeTab === tab && (
+          <span className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] " />
+        )}
+      </button>
+    ))}
+  </div>
 
-    {/* Tabs Content */}
-    <CardContent
-      className={`
-        px-4 sm:px-6 md:px-8 py-6 sm:py-8
-        ${"bg-white md:bg-[#FFF9E8]/90"}
-      `}
-    >
-      {/* 🪶 DESCRIPTION */}
-      {activeTab === "description" && (
-        <div className="space-y-6 sm:space-y-8">
-          <div
-            className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13]"
-            dangerouslySetInnerHTML={{
-              __html: formatDescription(product.description),
-            }}
-          />
-        </div>
-      )}
-
-      {/* 🍳 HOW TO USE */}
-      {activeTab === "instructions" && (
-        <div className="space-y-10 sm:space-y-12">
-          <div className="flex items-center gap-4 mb-4 sm:mb-6">
-            <div className="p-3 bg-gradient-to-br from-[#FED649] to-[#DD9627] rounded-2xl shadow-md">
-              <ChefHat className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-[#DD9627]">
-                How to Use
-              </h2>
-              <p className="text-xs sm:text-base text-[#B47B2B]/90 mt-1 font-medium">
-                Follow these steps to enjoy the authentic KOKO Fresh flavour
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-            {product.additionalInfoSections?.map((section, index) => {
-              const steps = section.description
-                .split(/<p>|<\/p>/)
-                .filter((s) => s.trim().length > 0 && !s.includes("<strong>"))
-
-              return steps.map((step, stepIndex) => (
-                <div
-                  key={`${index}-${stepIndex}`}
-                  className="relative bg-[#FFF9E8] border border-[#FED649]/50 rounded-xl md:rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  <div className="absolute -top-4 left-6 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black w-9 h-9 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-extrabold text-lg shadow-md border border-[#B47B2B]/30">
-                    {stepIndex + 1}
-                  </div>
+      <CardContent className="p-6 sm:p-8">
+            {activeTab === "description" && (
+              <div className="space-y-6 sm:space-y-8">
+                <div className="block sm:hidden">
                   <div
-                    className="prose prose-sm sm:prose-base text-[#3B2B13] mt-5 leading-relaxed"
+                    className="prose prose-sm max-w-none text-[#3B2B13] leading-relaxed"
                     dangerouslySetInnerHTML={{
-                      __html: step
-                        .replace(/<strong>/g, '<strong class="text-[#DD9627] font-semibold">')
-                        .replace(/<\/strong>/g, "</strong>")
-                        .replace(/&nbsp;/g, ""),
+                      __html: formatDescription(
+                        expandedDescription ? product.description : getDescriptionPreview(product.description),
+                      ),
+                    }}
+                  />
+                  {!expandedDescription && (
+                    <button
+                      onClick={() => setExpandedDescription(true)}
+                      className="mt-4 px-4 py-2 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold rounded-lg transition-all duration-200"
+                    >
+                      Read More
+                    </button>
+                  )}
+                  {expandedDescription && (
+                    <button
+                      onClick={() => setExpandedDescription(false)}
+                      className="mt-4 px-4 py-2 bg-white border-2 border-[#3B2B13]/20 text-[#3B2B13] font-semibold rounded-lg hover:bg-[#FED649]/10 transition-all duration-200"
+                    >
+                      Read Less
+                    </button>
+                  )}
+                </div>
+
+                <div className="hidden sm:block">
+                  <div
+                    className="prose prose-sm sm:prose-base max-w-none text-[#3B2B13] leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: formatDescription(product.description),
                     }}
                   />
                 </div>
-              ))
-            })}
-          </div>
+              </div>
+            )}
 
-          <div className="p-5 sm:p-8 bg-gradient-to-r from-[#FED649]/25 via-[#DD9627]/15 to-[#B47B2B]/10 border border-[#FED649]/50 rounded-xl md:rounded-2xl shadow-inner">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black rounded-full flex items-center justify-center shadow-md border border-[#B47B2B]/30">
-                <Lightbulb className="h-5 w-5 sm:h-6 sm:w-6" />
-              </div>
-              <div>
-                <h4 className="font-serif font-semibold text-[#DD9627] mb-2 text-base sm:text-lg">
-                  Pro Tip
-                </h4>
-                <p className="text-[#3B2B13]/90 text-sm sm:text-base leading-relaxed">
-                  Warm a spoon of ghee or sesame oil before mixing — this enhances the
-                  aroma and brings out the rich, nutty flavour of Bengal Gram Chutney Powder.
-                </p>
-              </div>
+ {activeTab === "instructions" && (
+  <div className="space-y-10 sm:space-y-12">
+    {/* 🏷️ Header */}
+    <div className="flex items-center gap-4 mb-2 sm:mb-6">
+      <div className="p-3 bg-gradient-to-br from-[#FED649] to-[#DD9627] rounded-2xl shadow-lg">
+        <ChefHat className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+      </div>
+      <div>
+        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#DD9627]">
+          How to Use
+        </h2>
+        <p className="text-sm sm:text-base text-[#B47B2B]/90 mt-1 font-medium">
+          Follow these easy steps to enjoy the authentic KOKO Fresh flavour
+        </p>
+      </div>
+    </div>
+
+    {/* 🪶 Instruction Steps */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+      {product.additionalInfoSections?.map((section, index) => {
+        const steps = section.description
+          .split(/<p>|<\/p>/)
+          .filter((s) => s.trim().length > 0 && !s.includes("<strong>"))
+
+        return steps.map((step, stepIndex) => (
+          <div
+            key={`${index}-${stepIndex}`}
+            className="relative bg-gradient-to-br from-[#FFF9E8] via-[#FFF3C1] to-[#FED649]/20 border border-[#FED649]/50 rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-lg hover:shadow-[#FED649]/30 transition-all duration-300"
+          >
+            {/* 🔢 Step number */}
+            <div className="absolute -top-4 left-6 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-extrabold text-lg shadow-md border border-[#B47B2B]/30">
+              {stepIndex + 1}
             </div>
+
+            {/* 📝 Step Content */}
+            <div
+              className="prose prose-sm sm:prose-base text-[#3B2B13] mt-6 leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: step
+                  .replace(/<strong>/g, '<strong class="text-[#DD9627] font-semibold">')
+                  .replace(/<\/strong>/g, "</strong>")
+                  .replace(/&nbsp;/g, "")
+                  .replace(
+                    /Step\s*\d+:/gi,
+                    (match) =>
+                      `<span class="font-bold text-[#B47B2B] tracking-wide">${match}</span>`
+                  ),
+              }}
+            />
           </div>
+        ))
+      })}
+    </div>
+
+    {/* 💡 Pro Tip Section */}
+    <div className="p-6 sm:p-8 bg-gradient-to-r from-[#FED649]/25 via-[#DD9627]/15 to-[#B47B2B]/10 border border-[#FED649]/50 rounded-2xl shadow-inner">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#FED649] to-[#DD9627] text-black rounded-full flex items-center justify-center shadow-md border border-[#B47B2B]/30">
+          <Lightbulb className="h-5 w-5 sm:h-6 sm:w-6" />
         </div>
-      )}
+        <div>
+          <h4 className="font-serif font-semibold text-[#DD9627] mb-2 text-lg">
+            Pro Tip
+          </h4>
+          <p className="text-[#3B2B13]/90 text-sm sm:text-base leading-relaxed">
+            Warm a spoon of ghee or sesame oil before mixing — this enhances the
+            aroma and brings out the rich, nutty flavour of Bengal Gram Chutney Powder.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
-      {/* 🧾 DETAILS */}
-      {activeTab === "details" && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          <div className="space-y-4">
-            <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">
-              Product Details
-            </h3>
-            <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b border-[#FED649]/40 text-sm sm:text-base">
-                <span className="text-[#3B2B13]/70">Product Type</span>
-                <span className="font-medium text-[#3B2B13] capitalize">
-                  {product.productType}
-                </span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-[#FED649]/40 text-sm sm:text-base">
-                <span className="text-[#3B2B13]/70">Availability</span>
-                <Badge
-                  variant={product.stock?.inStock ? "default" : "destructive"}
-                  className={`text-xs font-medium ${
-                    product.stock?.inStock
-                      ? "bg-[#FED649] text-[#3B2B13] border border-[#DD9627]"
-                      : "bg-gray-900 text-white"
-                  }`}
-                >
-                  {product.stock?.inStock ? "In Stock" : "Out of Stock"}
-                </Badge>
-              </div>
-            </div>
-          </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">
-              Variants
-            </h3>
-            <div className="space-y-3">
-              {product.variants
-                ?.filter((variant: any) => variant.variant.visible)
-                .map((variant: any, index: number) => (
-                  <div
-                    key={index}
-                    className="p-3 sm:p-4 border border-[#FED649]/40 rounded-lg bg-white"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                      <span className="font-medium text-sm sm:text-base text-[#3B2B13]">
-                        {Object.entries(variant.choices)
-                          .map(([key, value]) => `${value}`)
-                          .join(", ")}
-                      </span>
-                      <span className="text-[#DD9627] font-semibold text-sm sm:text-base">
-                        {variant.variant.priceData.formatted.price}
-                      </span>
+            {activeTab === "details" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                <div className="space-y-4">
+                  <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">Product Details</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-[#FED649]/40 text-sm sm:text-base">
+                      <span className="text-[#3B2B13]/70">Product Type</span>
+                      <span className="font-medium text-[#3B2B13] capitalize">{product.productType}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-[#FED649]/40 text-sm sm:text-base">
+                      <span className="text-[#3B2B13]/70">Availability</span>
+                      <Badge
+                        variant={product.stock?.inStock ? "default" : "destructive"}
+                        className={`text-xs font-medium ${
+                          product.stock?.inStock
+                            ? "bg-[#FED649] text-[#3B2B13] border border-[#DD9627]"
+                            : "bg-gray-900 text-white"
+                        }`}
+                      >
+                        {product.stock?.inStock ? "In Stock" : "Out of Stock"}
+                      </Badge>
                     </div>
                   </div>
-                ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </CardContent>
-  </Card>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg sm:text-xl font-serif font-semibold text-[#3B2B13]">Variants</h3>
+                  <div className="space-y-3">
+                    {product.variants
+                      ?.filter((variant: any) => variant.variant.visible)
+                      .map((variant: any, index: number) => (
+                        <div key={index} className="p-3 sm:p-4 border border-[#FED649]/40 rounded-lg bg-white">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                            <span className="font-medium text-sm sm:text-base text-[#3B2B13]">
+                              {Object.entries(variant.choices)
+                                .map(([key, value]) => `${value}`)
+                                .join(", ")}
+                            </span>
+                            <span className="text-[#DD9627] font-semibold text-sm sm:text-base">
+                              {variant.variant.priceData.formatted.price}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+
+</Card>
 </div>
 
 
