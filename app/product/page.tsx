@@ -312,7 +312,7 @@ export default function ProductPage() {
 
           <div className="space-y-2 sm:space-y-3">
             <div className="space-y-1 sm:space-y-2">
-              <h1 className="text-lg sm:text-3xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
+              <h1 className="text-lg sm:text-4xl lg:text-4xl font-serif font-bold text-[#3B2B13] leading-tight">
                 {product.name}
               </h1>
             </div>
@@ -346,41 +346,75 @@ export default function ProductPage() {
             <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
               <CardContent className="p-2 sm:p-4 space-y-1.5 sm:space-y-3">
                 {/* Product Options */}
-                {product.productOptions?.map((opt: any) => (
-                  <div key={opt.name} className="space-y-0.5 sm:space-y-1.5">
-                    <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
-                      {opt.name}:
-                    </label>
-                    <div className="flex flex-wrap gap-1 sm:gap-2">
-                      {opt.choices
-                        .filter((choice: any) => choice.visible)
-                        .map((choice: any) => (
-                          <button
-                            key={choice.value}
-                            onClick={() =>
-                              setSelectedOptions((prev) => ({
-                                ...prev,
-                                [opt.name]: choice.value,
-                              }))
-                            }
-                            disabled={!choice.inStock}
-                            className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-base ${
-                              selectedOptions[opt.name] === choice.value
-                                ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
-                                : choice.inStock
-                                  ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
-                                  : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-                            }`}
-                          >
-                            {choice.value}
-                          </button>
-                        ))}
-                    </div>
-                  </div>
-                ))}
+    {/* Product Options + Quantity in one grid (mobile combined) */}
+{/* ✅ Product Options + Quantity in one responsive grid */}
+<div className="grid grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3">
+  {/* 🧂 Weight / Variant Option */}
+  {product.productOptions?.map((opt: any) => (
+    <div
+      key={opt.name}
+      className="space-y-0.5 sm:space-y-1.5 col-span-1"
+    >
+      <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+        {opt.name}:
+      </label>
+      <div className="flex flex-wrap gap-1 sm:gap-2">
+        {opt.choices
+          .filter((choice: any) => choice.visible)
+          .map((choice: any) => (
+            <button
+              key={choice.value}
+              onClick={() =>
+                setSelectedOptions((prev) => ({
+                  ...prev,
+                  [opt.name]: choice.value,
+                }))
+              }
+              disabled={!choice.inStock}
+              className={`px-2 sm:px-4 py-0.5 sm:py-2 rounded-lg border-2 transition-all duration-200 font-medium text-xs sm:text-base ${
+                selectedOptions[opt.name] === choice.value
+                  ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-lg"
+                  : choice.inStock
+                    ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
+                    : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {choice.value}
+            </button>
+          ))}
+      </div>
+    </div>
+  ))}
+
+  {/* 🧮 Quantity Selector */}
+  <div className="space-y-0.5 sm:space-y-1.5 col-span-1">
+    <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+      Quantity:
+    </label>
+    <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit">
+      <button
+        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+        className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+      >
+        <Minus className="h-4 w-4 sm:h-5 sm:w-5" />
+      </button>
+      <span className="px-2 sm:px-4 py-0.5 sm:py-2 border-x-2 border-[#3B2B13]/20 font-bold text-sm sm:text-xl min-w-[35px] sm:min-w-[60px] text-center bg-white text-[#3B2B13]">
+        {quantity}
+      </span>
+      <button
+        onClick={() => setQuantity(quantity + 1)}
+        className="p-1 sm:p-2 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+      >
+        <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
                 {/* Quantity Selector */}
-                <div className="space-y-0.5 sm:space-y-1.5">
+                {/* <div className="space-y-0.5 sm:space-y-1.5">
                   <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                     Quantity:
                   </label>
@@ -401,7 +435,7 @@ export default function ProductPage() {
                       <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Add to Cart Button */}
                 <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 pt-1 sm:pt-1.5">
