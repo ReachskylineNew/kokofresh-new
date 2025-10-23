@@ -392,7 +392,7 @@ const formatDescription = (description: string) => {
               </div>
 
               {/* Mobile thumbnail images */}
-              <div className="md:hidden flex gap-2 justify-center overflow-x-auto pb-1">
+              <div className="md:hidden flex  justify-center overflow-x-auto">
                 {(product.media?.items?.length
                   ? product.media.items.map((m: any) => m.image?.url)
                   : [product.media?.mainMedia?.image?.url]
@@ -415,9 +415,9 @@ const formatDescription = (description: string) => {
             </div>
 
             {/* RIGHT COLUMN: Product Details */}
-            <div className="flex flex-col gap-3 md:gap-4 md:overflow-y-auto md:max-h-[calc(100vh-200px)]">
+            <div className="flex flex-col  md:overflow-y-auto md:max-h-[calc(100vh-200px)]">
               {/* Mobile product info card */}
-              <div className="md:hidden space-y-3 bg-white rounded-lg p-4 border border-[#FED649]/30">
+              <div className="md:hidden space-y-1 p-3 bg-white rounded-lg border border-[#FED649]/30">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
                     <h1 className="text-lg font-bold text-[#3B2B13] leading-tight">{product.name}</h1>
