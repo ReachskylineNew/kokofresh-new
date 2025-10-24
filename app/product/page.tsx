@@ -423,27 +423,26 @@ export default function ProductPage() {
             </div>
 
             {/* 🟡 MOBILE: Compact Price Card */}
-        <Card className="border border-[#E5E2DA] bg-gradient-to-br from-white to-[#FFF9F2] shadow-md rounded-2xl sm:hidden transition-all duration-300 hover:shadow-xl">
-  <CardContent className="p-4">
-    <div className="flex items-center justify-between gap-3">
-      {/* Left Section - Price and Tax Info */}
+{/* 🟡 MOBILE: Compact Price Card */}
+{/* Compact Unified Mobile Card (price + options + qty) */}
+<Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-md rounded-xl sm:hidden">
+  <CardContent className="p-3 space-y-2">
+    {/* Top: compact price + badge */}
+    <div className="flex items-center justify-between gap-2">
       <div className="flex-1">
-        <div className="flex items-baseline gap-2">
-          {displayPriceFormatted && (
-            <span className="font-extrabold text-3xl text-[#DD9627] tracking-tight">
-              {displayPriceFormatted}
-            </span>
-          )}
-        </div>
-        <p className="text-[11px] text-[#3B2B13]/70 mt-1 italic">
+        {displayPriceFormatted && (
+          <span className="font-bold text-xl text-[#DD9627] leading-none">
+            {displayPriceFormatted}
+          </span>
+        )}
+        <p className="text-[10px] text-[#3B2B13]/70 mt-0.5 italic">
           Inclusive of all taxes
         </p>
       </div>
 
-      {/* Right Section - Stock Badge */}
       <Badge
         variant={inStock ? "default" : "destructive"}
-        className={`px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide shadow-sm ${
+        className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold tracking-wide ${
           inStock
             ? "bg-[#FEEB9A] text-[#3B2B13] border border-[#DD9627]/40"
             : "bg-[#3B2B13] text-white border border-[#3B2B13]"
@@ -453,13 +452,80 @@ export default function ProductPage() {
       </Badge>
     </div>
 
-    {/* Optional subtle divider line for visual balance */}
-    <div className="mt-3 border-t border-[#3B2B13]/10" />
+    {/* Divider */}
+    <div className="border-t border-[#3B2B13]/10" />
 
-    {/* Optional “Add to Cart” or CTA area for better UX */}
+    {/* Bottom: options + quantity in one row */}
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      {/* Options area - takes majority of width */}
+      <div className="flex-1 min-w-[55%]">
+        {product.productOptions?.map((opt: any) => (
+          <div key={opt.name} className="space-y-1">
+            <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+              {opt.name}:
+            </label>
 
+            <div className="flex flex-wrap gap-1.5">
+              {opt.choices
+                .filter((choice: any) => choice.visible)
+                .map((choice: any) => (
+                  <button
+                    key={choice.value}
+                    onClick={() =>
+                      setSelectedOptions((prev: any) => ({
+                        ...prev,
+                        [opt.name]: choice.value,
+                      }))
+                    }
+                    disabled={!choice.inStock}
+                    className={`px-3 py-1.5 rounded-lg border-2 transition-all duration-200 font-medium text-xs ${
+                      selectedOptions[opt.name] === choice.value
+                        ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-md"
+                        : choice.inStock
+                        ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
+                        : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    {choice.value}
+                  </button>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quantity area */}
+      <div className="flex flex-col justify-center min-w-[35%] space-y-1">
+        <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+          Quantity:
+        </label>
+
+        <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit mx-auto">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+            aria-label="decrease quantity"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+
+          <span className="px-3 py-1.5 border-x-2 border-[#3B2B13]/20 font-bold text-sm min-w-[40px] text-center bg-white text-[#3B2B13]">
+            {quantity}
+          </span>
+
+          <button
+            onClick={() => setQuantity(quantity + 1)}
+            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+            aria-label="increase quantity"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
   </CardContent>
 </Card>
+
 
 
             {/* 🟡 DESKTOP: Original Price Card */}
@@ -490,69 +556,7 @@ export default function ProductPage() {
             </Card>
 
             {/* 🟡 MOBILE: Optimized Options Card */}
-           <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg sm:hidden rounded-2xl">
-  <CardContent className="p-3">
-    <div className="flex flex-wrap items-start justify-between gap-3">
-      {/* Weight / Options */}
-      {product.productOptions?.map((opt: any) => (
-        <div key={opt.name} className="flex-1 min-w-[55%] space-y-1">
-          <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
-            {opt.name}:
-          </label>
-          <div className="flex flex-wrap gap-1.5">
-            {opt.choices
-              .filter((choice: any) => choice.visible)
-              .map((choice: any) => (
-                <button
-                  key={choice.value}
-                  onClick={() =>
-                    setSelectedOptions((prev) => ({
-                      ...prev,
-                      [opt.name]: choice.value,
-                    }))
-                  }
-                  disabled={!choice.inStock}
-                  className={`px-3 py-1.5 rounded-lg border-2 transition-all duration-200 font-medium text-xs ${
-                    selectedOptions[opt.name] === choice.value
-                      ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-md"
-                      : choice.inStock
-                        ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
-                        : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-                  }`}
-                >
-                  {choice.value}
-                </button>
-              ))}
-          </div>
-        </div>
-      ))}
-
-      {/* Quantity */}
-      <div className="flex flex-col justify-center min-w-[35%] space-y-1">
-        <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
-          Quantity:
-        </label>
-        <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit mx-auto sm:mx-0">
-          <button
-            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
-          >
-            <Minus className="h-4 w-4" />
-          </button>
-          <span className="px-3 py-1.5 border-x-2 border-[#3B2B13]/20 font-bold text-sm min-w-[40px] text-center bg-white text-[#3B2B13]">
-            {quantity}
-          </span>
-          <button
-            onClick={() => setQuantity(quantity + 1)}
-            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-    </div>
-  </CardContent>
-</Card>
+ 
 
 
             {/* 🟡 DESKTOP: Original Options Card */}
