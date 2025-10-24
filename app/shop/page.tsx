@@ -543,13 +543,14 @@ export default function ShopPage() {
         </Card>
       )}
 
-      <div
+<div
   className={`grid gap-2 sm:gap-3 lg:gap-4 ${
     viewMode === "grid"
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3" // 👈 2 columns on mobile
       : "grid-cols-1"
   }`}
 >
+
 
         {filteredProducts.map((product) => {
           const currentPrice = getCurrentPrice(product)
@@ -727,151 +728,142 @@ export default function ShopPage() {
                     </div>
                   ) : (
                     // Grid View - Minimal card design with reduced padding
-                    <>
-                      <div className="relative overflow-hidden">
-                        <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-lg">
-                          <img
-                            src={getCurrentImage(product) || "/placeholder.svg"}
-                            alt={product.name}
-                            className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
+<>
+  <div className="relative overflow-hidden">
+    <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-lg p-1">
+      <img
+        src={getCurrentImage(product) || "/placeholder.svg"}
+        alt={product.name}
+        className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
+      />
+    </div>
 
-                        <div className="absolute top-1 left-1 flex flex-col gap-0.5">
-                          {product.bestseller && (
-                            <Badge className="bg-[#DD9627] text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border-0 font-medium">
-                              ✨ Bestseller
-                            </Badge>
-                          )}
-                          {product.limitedEdition && (
-                            <Badge className="bg-[#B47B2B] text-white text-xs px-1.5 py-0.5 rounded-full shadow-lg border-0 font-medium">
-                              🔥 Limited
-                            </Badge>
-                          )}
-                          {isMadeToOrder(product) && (
-                            <Badge className="bg-[#FED649] text-black text-xs px-1.5 py-0.5 rounded-full shadow-lg border-0 font-medium">
-                              👨‍🍳 Made to Order
-                            </Badge>
-                          )}
-                          {!isInStock(product) && (
-                            <Badge
-                              variant="destructive"
-                              className="text-xs px-1.5 py-0.5 rounded-full shadow-lg border-0 font-medium"
-                            >
-                              Out of Stock
-                            </Badge>
-                          )}
-                        </div>
+    {/* 🏷️ Ribbons */}
+    <div className="absolute top-1 left-1 flex flex-col gap-0.5">
+      {product.bestseller && (
+        <Badge className="bg-[#DD9627] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
+          ✨ Bestseller
+        </Badge>
+      )}
+      {product.limitedEdition && (
+        <Badge className="bg-[#B47B2B] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
+          🔥 Limited
+        </Badge>
+      )}
+      {!isInStock(product) && (
+        <Badge
+          variant="destructive"
+          className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium"
+        >
+          Out of Stock
+        </Badge>
+      )}
+    </div>
 
-                        <button className="absolute top-1 right-1 p-1 bg-white/95 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
-                          <Heart className="h-2.5 w-2.5 text-gray-600 hover:text-red-500 transition-colors" />
-                        </button>
-                      </div>
+    {/* ❤️ Wishlist Button */}
+    <button className="absolute top-1 right-1 p-[5px] sm:p-1 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-md">
+      <Heart className="h-[9px] w-[9px] sm:h-[10px] sm:w-[10px] text-gray-600 hover:text-red-500 transition-colors" />
+    </button>
+  </div>
 
-                      <div className="p-2 sm:p-2.5 lg:p-3">
-                        <div className="flex items-start justify-between mb-1 sm:mb-1.5 lg:mb-2">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-serif font-semibold text-xs sm:text-sm text-[#3B2B13] mb-0.5 line-clamp-2 leading-tight group-hover:text-[#DD9649] transition-colors duration-200">
-                              {product.name}
-                            </h3>
-                          </div>
-                          {typeof product.rating === "number" && (
-                            <div className="flex items-center gap-0.5 bg-[#FFF6CC] px-1 sm:px-1.5 py-0.5 rounded-full ml-1 flex-shrink-0 border border-[#FED649]/40">
-                              <Star className="h-2.5 w-2.5 fill-[#FED649] text-[#FED649]" />
-                              <span className="text-xs font-semibold text-[#B47B2B]">{product.rating}</span>
-                            </div>
-                          )}
-                        </div>
+  <div className="p-1.5 sm:p-2.5 lg:p-3">
+    {/* 🧾 Product Name + Rating */}
+    <div className="flex items-start justify-between mb-1 sm:mb-1.5">
+      <h3 className="font-serif font-semibold text-[10px] sm:text-[11px] md:text-xs lg:text-sm text-[#3B2B13] line-clamp-2 leading-snug group-hover:text-[#DD9627] transition-colors duration-200">
+        {product.name}
+      </h3>
+      {typeof product.rating === "number" && (
+        <div className="flex items-center gap-0.5 bg-[#FFF6CC] px-1 py-[2px] sm:px-1 sm:py-0.5 rounded-full border border-[#FED649]/40">
+          <Star className="h-[8px] w-[8px] sm:h-[10px] sm:w-[10px] fill-[#FED649] text-[#FED649]" />
+          <span className="text-[9px] sm:text-[10px] font-semibold text-[#B47B2B]">{product.rating}</span>
+        </div>
+      )}
+    </div>
 
-                        <div className="flex flex-col gap-0.5 mb-1 sm:mb-1.5 lg:mb-2">
-                          {product.region && (
-                            <span className="text-xs text-[#B47B2B] font-semibold px-1 sm:px-1.5 py-0.5 rounded-full border border-[#DD9627] w-fit">
-                              {"📍 "}
-                              {product.region}
-                            </span>
-                          )}
-                          {product.category && (
-                            <span className="text-xs text-gray-600 font-medium bg-gray-50 px-1 sm:px-1.5 py-0.5 rounded-full w-fit">
-                              {product.category}
-                            </span>
-                          )}
-                        </div>
+    {/* 📍 Region + Category Tags */}
+    <div className="flex flex-col gap-0.5 mb-1 sm:mb-1.5">
+      {product.region && (
+        <span className="text-[9px] sm:text-[10px] text-[#B47B2B] font-semibold px-1 py-[2px] rounded-full border border-[#DD9627] w-fit">
+          📍 {product.region}
+        </span>
+      )}
+      {product.category && (
+        <span className="text-[9px] sm:text-[10px] text-gray-600 font-medium bg-gray-50 px-1 py-[2px] rounded-full w-fit">
+          {product.category}
+        </span>
+      )}
+    </div>
 
-                        {product.variants && product.variants.length > 0 && (
-                          <div className="mb-1 sm:mb-1.5 lg:mb-2 space-y-1">
-                            <div className="flex items-center justify-between gap-1">
-                              <span className="text-xs font-medium text-gray-700">Weight:</span>
-                              <select
-                                value={selectedVariantId || ""}
-                                onChange={(e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  handleVariantChange(productId, e.target.value)
-                                }}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                }}
-                                className="px-1 sm:px-1.5 py-0.5 text-xs border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DD9627] focus:border-transparent bg-white"
-                              >
-                                {product.variants
-                                  .filter((variant) => variant.variant.visible)
-                                  .map((variant) => (
-                                    <option key={variant._id} value={variant._id}>
-                                      {variant.choices.weight}
-                                    </option>
-                                  ))}
-                              </select>
-                            </div>
+    {/* ⚖️ Weight + Price */}
+    {product.variants && product.variants.length > 0 && (
+      <div className="space-y-1 mb-1 sm:mb-1.5">
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-[9px] sm:text-[10px] font-medium text-gray-700">Weight:</span>
+          <select
+            value={selectedVariantId || ""}
+            onChange={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleVariantChange(productId, e.target.value)
+            }}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            className="px-1 py-[2px] text-[9px] sm:text-[10px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#DD9627] bg-white"
+          >
+            {product.variants
+              .filter((variant) => variant.variant.visible)
+              .map((variant) => (
+                <option key={variant._id} value={variant._id}>
+                  {variant.choices.weight}
+                </option>
+              ))}
+          </select>
+        </div>
 
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm sm:text-base font-bold text-[#B47B2B]">
-                                {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-[#B47B2B]">
+            {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+          </span>
+        </div>
+      </div>
+    )}
 
-                        {(!product.variants || product.variants.length === 0) && (
-                          <div className="mb-1 sm:mb-1.5 lg:mb-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm sm:text-base font-bold text-[#B47B2B]">₹{currentPrice}</span>
-                            </div>
-                          </div>
-                        )}
+    {/* 🛒 Add Button */}
+    <Button
+      className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1 sm:py-1.5 rounded-md transition-all duration-200 shadow-md hover:shadow-lg"
+      onClick={async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        try {
+          if (!isInStock(product)) throw new Error("Out of stock")
 
-                        <Button
-                          className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-xs py-1.5 rounded-md transition-all duration-200 shadow-md hover:shadow-lg"
-                          onClick={async (e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            try {
-                              if (!isInStock(product)) throw new Error("Out of stock")
-                              const exportProductId = product._id || product.id || ""
-                              const selectedVariantId = selectedVariant?._id
+          const exportProductId = product._id || product.id || ""
+          const selectedVariantId = selectedVariant?._id
+          const optionsArray = selectedVariant
+            ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
+                name,
+                value,
+              }))
+            : []
 
-                              const optionsArray = selectedVariant
-                                ? Object.entries(selectedVariant.choices).map(([name, value]) => ({
-                                    name,
-                                    value,
-                                  }))
-                                : []
+          await add(exportProductId, 1, optionsArray, selectedVariantId)
+          const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
+          toast.success("Added to cart", { description: `${product.name}${weightText}` })
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Add to cart failed"
+          toast.error(message)
+        }
+      }}
+    >
+      <ShoppingCart className="h-[10px] w-[10px] sm:h-[11px] sm:w-[11px] mr-1" />
+      Add
+    </Button>
+  </div>
+</>
 
-                              await add(exportProductId, 1, optionsArray, selectedVariantId)
 
-                              const weightText = selectedVariant ? ` (${selectedVariant.choices.weight})` : ""
-                              toast.success("Added to cart", { description: `${product.name}${weightText}` })
-                            } catch (err) {
-                              const message = err instanceof Error ? err.message : "Add to cart failed"
-                              toast.error(message)
-                            }
-                          }}
-                        >
-                          <ShoppingCart className="h-3 w-3 mr-1" />
-                          Add to Cart
-                        </Button>
-                      </div>
-                    </>
                   )}
                 </CardContent>
               </Card>
