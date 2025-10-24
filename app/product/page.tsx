@@ -87,14 +87,15 @@ export default function ProductPage() {
         const data = await res.json()
         setProduct(data.product)
 
-        if (data.product?.productOptions?.length) {
-          const defaults: Record<string, string> = {}
-          data.product.productOptions.forEach((opt: any) => {
-            const firstChoice = opt.choices.find((c: any) => c.inStock)
-            if (firstChoice) defaults[opt.name] = firstChoice.value
-          })
-          setSelectedOptions(defaults)
-        }
+       if (data.product?.productOptions?.length) {
+  const defaults: Record<string, string> = {}
+  data.product.productOptions.forEach((opt: any) => {
+    const firstChoice = opt.choices.find((c: any) => c.inStock)
+    if (firstChoice) defaults[opt.name] = firstChoice.value
+  })
+  setSelectedOptions(defaults)
+}
+
       } catch (e: any) {
         setError(e?.message || "Failed to load product")
       }
