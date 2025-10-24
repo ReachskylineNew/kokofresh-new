@@ -220,29 +220,28 @@ export default function ProductPage() {
     }
   }, [product])
 
-useEffect(() => {
-  if (!relatedProductsRef.current) return; // 🟢 Wait until section exists
+  useEffect(() => {
+    if (!relatedProductsRef.current) return // 🟢 Wait until section exists
 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      // hide when related section is visible
-      setShowBottomBar(!entry.isIntersecting);
-    },
-    {
-      root: null,
-      threshold: 0.1,
-      rootMargin: "0px 0px -100px 0px", // triggers a bit before it fully appears
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // hide when related section is visible
+        setShowBottomBar(!entry.isIntersecting)
+      },
+      {
+        root: null,
+        threshold: 0.1,
+        rootMargin: "0px 0px -100px 0px", // triggers a bit before it fully appears
+      },
+    )
+
+    const target = relatedProductsRef.current
+    observer.observe(target)
+
+    return () => {
+      if (target) observer.unobserve(target)
     }
-  );
-
-  const target = relatedProductsRef.current;
-  observer.observe(target);
-
-  return () => {
-    if (target) observer.unobserve(target);
-  };
-}, [relatedProducts]);
-
+  }, [relatedProducts])
 
   const selectedVariant = product ? getVariant(product, selectedOptions) : null
 
@@ -346,6 +345,7 @@ useEffect(() => {
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
                   "/placeholder.svg" ||
+                  "/placeholder.svg" ||
                   "/placeholder.svg"
                 }
                 alt={product.name}
@@ -422,7 +422,48 @@ useEffect(() => {
               </h1>
             </div>
 
-            <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
+            {/* 🟡 MOBILE: Compact Price Card */}
+        <Card className="border border-[#E5E2DA] bg-gradient-to-br from-white to-[#FFF9F2] shadow-md rounded-2xl sm:hidden transition-all duration-300 hover:shadow-xl">
+  <CardContent className="p-4">
+    <div className="flex items-center justify-between gap-3">
+      {/* Left Section - Price and Tax Info */}
+      <div className="flex-1">
+        <div className="flex items-baseline gap-2">
+          {displayPriceFormatted && (
+            <span className="font-extrabold text-3xl text-[#DD9627] tracking-tight">
+              {displayPriceFormatted}
+            </span>
+          )}
+        </div>
+        <p className="text-[11px] text-[#3B2B13]/70 mt-1 italic">
+          Inclusive of all taxes
+        </p>
+      </div>
+
+      {/* Right Section - Stock Badge */}
+      <Badge
+        variant={inStock ? "default" : "destructive"}
+        className={`px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide shadow-sm ${
+          inStock
+            ? "bg-[#FEEB9A] text-[#3B2B13] border border-[#DD9627]/40"
+            : "bg-[#3B2B13] text-white border border-[#3B2B13]"
+        }`}
+      >
+        {inStock ? "In Stock" : "Out of Stock"}
+      </Badge>
+    </div>
+
+    {/* Optional subtle divider line for visual balance */}
+    <div className="mt-3 border-t border-[#3B2B13]/10" />
+
+    {/* Optional “Add to Cart” or CTA area for better UX */}
+
+  </CardContent>
+</Card>
+
+
+            {/* 🟡 DESKTOP: Original Price Card */}
+            <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg hidden sm:block">
               <CardContent className="p-2 sm:p-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
                   <div>
@@ -448,15 +489,77 @@ useEffect(() => {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg">
+            {/* 🟡 MOBILE: Optimized Options Card */}
+           <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg sm:hidden rounded-2xl">
+  <CardContent className="p-3">
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      {/* Weight / Options */}
+      {product.productOptions?.map((opt: any) => (
+        <div key={opt.name} className="flex-1 min-w-[55%] space-y-1">
+          <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+            {opt.name}:
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {opt.choices
+              .filter((choice: any) => choice.visible)
+              .map((choice: any) => (
+                <button
+                  key={choice.value}
+                  onClick={() =>
+                    setSelectedOptions((prev) => ({
+                      ...prev,
+                      [opt.name]: choice.value,
+                    }))
+                  }
+                  disabled={!choice.inStock}
+                  className={`px-3 py-1.5 rounded-lg border-2 transition-all duration-200 font-medium text-xs ${
+                    selectedOptions[opt.name] === choice.value
+                      ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-md"
+                      : choice.inStock
+                        ? "border-[#3B2B13]/30 hover:border-[#3B2B13] hover:bg-white/80 text-[#3B2B13]"
+                        : "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {choice.value}
+                </button>
+              ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Quantity */}
+      <div className="flex flex-col justify-center min-w-[35%] space-y-1">
+        <label className="text-xs font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
+          Quantity:
+        </label>
+        <div className="flex items-center border-2 border-[#3B2B13]/20 rounded-xl overflow-hidden bg-white shadow-sm w-fit mx-auto sm:mx-0">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span className="px-3 py-1.5 border-x-2 border-[#3B2B13]/20 font-bold text-sm min-w-[40px] text-center bg-white text-[#3B2B13]">
+            {quantity}
+          </span>
+          <button
+            onClick={() => setQuantity(quantity + 1)}
+            className="p-1.5 hover:bg-[#FED649]/20 transition-colors text-[#DD9627]"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
+
+            {/* 🟡 DESKTOP: Original Options Card */}
+            <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-lg hidden sm:block">
               <CardContent className="p-2 sm:p-4 space-y-1.5 sm:space-y-3">
-                {/* Product Options */}
-                {/* Product Options + Quantity in one grid (mobile combined) */}
-                {/* ✅ Product Options + Quantity in one responsive grid */}
-                {/* ✅ Product Options + Quantity (side by side only on mobile) */}
                 <div className="flex flex-col sm:block gap-2">
                   <div className="grid grid-cols-2 sm:grid-cols-1 gap-2">
-                    {/* 🧂 Weight / Variant Option */}
                     {product.productOptions?.map((opt: any) => (
                       <div key={opt.name} className="space-y-0.5 sm:space-y-1.5 col-span-1">
                         <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
@@ -490,7 +593,6 @@ useEffect(() => {
                       </div>
                     ))}
 
-                    {/* 🧮 Quantity Selector (side-by-side only on mobile) */}
                     <div className="space-y-0.5 sm:space-y-1.5 col-span-1">
                       <label className="text-xs sm:text-sm font-serif font-semibold text-[#3B2B13] uppercase tracking-wide">
                         Quantity:
@@ -802,45 +904,44 @@ useEffect(() => {
 
       <Footer />
 
-{showBottomBar && (
-  <div
-    className="fixed bottom-0 left-0 right-0 sm:hidden 
+      {showBottomBar && (
+        <div
+          className="fixed bottom-0 left-0 right-0 sm:hidden 
                bg-white border-t border-[#3B2B13]/10 shadow-2xl 
                z-50 px-4 py-3 flex items-center gap-3 justify-between"
-  >
-    {/* 🛒 Cart Button with Badge */}
-    <button
-      onClick={() => router.push("/cart")}
-      aria-label="Open cart"
-      className="relative flex items-center justify-center w-14 h-14 bg-white border-2 border-[#3B2B13]/20 
+        >
+          {/* 🛒 Cart Button with Badge */}
+          <button
+            onClick={() => router.push("/cart")}
+            aria-label="Open cart"
+            className="relative flex items-center justify-center w-14 h-14 bg-white border-2 border-[#3B2B13]/20 
                  rounded-xl hover:bg-[#FED649]/10 transition-all duration-200 flex-shrink-0"
-    >
-      <ShoppingCart className="h-6 w-6 text-[#DD9627]" />
-      {cartCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full 
-                         w-6 h-6 flex items-center justify-center text-xs font-bold shadow">
-          {cartCount}
-        </span>
-      )}
-    </button>
+          >
+            <ShoppingCart className="h-6 w-6 text-[#DD9627]" />
+            {cartCount > 0 && (
+              <span
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full 
+                         w-6 h-6 flex items-center justify-center text-xs font-bold shadow"
+              >
+                {cartCount}
+              </span>
+            )}
+          </button>
 
-    {/* 🟡 Add to Cart Button (full-width remaining space) */}
-    <Button
-      size="lg"
-      onClick={handleAddToCart}
-      disabled={!inStock}
-      className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] 
+          {/* 🟡 Add to Cart Button (full-width remaining space) */}
+          <Button
+            size="lg"
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] 
                  hover:brightness-95 text-black py-3 text-base font-bold rounded-xl 
                  shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
-    >
-      <ShoppingBag className="h-5 w-5" />
-      {inStock ? "Add to Cart" : "Out of Stock"}
-    </Button>
-  </div>
-)}
-
-
-
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {inStock ? "Add to Cart" : "Out of Stock"}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
