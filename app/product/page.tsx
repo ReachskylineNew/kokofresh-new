@@ -804,39 +804,41 @@ useEffect(() => {
 
 {showBottomBar && (
   <div
-    className="fixed bottom-4 left-1/2 -translate-x-1/2 sm:hidden 
-               bg-white border border-[#3B2B13]/10 shadow-xl 
-               rounded-2xl z-50 px-3 py-3 w-[92%] max-w-[420px] 
-               flex items-center gap-3 justify-center"
+    className="fixed bottom-0 left-0 right-0 sm:hidden 
+               bg-white border-t border-[#3B2B13]/10 shadow-2xl 
+               z-50 px-4 py-3 flex items-center gap-3 justify-between"
   >
-    {/* Cart button (small square) */}
+    {/* 🛒 Cart Button with Badge */}
     <button
       onClick={() => router.push("/cart")}
       aria-label="Open cart"
-      className="relative flex items-center justify-center w-12 h-12 bg-white border-2 border-[#3B2B13]/20 rounded-lg hover:bg-[#FED649]/10 transition-all duration-150 flex-shrink-0"
+      className="relative flex items-center justify-center w-14 h-14 bg-white border-2 border-[#3B2B13]/20 
+                 rounded-xl hover:bg-[#FED649]/10 transition-all duration-200 flex-shrink-0"
     >
-      <ShoppingCart className="h-5 w-5 text-[#DD9627]" />
+      <ShoppingCart className="h-6 w-6 text-[#DD9627]" />
       {cartCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow">
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full 
+                         w-6 h-6 flex items-center justify-center text-xs font-bold shadow">
           {cartCount}
         </span>
       )}
     </button>
 
-    {/* Add to Cart button (centered, compact) */}
+    {/* 🟡 Add to Cart Button (full-width remaining space) */}
     <Button
       size="lg"
       onClick={handleAddToCart}
       disabled={!inStock}
-      className="flex-1 min-w-[180px] max-w-[320px] bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] 
-                 hover:brightness-95 text-black py-2.5 text-sm font-bold rounded-lg shadow-lg 
-                 hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
+      className="flex-1 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] 
+                 hover:brightness-95 text-black py-3 text-base font-bold rounded-xl 
+                 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
     >
-      <ShoppingBag className="h-4 w-4" />
+      <ShoppingBag className="h-5 w-5" />
       {inStock ? "Add to Cart" : "Out of Stock"}
     </Button>
   </div>
 )}
+
 
 
     </div>
