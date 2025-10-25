@@ -15,8 +15,7 @@ export function Navigation() {
   const { cart } = useCart()
   const { wishlist } = useWishlist()
 
-  const totalQuantity =
-    cart?.lineItems?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0
+  const totalQuantity = cart?.lineItems?.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0) || 0
   const wishlistCount = wishlist?.length || 0
 
   // Prevent background scroll when mobile menu open
@@ -41,10 +40,10 @@ export function Navigation() {
       role="navigation"
       aria-label="Main"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-6 h-16 md:h-24">
+      <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-24 gap-2 md:gap-6">
           {/* Logo and Branding */}
-          <Link
+           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-3 flex-shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 rounded-md"
             aria-label="KOKO FRESH home"
@@ -71,8 +70,9 @@ export function Navigation() {
             </div>
           </Link>
 
+
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center justify-center gap-1.5 lg:gap-3">
+          <div className="hidden md:flex items-center justify-center gap-1.5 lg:gap-3 flex-1">
             {["Home", "Shop", "About", "Contact"].map((item) => (
               <Link
                 key={item}
@@ -88,18 +88,18 @@ export function Navigation() {
             ))}
           </div>
 
-          {/* Right Icons */}
-          <div className="flex items-center gap-1.5 md:gap-3">
+          {/* Right Icons - Improved mobile spacing and touch targets */}
+          <div className="flex items-center gap-1 md:gap-3 ml-auto">
             <Link href="/wishlist" aria-label={`Wishlist${wishlistCount ? `, ${wishlistCount} items` : ""}`}>
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-white hover:text-[#DD9627] h-11 w-11 md:h-12 md:w-12 focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
+                className="relative text-white hover:text-[#DD9627] h-10 w-10 md:h-12 md:w-12 focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
               >
                 <Heart className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
                 {wishlistCount > 0 && (
                   <span
-                    className="absolute -top-1.5 -right-1.5 bg-[#DD9627] text-[11px] rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-white shadow"
+                    className="absolute -top-1 -right-1 bg-[#DD9627] text-[10px] rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-white shadow font-semibold"
                     aria-label={`${wishlistCount} items in wishlist`}
                   >
                     {wishlistCount}
@@ -112,12 +112,12 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative text-white hover:text-[#FED649] h-11 w-11 md:h-12 md:w-12 focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
+                className="relative text-white hover:text-[#FED649] h-10 w-10 md:h-12 md:w-12 focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
               >
                 <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" aria-hidden="true" />
                 {totalQuantity > 0 && (
                   <span
-                    className="absolute -top-1.5 -right-1.5 bg-[#FED649] text-[11px] rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-[#B47B2B] font-semibold shadow"
+                    className="absolute -top-1 -right-1 bg-[#FED649] text-[10px] rounded-full h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-[#B47B2B] font-semibold shadow"
                     aria-label={`${totalQuantity} items in cart`}
                   >
                     {totalQuantity}
@@ -132,7 +132,7 @@ export function Navigation() {
 
             <button
               onClick={() => setIsMenuOpen((v) => !v)}
-              className="md:hidden text-white h-11 w-11 inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
+              className="md:hidden text-white h-10 w-10 inline-flex items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
               aria-controls="mobile-nav"
@@ -143,7 +143,7 @@ export function Navigation() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Improved mobile menu styling and organization */}
       {isMenuOpen && (
         <>
           <div
@@ -157,34 +157,42 @@ export function Navigation() {
             aria-modal="true"
             className="fixed inset-x-0 top-16 z-50 md:hidden border-t border-[#FED649]/30 bg-black/95 backdrop-blur
               motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-2"
-            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
+            style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
           >
-            <div className="max-w-7xl mx-auto px-4 py-4">
-              <div className="flex flex-col">
+            <div className="max-w-7xl mx-auto px-3 py-4">
+              <div className="flex flex-col gap-1">
+                {/* Navigation Links */}
                 {["Shop", "About", "Contact"].map((item) => (
                   <Link
                     key={item}
                     href={`/${item.toLowerCase()}`}
                     onClick={() => setIsMenuOpen(false)}
-                    className="text-white/95 text-base font-medium px-2 py-3 rounded-md hover:text-white
-                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
+                    className="text-white/95 text-base font-medium px-3 py-3 rounded-md hover:text-white hover:bg-white/5
+                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 transition-colors"
                   >
                     {item}
                   </Link>
                 ))}
 
+                {/* Wishlist Link */}
                 <Link
                   href="/wishlist"
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-white/95 text-base font-medium flex items-center gap-2 px-2 py-3 rounded-md hover:text-white
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60"
+                  className="text-white/95 text-base font-medium flex items-center justify-between px-3 py-3 rounded-md hover:text-white hover:bg-white/5
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FED649]/60 transition-colors"
                 >
-                  <Heart className="h-5 w-5" aria-hidden="true" />
-                  <span>Wishlist</span>
-                  {wishlistCount > 0 && <span className="ml-1 text-[#DD9627] font-medium">({wishlistCount})</span>}
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-5 w-5" aria-hidden="true" />
+                    <span>Wishlist</span>
+                  </div>
+                  {wishlistCount > 0 && <span className="text-[#DD9627] font-semibold text-sm">({wishlistCount})</span>}
                 </Link>
 
-                <div className="mt-2">
+                {/* Divider */}
+                <div className="h-px bg-[#FED649]/20 my-2" />
+
+                {/* User Account */}
+                <div className="px-3 py-3">
                   <NavUser fontSize="text-base" />
                 </div>
               </div>
