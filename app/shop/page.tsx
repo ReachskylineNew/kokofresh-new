@@ -118,64 +118,83 @@ export default function ShopPage() {
     : 0
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        setIsLoading(true)
+  const load = async () => {
+    try {
+      setIsLoading(true)
 
-        // fetch products + categories in parallel
-        const [productsRes, categoriesRes] = await Promise.all([
-          fetch("/api/products", { cache: "no-store" }),
-          fetch("/api/collections", { cache: "no-store" }),
-        ])
+      // fetch products + categories in parallel
+      const [productsRes, categoriesRes] = await Promise.all([
+        fetch("/api/products", { cache: "no-store" }),
+        fetch("/api/collections", { cache: "no-store" }),
+      ])
 
-        if (!productsRes.ok) throw new Error("Failed to load products")
-        if (!categoriesRes.ok) throw new Error("Failed to load categories")
+      if (!productsRes.ok) throw new Error("Failed to load products")
+      if (!categoriesRes.ok) throw new Error("Failed to load categories")
 
-        const productsData = await productsRes.json()
-        const categoriesData = await categoriesRes.json()
+      const productsData = await productsRes.json()
+      const categoriesData = await categoriesRes.json()
 
-        console.log("productsData:", productsData)
-        console.log("categoriesData:", categoriesData)
-        // map category IDs to names
-        const categoryMap: Record<string, string> = {}
-        ;(categoriesData.categories || []).forEach((cat: any) => {
-          categoryMap[cat._id] = cat.name
-        })
+      console.log("productsData:", productsData)
+      console.log("categoriesData:", categoriesData)
 
-        // assign correct category name to each product
-        const mappedProducts = (productsData.products || []).map((p: Product) => {
-          const mainCollectionId = p.collectionIds?.find((id: string) => id !== "00000000-000000-000000-000000000001")
-          const categoryName = categoryMap[mainCollectionId] || "Uncategorized"
-          return { ...p, category: categoryName }
-        })
+      // 🧠 Helper to Title-Case text (camelized)
+      const toTitleCase = (str: string) =>
+        str
+          .toLowerCase()
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")
 
-        console.log("✅ Mapped products with category:", mappedProducts)
+      // map category IDs to names
+      const categoryMap: Record<string, string> = {}
+      ;(categoriesData.categories || []).forEach((cat: any) => {
+        const formattedName = toTitleCase(cat.name?.trim() || "")
+        categoryMap[cat._id] = formattedName
+      })
 
-        const uniqueCategories = Array.from(
-          new Set(mappedProducts.map((p: Product) => p.category).filter(Boolean)),
-        ).sort() as string[]
+      // assign correct category name to each product
+      const mappedProducts = (productsData.products || []).map((p: Product) => {
+        const mainCollectionId = p.collectionIds?.find(
+          (id: string) => id !== "00000000-000000-000000-000000000001"
+        )
+        const categoryName = categoryMap[mainCollectionId] || "Uncategorized"
+        return { ...p, category: categoryName }
+      })
 
-        setCategories(["all", ...uniqueCategories])
-        setProducts(mappedProducts)
+      console.log("✅ Mapped products with category:", mappedProducts)
 
-        // select default visible variants
-        const defaultVariants: Record<string, string> = {}
-        mappedProducts.forEach((product: Product) => {
-          const productId = product._id || product.id || ""
-          if (product.variants && product.variants.length > 0) {
-            const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
-            defaultVariants[productId] = firstVisibleVariant ? firstVisibleVariant._id : product.variants[0]._id
-          }
-        })
-        setSelectedVariants(defaultVariants)
-      } catch (e: any) {
-        setError(e?.message || "Failed to load products")
-      } finally {
-        setIsLoading(false)
-      }
+      // 🧩 Collect unique category list and camelize them too
+      const uniqueCategories = Array.from(
+        new Set(mappedProducts.map((p: Product) => p.category).filter(Boolean))
+      )
+        .map(toTitleCase)
+        .sort()
+
+      // set in state (for filters)
+      setCategories(["All", ...uniqueCategories])
+      setProducts(mappedProducts)
+
+      // select default visible variants
+      const defaultVariants: Record<string, string> = {}
+      mappedProducts.forEach((product: Product) => {
+        const productId = product._id || product.id || ""
+        if (product.variants && product.variants.length > 0) {
+          const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
+          defaultVariants[productId] = firstVisibleVariant
+            ? firstVisibleVariant._id
+            : product.variants[0]._id
+        }
+      })
+      setSelectedVariants(defaultVariants)
+    } catch (e: any) {
+      setError(e?.message || "Failed to load products")
+    } finally {
+      setIsLoading(false)
     }
-    load()
-  }, [])
+  }
+  load()
+}, [])
+
 
   const getCurrentPrice = (product: Product): number => {
     if (!product.variants || product.variants.length === 0) {
