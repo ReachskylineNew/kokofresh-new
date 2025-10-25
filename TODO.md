@@ -1,32 +1,14 @@
-# Performance Optimization Tasks
+# TODO: Increase Font Sizes in Shop Page Product Cards for Mobile
 
-## API Endpoint Updates
-- [ ] Update /api/products to support limit and pagination query params
-- [ ] Return only minimal fields: id, name, price, image, stock
-- [ ] Add ISR caching with revalidate: 3600
-- [ ] Optimize mock data to match minimal fields
-
-## Shop Page (/shop/page.tsx)
-- [ ] Implement pagination to fetch 8-12 products initially
-- [ ] Add lazy loading to product images with loading="lazy" and placeholder="blur"
-- [ ] Defer product grid loading with React.lazy or next/dynamic (SSR false)
-- [ ] Add lightweight skeleton loader for products before data appears
-- [ ] Prioritize hero rendering, fetch products after mount with useEffect delay
-- [ ] Optimize image URLs to smaller CDN versions (w_400,h_400,q_80)
-- [ ] Ensure images below fold are not preloaded
-- [ ] Preload only hero and critical fonts/scripts
-
-## Home Page (/page.tsx)
-- [ ] Add lazy loading to product images
-- [ ] Defer product grid with dynamic import
-- [ ] Add skeleton loader
-- [ ] Fetch products after mount with delay
-- [ ] Optimize image URLs
-- [ ] Add ISR caching to fetch calls
-
-## Testing & Verification
-- [ ] Test pagination and loading
-- [ ] Verify Lighthouse scores (Desktop ≥95, LCP <2s)
-- [ ] Ensure design remains identical
-- [ ] Check minimal unused image/data loads
-- [ ] Confirm smooth skeleton animations
+## Tasks
+- [x] Increase product name font size in grid view (text-[10px] → text-[12px])
+- [x] Increase rating text font size (text-[9px] → text-[10px])
+- [x] Increase region and category tags font size (text-[9px] → text-[10px])
+- [x] Increase weight label font size (text-[9px] → text-[10px])
+- [x] Increase price font size (text-[11px] → text-[12px])
+- [x] Increase Add to Cart button font size (text-[10px] → text-[11px])
+- [x] Increase weight select font size (text-[9px] → text-[10px])
+- [x] Increase heart icon size (h-[9px] → h-[10px])
+- [x] Increase ribbon badges font size (text-[9px] → text-[10px])
+- [x] Increase quantity display font size (text-[11px] → text-[12px])
+- [ ] Test changes on mobile to ensure improved visibility and no layout breaks

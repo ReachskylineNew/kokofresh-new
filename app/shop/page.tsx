@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart, Heart, Search, X, Plus, Minus, ChevronRight } from "lucide-react"
+import { Star, ShoppingCart, Heart, Search, X, Plus, Minus, ChevronRight, Filter, Check } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
@@ -111,6 +111,8 @@ export default function ShopPage() {
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
   const [mobileCartQuantities, setMobileCartQuantities] = useState<Record<string, number>>({})
+  const [categories, setCategories] = useState<string[]>(["all"])
+
   const totalCartItems = Array.isArray(cart?.lineItems)
     ? cart.lineItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
     : 0
@@ -119,30 +121,50 @@ export default function ShopPage() {
     const load = async () => {
       try {
         setIsLoading(true)
-        const res = await fetch("/api/products", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to load products")
-        const data = await res.json()
-        const productsData = (data.products || []).map((p: Product) => {
-          let category = "Masala"
-          if (p.name?.toLowerCase().includes("chutney powder")) {
-            category = "Chutney"
-          }
-          return { ...p, category }
+
+        // fetch products + categories in parallel
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/collections", { cache: "no-store" }),
+        ])
+
+        if (!productsRes.ok) throw new Error("Failed to load products")
+        if (!categoriesRes.ok) throw new Error("Failed to load categories")
+
+        const productsData = await productsRes.json()
+        const categoriesData = await categoriesRes.json()
+
+        console.log("productsData:", productsData)
+        console.log("categoriesData:", categoriesData)
+        // map category IDs to names
+        const categoryMap: Record<string, string> = {}
+        ;(categoriesData.categories || []).forEach((cat: any) => {
+          categoryMap[cat._id] = cat.name
         })
 
-        console.log("Fetched products with category:", productsData)
-        setProducts(productsData)
+        // assign correct category name to each product
+        const mappedProducts = (productsData.products || []).map((p: Product) => {
+          const mainCollectionId = p.collectionIds?.find((id: string) => id !== "00000000-000000-000000-000000000001")
+          const categoryName = categoryMap[mainCollectionId] || "Uncategorized"
+          return { ...p, category: categoryName }
+        })
 
+        console.log("✅ Mapped products with category:", mappedProducts)
+
+        const uniqueCategories = Array.from(
+          new Set(mappedProducts.map((p: Product) => p.category).filter(Boolean)),
+        ).sort() as string[]
+
+        setCategories(["all", ...uniqueCategories])
+        setProducts(mappedProducts)
+
+        // select default visible variants
         const defaultVariants: Record<string, string> = {}
-        productsData.forEach((product: Product) => {
+        mappedProducts.forEach((product: Product) => {
           const productId = product._id || product.id || ""
           if (product.variants && product.variants.length > 0) {
             const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
-            if (firstVisibleVariant) {
-              defaultVariants[productId] = firstVisibleVariant._id
-            } else {
-              defaultVariants[productId] = product.variants[0]._id
-            }
+            defaultVariants[productId] = firstVisibleVariant ? firstVisibleVariant._id : product.variants[0]._id
           }
         })
         setSelectedVariants(defaultVariants)
@@ -348,19 +370,6 @@ export default function ShopPage() {
     }
   }
 
-  const regions = [
-    "all",
-    "Andhra Pradesh",
-    "Kerala",
-    "Maharashtra",
-    "Rajasthan",
-    "West Bengal",
-    "Punjab",
-    "Tamil Nadu",
-    "Gujarat",
-  ]
-  const categories = ["all", "Masala", "Chutney", "Instant"]
-
   const filteredProducts = products
     .filter((product) => {
       if (selectedRegion !== "all" && product.region !== selectedRegion) return false
@@ -393,6 +402,13 @@ export default function ShopPage() {
     setSearchQuery("")
     setSortBy("featured")
   }
+
+  const activeFilterCount = [
+    selectedRegion !== "all" ? 1 : 0,
+    selectedCategory !== "all" ? 1 : 0,
+    showBestsellers ? 1 : 0,
+    showLimitedEdition ? 1 : 0,
+  ].reduce((a, b) => a + b, 0)
 
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#3B2B13] font-sans">
@@ -439,6 +455,19 @@ export default function ShopPage() {
                     />
                   </div>
                 </div>
+
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className="lg:hidden flex items-center gap-2 px-4 py-2.5 sm:py-3 bg-black border border-[#DD9627]/30 rounded-lg hover:bg-[#1A1A1A] transition-all duration-200 text-[#FED649] font-semibold text-sm"
+                >
+                  <Filter className="h-4 w-4" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <span className="ml-1 px-2 py-0.5 bg-[#DD9627] text-black text-xs font-bold rounded-full">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </button>
               </div>
             </div>
           </div>
@@ -499,23 +528,6 @@ export default function ShopPage() {
           {/* LEFT FILTER PANEL */}
           <div className="lg:w-72 flex-shrink-0">
             <div className="sticky top-24">
-              {/* 🟣 MOBILE CATEGORY TABS (Zepto-style) */}
-              <div className="lg:hidden flex justify-between items-center bg-[#1A1A1A] border border-[#DD9627]/30 rounded-2xl shadow-md p-1 mb-4">
-                {["Masala", "Chutney", "Instant"].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`flex-1 text-center py-2 rounded-xl text-xs font-semibold transition-all duration-300 ${
-                      selectedCategory === cat
-                        ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black shadow-md"
-                        : "text-[#FED649] hover:text-[#DD9627]"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-
               {/* 🖥 DESKTOP FILTER PANEL ONLY */}
               <div className="hidden lg:block space-y-6 sm:space-y-8 lg:space-y-10">
                 <div className="bg-black border border-[#DD9627]/30 rounded-2xl shadow-md p-4 sm:p-5 lg:p-6">
@@ -526,7 +538,10 @@ export default function ShopPage() {
                     {categories.map((category) => (
                       <button
                         key={category}
-                        onClick={() => setSelectedCategory(category)}
+                        onClick={() => {
+                          setSelectedCategory(category)
+                          setIsFilterOpen(false)
+                        }}
                         className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
                           selectedCategory === category
                             ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-semibold"
@@ -541,6 +556,115 @@ export default function ShopPage() {
               </div>
             </div>
           </div>
+
+          {isFilterOpen && (
+            <>
+              {/* Backdrop */}
+              <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsFilterOpen(false)} />
+
+              {/* Bottom Sheet */}
+              <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white rounded-t-3xl shadow-2xl max-h-[85vh] overflow-y-auto">
+                {/* Header */}
+                <div className="sticky top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between rounded-t-3xl">
+                  <h2 className="font-serif text-lg font-bold text-[#3B2B13]">Filters</h2>
+                  <button
+                    onClick={() => setIsFilterOpen(false)}
+                    className="p-1 hover:bg-gray-100 rounded-full transition-all"
+                  >
+                    <X className="h-6 w-6 text-[#3B2B13]" />
+                  </button>
+                </div>
+
+                {/* Filter Content */}
+                <div className="p-4 space-y-6">
+                  {/* Categories Section */}
+                  <div>
+                    <h3 className="font-serif text-base font-bold text-[#3B2B13] mb-3">Categories</h3>
+                    <div className="space-y-2">
+                      {categories.map((category) => (
+                        <button
+                          key={category}
+                          onClick={() => {
+                            setSelectedCategory(category)
+                            setIsFilterOpen(false)
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                            selectedCategory === category
+                              ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-semibold shadow-md"
+                              : "bg-gray-50 hover:bg-gray-100 text-[#3B2B13] border border-gray-200"
+                          }`}
+                        >
+                          <div
+                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                              selectedCategory === category ? "bg-black border-black" : "border-gray-300 bg-white"
+                            }`}
+                          >
+                            {selectedCategory === category && <Check className="h-3 w-3 text-white" />}
+                          </div>
+                          <span className="text-sm font-medium">
+                            {category === "all" ? "All Categories" : category}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bestsellers Filter */}
+                  <div>
+                    <h3 className="font-serif text-base font-bold text-[#3B2B13] mb-3">Special</h3>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => setShowBestsellers(!showBestsellers)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                          showBestsellers
+                            ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-semibold shadow-md"
+                            : "bg-gray-50 hover:bg-gray-100 text-[#3B2B13] border border-gray-200"
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                            showBestsellers ? "bg-black border-black" : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {showBestsellers && <Check className="h-3 w-3 text-white" />}
+                        </div>
+                        <span className="text-sm font-medium">✨ Bestsellers</span>
+                      </button>
+
+                      <button
+                        onClick={() => setShowLimitedEdition(!showLimitedEdition)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                          showLimitedEdition
+                            ? "bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] text-black font-semibold shadow-md"
+                            : "bg-gray-50 hover:bg-gray-100 text-[#3B2B13] border border-gray-200"
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                            showLimitedEdition ? "bg-black border-black" : "border-gray-300 bg-white"
+                          }`}
+                        >
+                          {showLimitedEdition && <Check className="h-3 w-3 text-white" />}
+                        </div>
+                        <span className="text-sm font-medium">🔥 Limited Edition</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4 border-t border-gray-200">
+                    <Button
+                      onClick={clearAllFilters}
+                      variant="outline"
+                      className="flex-1 border-gray-300 text-[#3B2B13] hover:bg-gray-50 bg-transparent"
+                    >
+                      Clear All
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Product Grid */}
           <div className="flex-1">
@@ -564,15 +688,19 @@ export default function ShopPage() {
                   product.variants?.find((v) => v.variant.visible) ||
                   product.variants?.[0]
                 const mobileQuantity = mobileCartQuantities[productId] || 0
+                const outOfStock = !isInStock(product)
+
+                const CardWrapper = outOfStock ? "div" : Link
+                const cardProps = outOfStock ? {} : { href: `/product?id=${product.slug || productId}` }
 
                 return (
-                  <Link key={productId} href={`/product?id=${product.slug || productId}`}>
+                  <CardWrapper key={productId} {...cardProps}>
                     <Card
                       className={`group cursor-pointer overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white/95 rounded-lg hover:-translate-y-0.5 border border-[#DD9627]/20 ${
                         viewMode === "list" ? "flex flex-row max-w-4xl mx-auto" : ""
-                      }`}
-                      onMouseEnter={() => handleMouseEnter(productId)}
-                      onMouseLeave={() => handleMouseLeave(productId)}
+                      } ${outOfStock ? "opacity-60 grayscale pointer-events-none" : ""}`}
+                      onMouseEnter={() => !outOfStock && handleMouseEnter(productId)}
+                      onMouseLeave={() => !outOfStock && handleMouseLeave(productId)}
                     >
                       <CardContent className="p-0 flex-1">
                         {viewMode === "list" ? (
@@ -582,7 +710,9 @@ export default function ShopPage() {
                                 <img
                                   src={getCurrentImage(product) || "/placeholder.svg"}
                                   alt={product.name}
-                                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                  className={`object-cover w-full h-full transition-transform duration-500 ${
+                                    !outOfStock && "group-hover:scale-105"
+                                  }`}
                                 />
                               </div>
 
@@ -602,7 +732,7 @@ export default function ShopPage() {
                                     👨‍🍳 Made to Order
                                   </Badge>
                                 )}
-                                {!isInStock(product) && (
+                                {outOfStock && (
                                   <Badge
                                     variant="destructive"
                                     className="text-xs px-2 py-0.5 rounded-full shadow-lg border-0 font-medium"
@@ -612,7 +742,10 @@ export default function ShopPage() {
                                 )}
                               </div>
 
-                              <button className="absolute top-1.5 right-1.5 p-1.5 bg-white/95 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
+                              <button
+                                disabled={outOfStock}
+                                className={`absolute top-1.5 right-1.5 p-1.5 bg-white/95 backdrop-blur-sm rounded-full opacity-0 ${!outOfStock && "group-hover:opacity-100"} transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg disabled:opacity-0 disabled:cursor-not-allowed`}
+                              >
                                 <Heart className="h-3 w-3 text-gray-600 hover:text-red-500 transition-colors" />
                               </button>
                             </div>
@@ -662,7 +795,8 @@ export default function ShopPage() {
                                           e.preventDefault()
                                           e.stopPropagation()
                                         }}
-                                        className="px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DD9627] focus:border-transparent bg-white"
+                                        disabled={outOfStock}
+                                        className="px-1.5 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-2 text-xs lg:text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DD9627] focus:border-transparent bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                                       >
                                         {product.variants
                                           .filter((variant) => variant.variant.visible)
@@ -694,7 +828,8 @@ export default function ShopPage() {
                               </div>
 
                               <Button
-                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-xs lg:text-sm py-1.5 lg:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-9 lg:h-10 flex items-center justify-center"
+                                disabled={outOfStock}
+                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-xs lg:text-sm py-1.5 lg:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-9 lg:h-10 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -737,48 +872,52 @@ export default function ShopPage() {
                                 <img
                                   src={getCurrentImage(product) || "/placeholder.svg"}
                                   alt={product.name}
-                                  className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                  className={`object-contain w-full h-full transition-transform duration-500 ${
+                                    !outOfStock && "group-hover:scale-105"
+                                  }`}
                                 />
                               </div>
 
                               {/* 🏷 Ribbons */}
                               <div className="absolute top-1 left-1 flex flex-col gap-0.5">
                                 {product.bestseller && (
-                                  <Badge className="bg-[#DD9627] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
+                                  <Badge className="bg-[#DD9627] text-white text-[10px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
                                     ✨ Bestseller
                                   </Badge>
                                 )}
                                 {product.limitedEdition && (
-                                  <Badge className="bg-[#B47B2B] text-white text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
+                                  <Badge className="bg-[#B47B2B] text-white text-[10px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium">
                                     🔥 Limited
                                   </Badge>
                                 )}
-                                {!isInStock(product) && (
+                                {outOfStock && (
                                   <Badge
                                     variant="destructive"
-                                    className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium"
+                                    className="text-[10px] sm:text-[10px] px-1.5 py-0.5 rounded-full shadow-md border-0 font-medium"
                                   >
                                     Out of Stock
                                   </Badge>
                                 )}
                               </div>
 
-                              {/* ❤ Wishlist Button */}
-                              <button className="absolute top-1 right-1 p-[5px] sm:p-1 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-md">
-                                <Heart className="h-[9px] w-[9px] sm:h-[10px] sm:w-[10px] text-gray-600 hover:text-red-500 transition-colors" />
+                              <button
+                                disabled={outOfStock}
+                                className={`absolute top-1 right-1 p-[5px] sm:p-1 bg-white/90 backdrop-blur-sm rounded-full opacity-0 ${!outOfStock && "group-hover:opacity-100"} transition-all duration-300 hover:bg-white hover:scale-110 shadow-md disabled:opacity-0 disabled:cursor-not-allowed`}
+                              >
+                                <Heart className="h-[10px] w-[10px] sm:h-[10px] sm:w-[10px] text-gray-600 hover:text-red-500 transition-colors" />
                               </button>
                             </div>
 
-                            <div className="p-1.5 sm:p-2.5 lg:p-3">
+                            <div className="p-1.5 sm:p-2.5 lg:p-3 flex flex-col h-[180px] sm:h-[200px] md:h-[220px] lg:h-auto">
                               {/* 🧾 Product Name + Rating */}
-                              <div className="flex items-start justify-between mb-1 sm:mb-1.5">
-                                <h3 className="font-serif font-semibold text-[10px] sm:text-[11px] md:text-xs lg:text-sm text-[#3B2B13] line-clamp-2 leading-snug group-hover:text-[#DD9627] transition-colors duration-200">
+                              <div className="flex items-start justify-between mb-1 sm:mb-1.5 flex-shrink-0">
+                                <h3 className="font-serif font-semibold text-[14px] sm:text-[13px] md:text-xs lg:text-sm text-[#3B2B13] line-clamp-2 leading-snug group-hover:text-[#DD9627] transition-colors duration-200">
                                   {product.name}
                                 </h3>
                                 {typeof product.rating === "number" && (
-                                  <div className="flex items-center gap-0.5 bg-[#FFF6CC] px-1 py-[2px] sm:px-1 sm:py-0.5 rounded-full border border-[#FED649]/40">
-                                    <Star className="h-[8px] w-[8px] sm:h-[10px] sm:w-[10px] fill-[#FED649] text-[#FED649]" />
-                                    <span className="text-[9px] sm:text-[10px] font-semibold text-[#B47B2B]">
+                                  <div className="flex items-center gap-0.5 bg-[#FFF6CC] px-1 py-[2px] sm:px-1 sm:py-0.5 rounded-full border border-[#FED649]/40 flex-shrink-0">
+                                    <Star className="h-[10px] w-[10px] sm:h-[10px] sm:w-[10px] fill-[#FED649] text-[#FED649]" />
+                                    <span className="text-[11px] sm:text-[11px] font-semibold text-[#B47B2B]">
                                       {product.rating}
                                     </span>
                                   </div>
@@ -786,59 +925,74 @@ export default function ShopPage() {
                               </div>
 
                               {/* 📍 Region + Category Tags */}
-                              <div className="flex flex-col gap-0.5 mb-1 sm:mb-1.5">
+                              <div className="flex flex-col gap-0.5 mb-1 sm:mb-1.5 flex-shrink-0">
                                 {product.region && (
-                                  <span className="text-[9px] sm:text-[10px] text-[#B47B2B] font-semibold px-1 py-[2px] rounded-full border border-[#DD9627] w-fit">
+                                  <span className="text-[11px] sm:text-[11px] text-[#B47B2B] font-semibold px-1 py-[2px] rounded-full border border-[#DD9627] w-fit">
                                     📍 {product.region}
                                   </span>
                                 )}
                                 {product.category && (
-                                  <span className="text-[9px] sm:text-[10px] text-gray-600 font-medium bg-gray-50 px-1 py-[2px] rounded-full w-fit">
+                                  <span className="text-[11px] sm:text-[11px] text-gray-600 font-medium bg-gray-50 px-1 py-[2px] rounded-full w-fit">
                                     {product.category}
                                   </span>
                                 )}
                               </div>
 
-                              {/* ⚖ Weight + Price */}
-                              {product.variants && product.variants.length > 0 && (
-                                <div className="space-y-1 mb-1 sm:mb-1.5">
-                                  <div className="flex items-center justify-between gap-1">
-                                    <span className="text-[9px] sm:text-[10px] font-medium text-gray-700">Weight:</span>
-                                    <select
-                                      value={selectedVariantId || ""}
-                                      onChange={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        handleVariantChange(productId, e.target.value)
-                                      }}
-                                      onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                      }}
-                                      className="px-1 py-[2px] text-[9px] sm:text-[10px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#DD9627] bg-white"
-                                    >
-                                      {product.variants
-                                        .filter((variant) => variant.variant.visible)
-                                        .map((variant) => (
-                                          <option key={variant._id} value={variant._id}>
-                                            {variant.choices.weight}
-                                          </option>
-                                        ))}
-                                    </select>
-                                  </div>
+                              {/* ⚖ Weight + Price - Flexible section that grows */}
+                              <div className="space-y-1 mb-1 sm:mb-1.5 flex-grow flex flex-col justify-end">
+                                {product.variants && product.variants.length > 0 && (
+                                  <>
+                                    <div className="flex items-center justify-between gap-1">
+                                      <span className="text-[11px] sm:text-[11px] font-medium text-gray-700">
+                                        Weight:
+                                      </span>
+                                      <select
+                                        value={selectedVariantId || ""}
+                                        onChange={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                          handleVariantChange(productId, e.target.value)
+                                        }}
+                                        onClick={(e) => {
+                                          e.preventDefault()
+                                          e.stopPropagation()
+                                        }}
+                                        disabled={outOfStock}
+                                        className="px-1 py-[2px] text-[11px] sm:text-[11px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#DD9627] bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                      >
+                                        {product.variants
+                                          .filter((variant) => variant.variant.visible)
+                                          .map((variant) => (
+                                            <option key={variant._id} value={variant._id}>
+                                              {variant.choices.weight}
+                                            </option>
+                                          ))}
+                                      </select>
+                                    </div>
 
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-[14px] sm:text-[14px] md:text-sm font-bold text-[#B47B2B]">
+                                        {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                      </span>
+                                    </div>
+                                  </>
+                                )}
+
+                                {(!product.variants || product.variants.length === 0) && (
                                   <div className="flex items-center justify-between">
-                                    <span className="text-[11px] sm:text-[12px] md:text-sm font-bold text-[#B47B2B]">
-                                      {selectedVariant?.variant.priceData.formatted.price || `₹${currentPrice}`}
+                                    <span className="text-[14px] sm:text-[14px] md:text-sm font-bold text-[#B47B2B]">
+                                      ₹{currentPrice}
                                     </span>
                                   </div>
-                                </div>
-                              )}
+                                )}
+                              </div>
 
-                              <div className="lg:hidden">
+                              {/* Button - Always at bottom */}
+                              <div className="lg:hidden mt-auto pt-1">
                                 {mobileQuantity === 0 ? (
                                   <Button
-                                    className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9"
+                                    disabled={outOfStock}
+                                    className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[11px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9 disabled:opacity-50 disabled:cursor-not-allowed"
                                     onClick={(e) => handleMobileAddToCart(product, e)}
                                   >
                                     ADD
@@ -851,7 +1005,7 @@ export default function ShopPage() {
                                     >
                                       <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-black" />
                                     </button>
-                                    <span className="text-black font-bold text-[11px] sm:text-[12px] md:text-sm min-w-[24px] text-center">
+                                    <span className="text-black font-bold text-[12px] sm:text-[12px] md:text-sm min-w-[24px] text-center">
                                       {mobileQuantity}
                                     </span>
                                     <button
@@ -867,7 +1021,8 @@ export default function ShopPage() {
                               {/* Desktop: Show regular button */}
                               <div className="hidden lg:block">
                                 <Button
-                                  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9 flex items-center justify-center"
+                                  disabled={outOfStock}
+                                  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                                   onClick={async (e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
@@ -901,7 +1056,7 @@ export default function ShopPage() {
                         )}
                       </CardContent>
                     </Card>
-                  </Link>
+                  </CardWrapper>
                 )
               })}
             </div>
