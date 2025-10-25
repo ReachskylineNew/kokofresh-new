@@ -423,12 +423,10 @@ export default function ProductPage() {
               </h1>
             </div>
 
-            {/* 🟡 MOBILE: Compact Price Card */}
-{/* 🟡 MOBILE: Compact Price Card */}
-{/* Compact Unified Mobile Card (price + options + qty) */}
+
 <Card className="border-2 border-[#3B2B13]/20 bg-white/90 shadow-md rounded-xl sm:hidden">
   <CardContent className="p-3 space-y-2">
-    {/* Top: compact price + badge */}
+    
     <div className="flex items-center justify-between gap-2">
       <div className="flex-1">
         {displayPriceFormatted && (

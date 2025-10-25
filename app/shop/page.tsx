@@ -95,8 +95,7 @@ const getWeightOptions = (basePrice: number): WeightOption[] => [
 ]
 
 export default function ShopPage() {
-const { add, cart, updateQuantity, remove, reload } = useCart()
-
+  const { add, cart, updateQuantity, remove, reload } = useCart()
 
   const [selectedRegion, setSelectedRegion] = useState<string>("all")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
@@ -112,9 +111,9 @@ const { add, cart, updateQuantity, remove, reload } = useCart()
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
   const [hoveredProducts, setHoveredProducts] = useState<Record<string, number>>({})
   const [mobileCartQuantities, setMobileCartQuantities] = useState<Record<string, number>>({})
-const totalCartItems = Array.isArray(cart?.lineItems)
-  ? cart.lineItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
-  : 0
+  const totalCartItems = Array.isArray(cart?.lineItems)
+    ? cart.lineItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
+    : 0
 
   useEffect(() => {
     const load = async () => {
@@ -283,76 +282,71 @@ const totalCartItems = Array.isArray(cart?.lineItems)
     }
   }
 
-const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
-  e.preventDefault()
-  e.stopPropagation()
-  try {
-    if (!isInStock(product)) throw new Error("Out of stock")
+  const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      if (!isInStock(product)) throw new Error("Out of stock")
 
-    const productId = product._id || product.id || ""
-    const selectedVariantId = selectedVariants[productId]
-    const selectedVariant =
-      product.variants?.find((v) => v._id === selectedVariantId) ||
-      product.variants?.find((v) => v.variant.visible) ||
-      product.variants?.[0]
+      const productId = product._id || product.id || ""
+      const selectedVariantId = selectedVariants[productId]
+      const selectedVariant =
+        product.variants?.find((v) => v._id === selectedVariantId) ||
+        product.variants?.find((v) => v.variant.visible) ||
+        product.variants?.[0]
 
-    const exportProductId = product._id || product.id || ""
-    const optionsArray = selectedVariant
-      ? Object.entries(selectedVariant.choices).map(([name, value]) => ({ name, value }))
-      : []
+      const exportProductId = product._id || product.id || ""
+      const optionsArray = selectedVariant
+        ? Object.entries(selectedVariant.choices).map(([name, value]) => ({ name, value }))
+        : []
 
-    await add(exportProductId, 1, optionsArray, selectedVariantId)
+      await add(exportProductId, 1, optionsArray, selectedVariantId)
 
-    // 🔄 refresh the cart to update floating count
-    await reload()
+      // 🔄 refresh the cart to update floating count
+      await reload()
 
-    // update UI
-    setMobileCartQuantities((prev) => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1,
-    }))
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Add to cart failed"
-    toast.error(message)
-  }
-}
-
-
-
- const handleMobileDecrement = async (product: Product, e: React.MouseEvent) => {
-  e.preventDefault()
-  e.stopPropagation()
-
-  try {
-    const productId = product._id || product.id || ""
-    const lineItem = cart?.lineItems?.find(
-      (item) => item.catalogReference?.catalogItemId === productId
-    )
-
-    if (!lineItem) return
-
-    const newQty = Math.max(0, (lineItem.quantity || 0) - 1)
-
-    if (newQty === 0) {
-      await remove(lineItem.id)
-    } else {
-      await updateQuantity(lineItem.id, newQty)
+      // update UI
+      setMobileCartQuantities((prev) => ({
+        ...prev,
+        [productId]: (prev[productId] || 0) + 1,
+      }))
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Add to cart failed"
+      toast.error(message)
     }
-
-    // 🔄 reload cart to sync floating cart count
-    await reload()
-
-    // update local UI quantity
-    setMobileCartQuantities((prev) => ({
-      ...prev,
-      [productId]: newQty,
-    }))
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to decrease quantity"
-    toast.error(message)
   }
-}
 
+  const handleMobileDecrement = async (product: Product, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+      const productId = product._id || product.id || ""
+      const lineItem = cart?.lineItems?.find((item) => item.catalogReference?.catalogItemId === productId)
+
+      if (!lineItem) return
+
+      const newQty = Math.max(0, (lineItem.quantity || 0) - 1)
+
+      if (newQty === 0) {
+        await remove(lineItem.id)
+      } else {
+        await updateQuantity(lineItem.id, newQty)
+      }
+
+      // 🔄 reload cart to sync floating cart count
+      await reload()
+
+      // update local UI quantity
+      setMobileCartQuantities((prev) => ({
+        ...prev,
+        [productId]: newQty,
+      }))
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to decrease quantity"
+      toast.error(message)
+    }
+  }
 
   const regions = [
     "all",
@@ -700,7 +694,7 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
                               </div>
 
                               <Button
-                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-xs lg:text-sm py-1.5 lg:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg"
+                                className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-bold text-xs lg:text-sm py-1.5 lg:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-9 lg:h-10 flex items-center justify-center"
                                 onClick={async (e) => {
                                   e.preventDefault()
                                   e.stopPropagation()
@@ -730,7 +724,7 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
                                   }
                                 }}
                               >
-                                <ShoppingCart className="h-3 w-3 mr-1" />
+                                <ShoppingCart className="h-4 w-4 mr-1.5" />
                                 Add to Cart
                               </Button>
                             </div>
@@ -841,31 +835,30 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
                                 </div>
                               )}
 
-                              {/* Desktop: Show regular button, Mobile: Show ADD or quantity selector */}
                               <div className="lg:hidden">
                                 {mobileQuantity === 0 ? (
                                   <Button
-                                    className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1 sm:py-1.5 rounded-md transition-all duration-200 shadow-md hover:shadow-lg"
+                                    className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9"
                                     onClick={(e) => handleMobileAddToCart(product, e)}
                                   >
                                     ADD
                                   </Button>
                                 ) : (
-                                  <div className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] rounded-md py-1 sm:py-1.5 px-2">
+                                  <div className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] rounded-md py-1.5 sm:py-2 px-2 h-8 sm:h-9">
                                     <button
                                       onClick={(e) => handleMobileDecrement(product, e)}
                                       className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-white/20 hover:bg-white/30 rounded transition-all"
                                     >
-                                      <Minus className="h-3 w-3 sm:h-4 sm:w-4 text-black" />
+                                      <Minus className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-black" />
                                     </button>
-                                    <span className="text-black font-bold text-[11px] sm:text-[12px] md:text-sm min-w-[20px] text-center">
+                                    <span className="text-black font-bold text-[11px] sm:text-[12px] md:text-sm min-w-[24px] text-center">
                                       {mobileQuantity}
                                     </span>
                                     <button
                                       onClick={(e) => handleMobileIncrement(product, e)}
                                       className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-white/20 hover:bg-white/30 rounded transition-all"
                                     >
-                                      <Plus className="h-3 w-3 sm:h-4 sm:w-4 text-black" />
+                                      <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-black" />
                                     </button>
                                   </div>
                                 )}
@@ -874,7 +867,7 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
                               {/* Desktop: Show regular button */}
                               <div className="hidden lg:block">
                                 <Button
-                                  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1 sm:py-1.5 rounded-md transition-all duration-200 shadow-md hover:shadow-lg"
+                                  className="w-full bg-gradient-to-r from-[#DD9627] via-[#FED649] to-[#B47B2B] hover:brightness-95 text-black font-semibold text-[10px] sm:text-[11px] md:text-xs py-1.5 sm:py-2 rounded-md transition-all duration-200 shadow-md hover:shadow-lg h-8 sm:h-9 flex items-center justify-center"
                                   onClick={async (e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
@@ -899,7 +892,7 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
                                     }
                                   }}
                                 >
-                                  <ShoppingCart className="h-[10px] w-[10px] sm:h-[11px] sm:w-[11px] mr-1" />
+                                  <ShoppingCart className="h-3.5 w-3.5 mr-1" />
                                   Add
                                 </Button>
                               </div>
@@ -935,10 +928,10 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
 
       <Footer />
 
-{totalCartItems > 0 && (
-  <Link href="/cart" className="lg:hidden">
-    <button
-      className="
+      {totalCartItems > 0 && (
+        <Link href="/cart" className="lg:hidden">
+          <button
+            className="
         fixed bottom-4 left-1/2 -translate-x-1/2
         z-50
         flex flex-col items-center justify-center
@@ -951,22 +944,17 @@ const handleMobileIncrement = async (product: Product, e: React.MouseEvent) => {
         transition-all duration-300
         active:scale-95
       "
-      style={{ minWidth: "160px" }}
-    >
-      <div className="flex items-center justify-center gap-2">
-        <ShoppingCart className="h-5 w-5" />
-        <span className="text-sm font-semibold">View Cart</span>
-        <ChevronRight className="h-5 w-5" />
-      </div>
-      <span className="text-[11px] font-medium text-[#3B2B13]/80 mt-[2px]">
-        {totalCartItems} items
-      </span>
-    </button>
-  </Link>
-)}
-
-
-
+            style={{ minWidth: "160px" }}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="text-sm font-semibold">View Cart</span>
+              <ChevronRight className="h-5 w-5" />
+            </div>
+            <span className="text-[11px] font-medium text-[#3B2B13]/80 mt-[2px]">{totalCartItems} items</span>
+          </button>
+        </Link>
+      )}
     </div>
   )
 }
