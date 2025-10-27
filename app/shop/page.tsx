@@ -118,83 +118,81 @@ export default function ShopPage() {
     : 0
 
   useEffect(() => {
-  const load = async () => {
-    try {
-      setIsLoading(true)
+    const load = async () => {
+      try {
+        setIsLoading(true)
 
-      // fetch products + categories in parallel
-      const [productsRes, categoriesRes] = await Promise.all([
-        fetch("/api/products", { cache: "no-store" }),
-        fetch("/api/collections", { cache: "no-store" }),
-      ])
+        // fetch products + categories in parallel
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/collections", { cache: "no-store" }),
+        ])
 
-      if (!productsRes.ok) throw new Error("Failed to load products")
-      if (!categoriesRes.ok) throw new Error("Failed to load categories")
+        if (!productsRes.ok) throw new Error("Failed to load products")
+        if (!categoriesRes.ok) throw new Error("Failed to load categories")
 
-      const productsData = await productsRes.json()
-      const categoriesData = await categoriesRes.json()
+        const productsData = await productsRes.json()
+        const categoriesData = await categoriesRes.json()
 
-      console.log("productsData:", productsData)
-      console.log("categoriesData:", categoriesData)
+        console.log("productsData:", productsData)
+        console.log("categoriesData:", categoriesData)
 
-      // 🧠 Helper to Title-Case text (camelized)
-      const toTitleCase = (str: string) =>
-        str
-          .toLowerCase()
-          .split(" ")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")
+        // 🧠 Helper to Title-Case text (camelized)
+        const toTitleCase = (str: string) =>
+          str
+            .toLowerCase()
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")
 
-      // map category IDs to names
-      const categoryMap: Record<string, string> = {}
-      ;(categoriesData.categories || []).forEach((cat: any) => {
-        const formattedName = toTitleCase(cat.name?.trim() || "")
-        categoryMap[cat._id] = formattedName
-      })
+        // map category IDs to names
+        const categoryMap: Record<string, string> = {}
+        ;(categoriesData.categories || []).forEach((cat: any) => {
+          const formattedName = toTitleCase(cat.name?.trim() || "")
+          categoryMap[cat._id] = formattedName
+        })
 
-      // assign correct category name to each product
-      const mappedProducts = (productsData.products || []).map((p: Product) => {
-        const mainCollectionId = p.collectionIds?.find(
-          (id: string) => id !== "00000000-000000-000000-000000000001"
-        )
-        const categoryName = categoryMap[mainCollectionId] || "Uncategorized"
-        return { ...p, category: categoryName }
-      })
+        // assign correct category name to each product
+        const mappedProducts = (productsData.products || []).map((p: Product) => {
+          const mainCollectionId = p.collectionIds?.find((id: string) => id !== "00000000-000000-000000-000000000001")
+          const categoryName = categoryMap[mainCollectionId] || "Uncategorized"
+          return { ...p, category: categoryName }
+        })
 
-      console.log("✅ Mapped products with category:", mappedProducts)
+        console.log("✅ Mapped products with category:", mappedProducts)
 
-      // 🧩 Collect unique category list and camelize them too
-      const uniqueCategories = Array.from(
-        new Set(mappedProducts.map((p: Product) => p.category).filter(Boolean))
-      )
-        .map(toTitleCase)
-        .sort()
+        const uniqueCategories = Array.from(new Set(mappedProducts.map((p: Product) => p.category).filter(Boolean)))
+          .map(toTitleCase)
+          .sort((a, b) => {
+            // Put "Coming Soon" at the end
+            if (a === "Coming Soon") return 1
+            if (b === "Coming Soon") return -1
+            // Otherwise sort alphabetically
+            return a.localeCompare(b)
+          })
 
-      // set in state (for filters)
-      setCategories(["All", ...uniqueCategories])
-      setProducts(mappedProducts)
+        // set in state (for filters)
+        setCategories(["All", ...uniqueCategories])
+        setProducts(mappedProducts)
 
-      // select default visible variants
-      const defaultVariants: Record<string, string> = {}
-      mappedProducts.forEach((product: Product) => {
-        const productId = product._id || product.id || ""
-        if (product.variants && product.variants.length > 0) {
-          const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
-          defaultVariants[productId] = firstVisibleVariant
-            ? firstVisibleVariant._id
-            : product.variants[0]._id
-        }
-      })
-      setSelectedVariants(defaultVariants)
-    } catch (e: any) {
-      setError(e?.message || "Failed to load products")
-    } finally {
-      setIsLoading(false)
+        // select default visible variants
+        const defaultVariants: Record<string, string> = {}
+        mappedProducts.forEach((product: Product) => {
+          const productId = product._id || product.id || ""
+          if (product.variants && product.variants.length > 0) {
+            const firstVisibleVariant = product.variants.find((v) => v.variant.visible)
+            defaultVariants[productId] = firstVisibleVariant ? firstVisibleVariant._id : product.variants[0]._id
+          }
+        })
+        setSelectedVariants(defaultVariants)
+      } catch (e: any) {
+        setError(e?.message || "Failed to load products")
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }
-  load()
-}, [])
-
+    load()
+  }, [])
 
   const getCurrentPrice = (product: Product): number => {
     if (!product.variants || product.variants.length === 0) {
@@ -392,7 +390,10 @@ export default function ShopPage() {
   const filteredProducts = products
     .filter((product) => {
       if (selectedRegion !== "all" && product.region !== selectedRegion) return false
-      if (selectedCategory !== "all" && product.category !== selectedCategory) return false
+      // Fixed: Compare categories case-insensitively and handle "All" properly
+      if (selectedCategory !== "all" && selectedCategory !== "All") {
+        if (product.category?.toLowerCase() !== selectedCategory.toLowerCase()) return false
+      }
       if (showBestsellers && !product.bestseller) return false
       if (showLimitedEdition && !product.limitedEdition) return false
       if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
@@ -567,7 +568,7 @@ export default function ShopPage() {
                             : "hover:bg-[#1A1A1A] text-[#FED649] hover:text-[#DD9627] font-medium"
                         }`}
                       >
-                        {category === "all" ? "All Categories" : category}
+                        {category === "All" ? "All Categories" : category}
                       </button>
                     ))}
                   </div>
@@ -621,7 +622,7 @@ export default function ShopPage() {
                             {selectedCategory === category && <Check className="h-3 w-3 text-white" />}
                           </div>
                           <span className="text-sm font-medium">
-                            {category === "all" ? "All Categories" : category}
+                            {category === "All" ? "All Categories" : category}
                           </span>
                         </button>
                       ))}
@@ -884,7 +885,6 @@ export default function ShopPage() {
                             </div>
                           </div>
                         ) : (
-                          // Grid View - Minimal card design with reduced padding
                           <>
                             <div className="relative overflow-hidden">
                               <div className="relative w-full aspect-square overflow-hidden bg-white rounded-t-lg p-1">
