@@ -22,7 +22,7 @@ const mockCategories = [
   },
   {
     _id: "3",
-    name: "Nutri Pack",
+    name: "Power Foods",
     slug: "nutri-pack",
   },
   {
